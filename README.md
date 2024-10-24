@@ -98,3 +98,7 @@
 - 프로젝트 기능 명세서 작성
 - 피그마 제작
 - https://www.figma.com/design/MuUxoBacXZulhQLqVRlFF3/%EB%A9%8D%EC%8A%A4%ED%8C%9F?node-id=0-1&node-type=canvas&t=RJrFb4lwnd6hCT6P-0
+
+## 2024-10-24
+- 피그마 제작
+- 중간발표 ppt 제작
