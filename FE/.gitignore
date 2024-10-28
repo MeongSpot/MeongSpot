@@ -125,3 +125,7 @@ $RECYCLE.BIN/
 
 # dotenv
 .env
+
+# TypeScript build info
+*.tsbuildinfo
+tsconfig.*.tsbuildinfo

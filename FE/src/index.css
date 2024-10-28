@@ -46,6 +46,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+  
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -72,7 +73,7 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-  /* 모바일 최적화 추가 */
+
   html,
   body {
     @apply h-[100dvh] overflow-hidden;
@@ -86,13 +87,23 @@
 /* 모바일 레이아웃 유틸리티 */
 @layer utilities {
   .mobile-container {
-    @apply h-[100dvh] max-w-xl mx-auto relative flex flex-col;
-    /* iOS 안전영역 패딩 추가 */
+    @apply h-[100dvh] max-w-xl mx-auto relative flex flex-col bg-cream-bg;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
 
+  /* 로그인, 회원가입 페이지용 콘텐츠 */
+  .auth-content {
+    @apply flex-1 overflow-hidden;
+  }
+
+  /* 일반 페이지용 스크롤 가능한 콘텐츠 */
   .mobile-content {
-    @apply flex-1 overflow-y-auto overscroll-contain pb-16;
+    @apply flex-1 overflow-y-auto overscroll-contain;
+  }
+
+  /* 하단 네비게이션이 있는 페이지용 */
+  .mobile-content-with-nav {
+    @apply pb-16;
   }
 }
