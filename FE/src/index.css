@@ -2,15 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 폰트 민산스 */
 @font-face {
-  font-family: 'Pretendard-Regular';
-  src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
-  font-weight: 400;
+  font-family: 'MinSans-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/MinSans-Regular.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
 }
 
 * {
-  font-family: 'Pretendard-Regular';
+  font-family: 'MinSans-Regular';
 }
 
 * ::-webkit-scrollbar {
@@ -70,5 +71,28 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+  }
+  /* 모바일 최적화 추가 */
+  html,
+  body {
+    @apply h-[100dvh] overflow-hidden;
+  }
+
+  #root {
+    @apply h-full;
+  }
+}
+
+/* 모바일 레이아웃 유틸리티 */
+@layer utilities {
+  .mobile-container {
+    @apply h-[100dvh] max-w-xl mx-auto relative flex flex-col;
+    /* iOS 안전영역 패딩 추가 */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-content {
+    @apply flex-1 overflow-y-auto overscroll-contain pb-16;
   }
 }
