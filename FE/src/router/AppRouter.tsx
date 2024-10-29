@@ -4,7 +4,7 @@ import App from '@/App';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/MyPage'));
-const ChatPage = lazy(() => import('@/components/pages/ChatPage'));
+const ChatPage = lazy(() => import('@/pages/ChatPage'));
 const GroupPage = lazy(() => import('@/pages/GroupPage'));
 const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
 
