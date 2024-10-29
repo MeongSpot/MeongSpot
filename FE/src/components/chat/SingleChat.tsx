@@ -1,7 +1,7 @@
 import useChatStore from '@/store/chatStore';
 
-const SingleChat = () => {
-  const chats = useChatStore((state) => state.chats); // Zustand 스토어에서 채팅 데이터 가져오기
+const SingleChat = ({ roomId } : { roomId: string }) => {
+  const chats = useChatStore((state) => state.chats[roomId] || [] ); // Zustand 스토어에서 채팅 데이터 가져오기
 
   return (
     <div>

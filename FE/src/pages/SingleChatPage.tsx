@@ -54,16 +54,23 @@ const SingleChatPage = () => {
       </div>
       
       <div className="flex items-center p-3 border-t">
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="메세지 입력"
-          className="flex-1 bg-gray-100 rounded-full px-4 py-2 outline-none"
-        />
-        <button onClick={handleSendMessage} className="text-orange-500 ml-3">
-          <FaPaperPlane size={20} />
-        </button>
+        <div className="relative flex-1">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="메세지 입력"
+            className="w-full flex-1 bg-gray-100 rounded-full px-4 py-2 pr-10 outline-none"
+            />
+          {message && (
+            <button
+            onClick={handleSendMessage}
+            className="absolute inset-y-0 right-3 flex items-center text-orange-500"
+            >
+              <FaPaperPlane size={20} />
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

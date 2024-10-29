@@ -4,7 +4,7 @@ import App from '@/App';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/MyPage'));
-const ParticipateRoomPage = lazy(() => import('@/pages/ParticipateRoomPage'));
+const MeetUpRoomPage = lazy(() => import('@/pages/MeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/ChatPage'));
 const GroupChatPage = lazy(() => import('@/pages/GroupChatPage'));
 const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
@@ -27,8 +27,8 @@ const router = createBrowserRouter([
         element: <MyPage />,
       },
       {
-        path: 'participate',
-        element: <ParticipateRoomPage />,
+        path: 'meetUpRoom',
+        element: <MeetUpRoomPage />,
       },
       {
         path: 'chat',
