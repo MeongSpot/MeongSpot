@@ -1,21 +1,22 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
-import tsconfigPaths from "vite-tsconfig-paths"
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [
-    [react(), tsconfigPaths()],
+    react(),
+    tsconfigPaths(),
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
         enabled: false,
       },
       manifest: {
-        name: 'My PWA App',
-        short_name: 'PWA App',
-        description: 'A simple PWA using Vite, React, and TypeScript',
-        theme_color: '#ffffff',
+        name: '멍스팟',
+        short_name: '멍스팟',
+        description: '위치기반 반려견 산책 기록 및 친구 만들기 서비스',
+        theme_color: '#FEECCE', // 배경색
         icons: [
           {
             src: 'icons/favicon/android-icon-192x192.png',
