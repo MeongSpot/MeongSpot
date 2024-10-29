@@ -1,4 +1,4 @@
-const GroupChat = () => {
+const GroupChatList = () => {
     // Similar structure to SingleChat, but with group chat data.
     return (
       <div>
@@ -7,5 +7,5 @@ const GroupChat = () => {
     );
   };
   
-  export default GroupChat;
+  export default GroupChatList;
   

@@ -2,13 +2,13 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import App from '@/App';
 
-const ErrorPage = lazy(() => import('@/components/pages/ErrorPage'));
-const MyPage = lazy(() => import('@/components/pages/MyPage'));
-const ChatPage = lazy(() => import('@/components/pages/ChatPage'));
-const GroupPage = lazy(() => import('@/components/pages/GroupPage'));
-const KakaoMapPage = lazy(() => import('@/components/pages/KakaoMapPage'));
-const LoginPage = lazy(() => import('@/components/pages/LoginPage'));
-const SignupPage = lazy(() => import('@/components/pages/SignupPage'));
+const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
+const MyPage = lazy(() => import('@/pages/MyPage'));
+const ChatPage = lazy(() => import('@/pages/ChatPage'));
+const GroupPage = lazy(() => import('@/pages/GroupPage'));
+const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
+const LoginPage = lazy(() => import('@/pages/LoginPage'));
+const SignupPage = lazy(() => import('@/pages/SignupPage'));
 
 const router = createBrowserRouter([
   {
