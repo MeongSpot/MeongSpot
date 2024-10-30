@@ -10,18 +10,18 @@ const useChat = (roomId: string) => {
   const addChat = useChatStore((state) => state.addChat);
 
   // 채팅 데이터 API 호출
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const response = await apiClient.get<{ chats: Chat[] }>(`/api/v1/chats/${roomId}`);
-        setChats(roomId, response.data.chats); // 특정 방 번호에 맞는 채팅 데이터 설정
-      } catch (error) {
-        console.error('Failed to fetch chats:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchChats = async () => {
+  //     try {
+  //       const response = await apiClient.get<{ chats: Chat[] }>(`/api/v1/chats/${roomId}`);
+  //       setChats(roomId, response.data.chats); // 특정 방 번호에 맞는 채팅 데이터 설정
+  //     } catch (error) {
+  //       console.error('Failed to fetch chats:', error);
+  //     }
+  //   };
 
-    fetchChats();
-  }, [roomId, setChats]);
+  //   fetchChats();
+  // }, [roomId, setChats]);
 
   // WebSocket 연결 설정
   useEffect(() => {
