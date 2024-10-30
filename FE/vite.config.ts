@@ -57,4 +57,5 @@ export default defineConfig({
       },
     }),
   ],
+  esbuild: false,  // esbuild 비활성화
 });
