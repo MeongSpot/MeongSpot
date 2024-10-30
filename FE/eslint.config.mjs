@@ -18,6 +18,7 @@ export default [
         ecmaFeatures: {
           jsx: true,
         },
+        project: './tsconfig.json', // TypeScript 설정 경로 명시
       },
     },
     plugins: {
@@ -28,12 +29,12 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': 'warn',
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off', // TypeScript의 사용하지 않는 변수 무시
+      'no-unused-vars': 'off', // 일반 JavaScript의 사용하지 않는 변수 무시
       'react/react-in-jsx-scope': 'off',
       'react/jsx-uses-react': 'off',
       'react/prop-types': 'off',
-      'react/jsx-uses-vars': 'error',
+      'react/jsx-uses-vars': 'error', // JSX 내부에서 변수 사용 여부 확인
     },
     settings: {
       react: {
