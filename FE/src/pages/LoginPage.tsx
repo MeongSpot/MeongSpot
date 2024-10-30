@@ -18,7 +18,7 @@ const LoginPage = () => {
   const buttonClassName = "py-4"; // PrimaryButton의 높이 조절
 
   return (
-    <div className="auth-content flex h-full items-center justify-center pb-16">
+    <div className="auth-content flex h-full items-center justify-center bg-cream-bg">
       <div className="w-full max-w-sm px-6">
         <div className="flex flex-col items-center">
           {/* 로고 영역 */}

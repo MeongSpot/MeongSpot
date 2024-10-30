@@ -5,7 +5,7 @@ const App = () => {
   const location = useLocation();
   const pathSegments = location.pathname.split('/');
   const hideNav =
-    ['/login', '/signup'].includes(location.pathname) || (pathSegments[1] === 'chat' && pathSegments.length === 4);
+    ['/login', '/signup/auth', '/signup/info','/signup/complete'].includes(location.pathname) || (pathSegments[1] === 'chat' && pathSegments.length === 4);
 
   return (
     <div className="mobile-container">
