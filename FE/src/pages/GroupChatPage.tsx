@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FaArrowLeft, FaPaperPlane } from 'react-icons/fa';
 import { FiMenu } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ const GroupChatPage = () => {
     { sender: '뽀삐', message: '저희 강아지 조금 소심한데 참여해도 되나요?', time: '10:23' },
     { sender: 'me', message: '그럼요 괜찮아요', time: '10:23' },
     { sender: '두부', message: '저희 강아지도 낯가려요 ㅎㅎ', time: '10:23' },
-    { sender: '감자', message: '저 15분 정도 늦게 참석할 것 같아요 최대한 빨리 갈게요!', time: '17:34' },
+    { sender: '깜자', message: '저 15분 정도 늦게 참석할 것 같아요 최대한 빨리 갈게요!', time: '17:34' },
     { sender: 'me', message: '천천히 오세요~', time: '17:35' },
     { sender: 'me', message: '1주차장 옆 광장에 다들 모여있어요~', time: '17:35' },
   ];
@@ -25,6 +25,11 @@ const GroupChatPage = () => {
     }
   };
 
+  const handleViewDetails = () => {
+    setIsModalOpen(false);
+    navigate('/meetUpDogList');
+  };
+
   return (
     <div className="flex flex-col h-screen">
       <div className="flex items-center bg-orange-500 text-white px-4 py-3">
@@ -37,7 +42,7 @@ const GroupChatPage = () => {
         </button>
       </div>
 
-      <div className="flex-1 p-4 overflow-y-auto bg-gray-100">
+      <div className="flex-1 p-4 overflow-y-auto bg-white">
         {chats.map((chat, index) => (
           <div
             key={index}
@@ -48,13 +53,24 @@ const GroupChatPage = () => {
                 {chat.sender}
               </div>
             )}
-            <div
-              className={`${
-                chat.sender === 'me' ? 'bg-yellow-200' : 'bg-gray-200'
-              } text-gray-800 rounded-lg px-4 py-2 inline-block max-w-xs`}
-            >
-              {chat.message}
-              <span className="block text-xs text-gray-400 mt-1 text-right">{chat.time}</span>
+            <div className="flex flex-col max-w-xs">
+              <div className={`flex items-end ${chat.sender === 'me' ? 'flex-row-reverse' : ''}`}>
+                <div
+                  className={`${
+                    chat.sender === 'me' ? 'bg-cream-bg' : 'bg-gray-200'
+                  } text-gray-800 rounded-lg px-4 py-2`}
+                >
+                  {chat.message}
+                </div>
+                <span
+                  className={`text-xs text-gray-400 ml-2 ${
+                    chat.sender === 'me' ? 'mr-2' : 'ml-2'
+                  }`}
+                  style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
+                >
+                  {chat.time}
+                </span>
+              </div>
             </div>
           </div>
         ))}
@@ -68,18 +84,22 @@ const GroupChatPage = () => {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="메시지 입력"
             className="w-full flex-1 bg-gray-100 rounded-full px-4 py-2 outline-none"
-            />
+          />
           {message && (
             <button
-            onClick={handleSendMessage}
-            className="absolute inset-y-0 right-3 flex items-center text-orange-500"
+              onClick={handleSendMessage}
+              className="absolute inset-y-0 right-3 flex items-center text-orange-500"
             >
-                <FaPaperPlane size={20} />
-              </button>
-            )}
-          </div>
+              <FaPaperPlane size={20} />
+            </button>
+          )}
+        </div>
       </div>
-      <GroupChatInfoModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <GroupChatInfoModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onViewDetails={handleViewDetails}
+      />
     </div>
   );
 };
