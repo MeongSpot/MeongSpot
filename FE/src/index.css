@@ -14,8 +14,18 @@
   font-family: 'MinSans-Regular';
 }
 
-* ::-webkit-scrollbar {
+*::-webkit-scrollbar {
   display: none;
+}
+
+/* Firefox를 위한 스크롤바 숨김 */
+* {
+  scrollbar-width: none;
+}
+
+/* IE를 위한 스크롤바 숨김 */
+* {
+  -ms-overflow-style: none;
 }
 
 @layer base {

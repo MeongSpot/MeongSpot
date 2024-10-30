@@ -21,7 +21,7 @@ const PrimaryButton = ({
     >
       {children}
     </button>
-  );
+  ); 
 };
 
 export default PrimaryButton;
