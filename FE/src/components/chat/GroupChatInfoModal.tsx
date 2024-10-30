@@ -4,9 +4,10 @@ import { FiArrowRight, FiBell, FiCalendar, FiClock, FiMapPin,  FiSettings, FiLog
 interface GroupChatInfoModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onViewDetails: () => void;
 }
 
-const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose }) => {
+const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose, onViewDetails }) => {
   return (
     <div
       className={`fixed inset-0 z-20 bg-gray-800 bg-opacity-50 flex justify-end transition-opacity duration-300 ${
@@ -55,13 +56,13 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose
         <div className="mb-4">
           <h3 className="text-gray-700 mb-2">해시태그</h3>
           <div className="flex flex-wrap gap-2">
-            <span className="bg-orange-100 text-orange-600 px-2 py-1 rounded-full text-sm">
+            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm">
               # 활발한_강아지_환영
             </span>
-            <span className="bg-orange-100 text-orange-600 px-2 py-1 rounded-full text-sm">
+            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm">
               # 1시간정도
             </span>
-            <span className="bg-orange-100 text-orange-600 px-2 py-1 rounded-full text-sm">
+            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm">
               # 소형견만
             </span>
           </div>
@@ -85,7 +86,7 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose
               <span className="text-gray-800 font-semibold">5</span>
               <span className="text-gray-500">/ 6</span>
             </div>
-            <button className="text-sm text-gray-700">상세보기</button>
+            <button onClick={onViewDetails} className="text-sm text-gray-700">상세보기</button>
           </div>
           
           <div className="flex space-x-2 mt-2">

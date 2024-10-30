@@ -4,7 +4,8 @@ import App from '@/App';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/MyPage'));
-const MeetUpRoomPage = lazy(() => import('@/pages/MeetUpRoomPage'));
+const MyMeetUpRoomPage = lazy(() => import('@/pages/MyMeetUpRoomPage'));
+const AllMeetUpRoomPage = lazy(() => import('@/pages/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/ChatPage'));
 const GroupChatPage = lazy(() => import('@/pages/GroupChatPage'));
 const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
@@ -28,8 +29,12 @@ const router = createBrowserRouter([
         element: <MyPage />,
       },
       {
-        path: 'meetUpRoom',
-        element: <MeetUpRoomPage />,
+        path: 'myMeetUpRoom',
+        element: <MyMeetUpRoomPage />,
+      },
+      {
+        path: 'allMeetUpRoom',
+        element: <AllMeetUpRoomPage />,
       },
       {
         path: 'chat',
@@ -52,7 +57,7 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: 'meetUpDogList',
+        path: 'MeetUpDogList',
         element: <MeetUpDogListPage />
       },
     ],
