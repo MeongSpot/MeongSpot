@@ -10,5 +10,6 @@
     },
     "noUnusedLocals": false,        // 사용되지 않는 로컬 변수 무시
     "noUnusedParameters": false,    // 사용되지 않는 매개변수 무시
+    "skipLibCheck": true,           // 라이브러리 체크 생략
   }
 }
