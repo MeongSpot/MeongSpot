@@ -1,16 +1,16 @@
 import globals from 'globals';
 import pluginJs from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import tseslint from '@typescript-eslint/eslint-plugin';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default [
-  ...tseslint.configs.recommended,
-  pluginJs.configs.recommended,
-  react.configs.flat.recommended,
-  { files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'] },
+  tseslint.configs.recommended, // TypeScript ESLint 플러그인 설정
+  pluginJs.configs.recommended, // 기본 JavaScript ESLint 설정
+  react.configs.flat.recommended, // React ESLint 설정
   {
+    files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
@@ -22,6 +22,7 @@ export default [
       },
     },
     plugins: {
+      '@typescript-eslint': tseslint, // TypeScript ESLint 플러그인
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
