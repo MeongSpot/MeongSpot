@@ -38,14 +38,10 @@ const ChatOptionsModal: React.FC<ChatOptionsModalProps> = ({ isOpen, onClose, ch
           <FiLogOut className="text-gray-600 mr-3" />
           <span className="text-gray-800">채팅 나가기</span>
         </div>
-        <div className="flex items-center cursor-pointer mb-5">
+        <div className="flex items-center cursor-pointer">
           <FiBellOff className="text-gray-600 mr-3" />
           <span className="text-gray-800">채팅 푸시 알림 해제</span>
         </div>
-        <hr className="my-2 border-t-2" />
-        <button onClick={onClose} className="block mx-auto mt-6 font-bold text-sm text-orange-600">
-          닫기
-        </button>
       </div>
     </div>
   );

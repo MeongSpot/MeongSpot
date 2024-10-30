@@ -11,6 +11,7 @@ const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/SignupPage'));
 const SingleChatPage = lazy(() => import('@/pages/SingleChatPage'));
+const MeetUpDogListPage = lazy(() => import('@/pages/MeetUpDogListPage'));
 
 const router = createBrowserRouter([
   {
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignupPage />,
+      },
+      {
+        path: 'meetUpDogList',
+        element: <MeetUpDogListPage />
       },
     ],
   },
