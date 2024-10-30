@@ -12,7 +12,7 @@ const ChatPage = () => {
       <div className="flex justify-center border-b border-gray-300">
         <button
           className={`flex-1 py-2 text-center ${
-            activeTab === 'single' ? 'text-custom-orange border-b-2 border-custom-orange' : 'text-gray-500'
+            activeTab === 'single' ? 'text-custom-orange border-b-2 border-light-orange' : 'text-gray-500'
           }`}
           onClick={() => setActiveTab('single')}
         >
@@ -20,7 +20,7 @@ const ChatPage = () => {
         </button>
         <button
           className={`flex-1 py-2 text-center ${
-            activeTab === 'group' ? 'text-custom-orange border-b-2 border-custom-orange' : 'text-gray-500'
+            activeTab === 'group' ? 'text-custom-orange border-b-2 border-light-orange' : 'text-gray-500'
           }`}
           onClick={() => setActiveTab('group')}
         >

@@ -87,7 +87,7 @@
 /* 모바일 레이아웃 유틸리티 */
 @layer utilities {
   .mobile-container {
-    @apply h-[100dvh] max-w-xl mx-auto relative flex flex-col bg-cream-bg;
+    @apply h-[100dvh] max-w-xl mx-auto relative flex flex-col;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }

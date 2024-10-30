@@ -4,11 +4,14 @@ import App from '@/App';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/MyPage'));
+const MeetUpRoomPage = lazy(() => import('@/pages/MeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/ChatPage'));
-const GroupPage = lazy(() => import('@/pages/GroupPage'));
+const GroupChatPage = lazy(() => import('@/pages/GroupChatPage'));
 const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/SignupPage'));
+const SingleChatPage = lazy(() => import('@/pages/SingleChatPage'));
+const MeetUpDogListPage = lazy(() => import('@/pages/MeetUpDogListPage'));
 
 const router = createBrowserRouter([
   {
@@ -17,7 +20,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true, // 루트 경로의 기본 페이지
+        index: true,
         element: <KakaoMapPage />,
       },
       {
@@ -25,12 +28,20 @@ const router = createBrowserRouter([
         element: <MyPage />,
       },
       {
+        path: 'meetUpRoom',
+        element: <MeetUpRoomPage />,
+      },
+      {
         path: 'chat',
         element: <ChatPage />,
       },
       {
-        path: 'group',
-        element: <GroupPage />,
+        path: 'chat/single/:id',
+        element: <SingleChatPage />,
+      },
+      {
+        path: 'chat/group/:id',
+        element: <GroupChatPage />,
       },
       {
         path: 'login',
@@ -39,6 +50,10 @@ const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignupPage />,
+      },
+      {
+        path: 'meetUpDogList',
+        element: <MeetUpDogListPage />
       },
     ],
   },
