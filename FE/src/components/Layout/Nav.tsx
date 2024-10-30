@@ -10,7 +10,7 @@ function Nav() {
       <NavLink
         to="/"
         className={({ isActive }) =>
-          `flex-1 flex flex-col items-center justify-center py-2 hover:text-light-orange ${
+          `flex-1 flex flex-col items-center justify-center py-3 hover:text-light-orange ${
             isActive || isRootActive ? 'text-light-orange' : 'text-[#9B9B9B]'
           }`
         }
