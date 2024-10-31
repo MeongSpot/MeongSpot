@@ -18,7 +18,7 @@ interface EventCardProps {
   onClick: (roomId: number) => void;
 }
 
-const MyRoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => (
+const RoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => (
   <div
     onClick={() => onClick(event.id)}
     className="bg-white p-4 rounded-lg shadow cursor-pointer"
@@ -44,7 +44,7 @@ const MyRoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => (
 
     <div className="flex flex-wrap mt-2 space-x-2">
       {event.tags.map((tag, index) => (
-        <span key={index} className="text-xs text-orange-600 bg-cream-bg px-2 py-1 rounded-full">
+        <span key={index} className="text-xs text-deep-coral bg-cream-bg px-2 py-1 rounded-full">
           {tag}
         </span>
       ))}
@@ -52,4 +52,4 @@ const MyRoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => (
   </div>
 );
 
-export default MyRoomListCard;
+export default RoomListCard;

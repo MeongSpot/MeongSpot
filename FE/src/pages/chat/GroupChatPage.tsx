@@ -32,9 +32,9 @@ const GroupChatPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex items-center bg-orange-500 text-white px-4 py-3">
+      <div className="flex items-center bg-deep-coral text-white p-4">
         <button onClick={() => navigate(-1)} className="mr-3">
-          <FaArrowLeft size={20} />
+          <FaArrowLeft size={16} />
         </button>
         <h1 className="text-lg font-bold flex-1">채팅방</h1>
         <button onClick={() => setIsModalOpen(true)} className="text-white">
@@ -44,10 +44,7 @@ const GroupChatPage = () => {
 
       <div className="flex-1 p-4 overflow-y-auto bg-white">
         {chats.map((chat, index) => (
-          <div
-            key={index}
-            className={`flex mb-4 ${chat.sender === 'me' ? 'justify-end' : 'justify-start'}`}
-          >
+          <div key={index} className={`flex mb-4 ${chat.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
             {chat.sender !== 'me' && (
               <div className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-2">
                 {chat.sender}
@@ -63,9 +60,7 @@ const GroupChatPage = () => {
                   {chat.message}
                 </div>
                 <span
-                  className={`text-xs text-gray-400 ml-2 ${
-                    chat.sender === 'me' ? 'mr-2' : 'ml-2'
-                  }`}
+                  className={`text-xs text-gray-400 ml-2 ${chat.sender === 'me' ? 'mr-2' : 'ml-2'}`}
                   style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
                 >
                   {chat.time}
@@ -88,14 +83,14 @@ const GroupChatPage = () => {
           {message && (
             <button
               onClick={handleSendMessage}
-              className="absolute inset-y-0 right-3 flex items-center text-orange-500"
+              className="absolute inset-y-0 right-3 flex items-center text-deep-coral"
             >
               <FaPaperPlane size={20} />
             </button>
           )}
         </div>
       </div>
-      <GroupChatInfoModal 
+      <GroupChatInfoModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onViewDetails={handleViewDetails}

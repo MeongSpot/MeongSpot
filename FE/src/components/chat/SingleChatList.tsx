@@ -77,9 +77,7 @@ const SingleChatList = () => {
               <div className="font-bold text-lg">{chat.name}</div>
               <div className="text-gray-600">{lastMessage ? lastMessage.message : 'No messages yet'}</div>
             </div>
-            <div className="text-gray-400 text-sm whitespace-nowrap mr-2">
-              {lastMessage ? lastMessage.time : ''}
-            </div>
+            <div className="text-gray-400 text-sm whitespace-nowrap mr-2">{lastMessage ? lastMessage.time : ''}</div>
             <button
               className="text-gray-500 z-10"
               onClick={(e) => {
@@ -93,11 +91,7 @@ const SingleChatList = () => {
         );
       })}
 
-      <ChatOptionsModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        chatName={selectedChat ? selectedChat.name : ''}
-      />
+      <ChatOptionsModal isOpen={isModalOpen} onClose={closeModal} chatName={selectedChat ? selectedChat.name : ''} />
     </div>
   );
 };
