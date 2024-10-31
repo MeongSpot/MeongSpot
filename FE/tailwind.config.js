@@ -12,6 +12,17 @@ export default {
         'peach-orange': '#F79D65', // 복숭아 주황
         'warm-orange': '#F79D65', // 따뜻한 주황
       },
+      fontWeight: {
+        thin: 100,
+        extralight: 200,
+        light: 300,
+        regular: 400,
+        medium: 500,
+        semibold: 600,
+        bold: 700,
+        extrabold: 800,
+        black: 900,
+      },
     },
   },
   plugins: [daisyui],

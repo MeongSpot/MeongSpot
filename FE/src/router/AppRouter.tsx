@@ -3,7 +3,7 @@ import { Suspense, lazy } from 'react';
 import App from '@/App';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
-const MyPage = lazy(() => import('@/pages/MyPage'));
+const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/ChatPage'));
@@ -25,15 +25,15 @@ const router = createBrowserRouter([
         element: <KakaoMapPage />,
       },
       {
-        path: 'myPage',
+        path: 'mypage',
         element: <MyPage />,
       },
       {
-        path: 'myMeetUpRoom',
+        path: 'mymeetuproom',
         element: <MyMeetUpRoomPage />,
       },
       {
-        path: 'allMeetUpRoom',
+        path: 'allmeetuproom',
         element: <AllMeetUpRoomPage />,
       },
       {
@@ -57,7 +57,7 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: 'MeetUpDogList',
+        path: 'meetupdoglist',
         element: <MeetUpDogListPage />
       },
     ],
