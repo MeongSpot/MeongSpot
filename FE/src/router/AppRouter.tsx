@@ -3,11 +3,19 @@ import { Suspense, lazy } from 'react';
 import App from '@/App';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
+<<<<<<< HEAD
 const MyPage = lazy(() => import('@/pages/MyPage'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
 const GroupChatPage = lazy(() => import('@/pages/chat/GroupChatPage'));
+=======
+const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
+const MyMeetUpRoomPage = lazy(() => import('@/pages/MyMeetUpRoomPage'));
+const AllMeetUpRoomPage = lazy(() => import('@/pages/AllMeetUpRoomPage'));
+const ChatPage = lazy(() => import('@/pages/ChatPage'));
+const GroupChatPage = lazy(() => import('@/pages/GroupChatPage'));
+>>>>>>> 004287d70d268d67e81db030a35c3775132bb8f0
 const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/SignupPage'));
@@ -28,15 +36,15 @@ const router = createBrowserRouter([
         element: <KakaoMapPage />,
       },
       {
-        path: 'myPage',
+        path: 'mypage',
         element: <MyPage />,
       },
       {
-        path: 'myMeetUpRoom',
+        path: 'mymeetuproom',
         element: <MyMeetUpRoomPage />,
       },
       {
-        path: 'allMeetUpRoom',
+        path: 'allmeetuproom',
         element: <AllMeetUpRoomPage />,
       },
       {
@@ -60,6 +68,7 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
+<<<<<<< HEAD
         path: 'MeetUpDogList',
         element: <MeetUpDogListPage />,
       },
@@ -74,6 +83,10 @@ const router = createBrowserRouter([
       {
         path: 'allMeetUpRoom/create',
         element: <CreateRoomPage />,
+=======
+        path: 'meetupdoglist',
+        element: <MeetUpDogListPage />
+>>>>>>> 004287d70d268d67e81db030a35c3775132bb8f0
       },
     ],
   },

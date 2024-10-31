@@ -1,0 +1,20 @@
+.dogSwiper {
+  width: 100%;
+  height: 280px;
+}
+
+/* .swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+.swiper-pagination-bullet-active {
+  background-color: #F4845F;
+  /* 활성화된 페이지네이션 점의 색상 */
+  opacity: 1;
+}
