@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FaArrowLeft, FaCalendarAlt, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
+import { IoChevronBack } from 'react-icons/io5';
 
 interface EventData {
   title: string;
@@ -42,7 +43,7 @@ const ParticipateDogPage = () => {
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="flex items-center bg-deep-coral text-white p-4">
         <button onClick={() => window.history.back()} className="mr-3">
-          <FaArrowLeft size={16} />
+          <IoChevronBack size={24} />
         </button>
         <h1 className="text-lg font-bold">참여 강아지</h1>
       </div>

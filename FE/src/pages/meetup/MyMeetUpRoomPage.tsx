@@ -32,7 +32,7 @@ const MyMeetUpRoomPage = () => {
     },
     {
       id: 2,
-      title: '저녁 산책 같이해요~',
+      title: '새벽 산책 같이해요~',
       date: '2024-01-22',
       time: '04:30',
       location: '제 2주차장',

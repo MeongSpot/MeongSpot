@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BiPlus } from 'react-icons/bi';
-import { FaArrowLeft } from 'react-icons/fa';
+import { IoChevronBack } from 'react-icons/io5';
 import EveryRoomListCard from '@/components/meetUp/RoomListCard';
 import RoomSortButton from '@/components/meetUp/RoomSortButton';
 
@@ -87,7 +87,7 @@ const AllMeetUpRoomPage = () => {
     <div className="p-4">
         <div className="flex items-center justify-between mb-4">
           <button className="mr-3 text-gray-600" onClick={() => navigate(-1)}>
-            <FaArrowLeft size={16} />
+            <IoChevronBack size={24} />
           </button>
           <h1 className="text-lg font-bold">모임</h1>
           <BiPlus onClick={handlePlusClick} className="text-xl cursor-pointer" />
