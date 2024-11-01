@@ -2,9 +2,9 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-
 import { useState } from 'react';
 import { IoChevronBack } from 'react-icons/io5';
 import { AnimatePresence, motion } from 'framer-motion';
-import AuthStep from '@/components/signup/AuthStep';
-import InfoStep from '@/components/signup/InfoStep';
-import CompleteStep from '@/components/signup/CompleteStep';
+import AuthStep from '@/pages/signup/AuthStep';
+import InfoStep from '@/pages/signup/InfoStep';
+import CompleteStep from '@/pages/signup/CompleteStep';
 import FooterButton from '@/components/common/Button/FooterButton';
 import { SignupData } from '@/types/signup';
 import { REGEX } from '@/types/signup';

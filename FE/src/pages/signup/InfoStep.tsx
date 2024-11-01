@@ -3,7 +3,7 @@ import BoxInput from '@/components/common/Input/BoxInput';
 import ValidateButton from '@/components/common/Button/ValidateButton';
 import GenderButton from '@/components/common/Button/GenderButton';
 import { SignupData, REGEX } from '@/types/signup';
-import ValidationMessage from '../common/Message/ValidationMessage';
+import ValidationMessage from '../../components/common/Message/ValidationMessage';
 
 interface InfoStepProps {
   formData: SignupData;
