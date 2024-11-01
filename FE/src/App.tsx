@@ -3,11 +3,19 @@ import Nav from '@/components/Layout/Nav';
 
 const App = () => {
   const location = useLocation();
-  const { id } = useParams<{ id: string }>(); 
+  const { id } = useParams<{ id: string }>();
   const hideNav =
-    ['/login', '/signup/auth', '/signup/info', '/signup/complete', '/allMeetUpRoom/create'].includes(location.pathname) ||
+    [
+      '/login',
+      '/signup/auth',
+      '/signup/info',
+      '/signup/complete',
+      '/allMeetUpRoom/create',
+      '/settings',
+      '/notification',
+    ].includes(location.pathname) ||
     (location.pathname.startsWith('/chat/') && id) ||
-    (location.pathname.startsWith('/participateDog/') && id); 
+    (location.pathname.startsWith('/participateDog/') && id);
 
   return (
     <div className="mobile-container">

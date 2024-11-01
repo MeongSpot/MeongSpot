@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
+const Settings = lazy(() => import('@/pages/mypage/Settings'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
@@ -16,7 +17,7 @@ const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/signup/SignupPage'));
 const SingleChatPage = lazy(() => import('@/pages/SingleChatPage'));
 const MeetUpDogListPage = lazy(() => import('@/pages/meetup/MeetUpDogListPage'));
-const AlarmPage = lazy(() => import('@/pages/AlarmPage'));
+const AlarmPage = lazy(() => import('@/pages/mypage/AlarmPage'));
 const ParticipateDogPage = lazy(() => import('@/pages/meetup/ParticipateDogPage'));
 const CreateRoomPage = lazy(() => import('@/pages/meetup/CreateRoomPage'));
 
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
       {
         path: 'mypage',
         element: <MyPage />,
+      },
+      {
+        path: 'settings',
+        element: <Settings />,
       },
       {
         path: 'mymeetuproom',
@@ -82,7 +87,7 @@ const router = createBrowserRouter([
         element: <MeetUpDogListPage />,
       },
       {
-        path: 'alarm',
+        path: 'notification',
         element: <AlarmPage />,
       },
       {
