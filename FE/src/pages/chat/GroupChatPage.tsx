@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { FaArrowLeft, FaPaperPlane } from 'react-icons/fa';
+import { FaPaperPlane } from 'react-icons/fa';
 import { FiMenu } from 'react-icons/fi';
+import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import GroupChatInfoModal from '@/components/chat/GroupChatInfoModal';
 
@@ -34,7 +35,7 @@ const GroupChatPage = () => {
     <div className="flex flex-col h-screen">
       <div className="flex items-center bg-deep-coral text-white p-4">
         <button onClick={() => navigate(-1)} className="mr-3">
-          <FaArrowLeft size={16} />
+          <IoChevronBack size={24} />
         </button>
         <h1 className="text-lg font-bold flex-1">채팅방</h1>
         <button onClick={() => setIsModalOpen(true)} className="text-white">

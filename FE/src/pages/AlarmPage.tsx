@@ -6,7 +6,7 @@ const AlarmPage = () => {
   return (
     <div className="p-4">
       <h1 className="text-center text-lg font-bold mb-4">알림</h1>
-      <hr className="my-4" />
+      <hr className="my-4 -mx-4 w-screen" />
       <div className="min-h-screen flex flex-col items-center justify-center mt-[-10vh]">
         {hasData ? (
           <div className="flex justify-between items-center mb-4">{/* 알림 내용 */}</div>
