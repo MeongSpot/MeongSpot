@@ -15,7 +15,7 @@ const MeetingMap = lazy(() => import('@/pages/map/MeetingMap'));
 const WalkingMap = lazy(() => import('@/pages/map/WalkingMap'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
 const SignupPage = lazy(() => import('@/pages/signup/SignupPage'));
-const SingleChatPage = lazy(() => import('@/pages/SingleChatPage'));
+const SingleChatPage = lazy(() => import('@/pages/chat/SingleChatPage'));
 const MeetUpDogListPage = lazy(() => import('@/pages/meetup/MeetUpDogListPage'));
 const AlarmPage = lazy(() => import('@/pages/mypage/AlarmPage'));
 const ParticipateDogPage = lazy(() => import('@/pages/meetup/ParticipateDogPage'));
