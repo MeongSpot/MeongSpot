@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import MascotDog from '@/components/common/Logo/Mascot';
 import { IoIosArrowBack } from 'react-icons/io';
+import { IoChevronBack } from 'react-icons/io5';
+
 
 const AlarmPage = () => {
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const AlarmPage = () => {
     <div className="">
       <div className="p-4">
         <div className="grid grid-cols-3 items-center">
-          <IoIosArrowBack onClick={() => navigate('/mypage')} className="text-xl" />
+          <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
           <h1 className="text-center text-lg font-bold">알림</h1>
         </div>
       </div>

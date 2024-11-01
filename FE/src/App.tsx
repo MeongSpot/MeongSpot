@@ -13,6 +13,7 @@ const App = () => {
       '/allMeetUpRoom/create',
       '/settings',
       '/notification',
+      '/registerdog',
     ].includes(location.pathname) ||
     (location.pathname.startsWith('/chat/') && id) ||
     (location.pathname.startsWith('/participateDog/') && id);

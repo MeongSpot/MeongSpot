@@ -2,7 +2,6 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import MyDogInfoCard from '@/components/mypage/MyDogInfoCard';
 import { IoNotificationsOutline } from 'react-icons/io5';
-import { HiPencil } from 'react-icons/hi';
 import { IoAddCircle } from 'react-icons/io5';
 import { FaAngleRight } from 'react-icons/fa6';
 import { PiNotePencil } from 'react-icons/pi';
@@ -49,11 +48,17 @@ const MyPage: React.FC = () => {
         <h1 className="text-center text-lg font-bold">마이페이지</h1>
         <div className="w-full flex justify-end items-center space-x-4">
           <IoNotificationsOutline
-            onClick={() => {navigate('/notification')}}
-            className="text-2xl text-zinc-700" />
+            onClick={() => {
+              navigate('/notification');
+            }}
+            className="text-2xl text-zinc-700"
+          />
           <SlSettings
-            onClick={() => {navigate('/settings')}}
-            className="text-[1.35rem] text-zinc-700" />
+            onClick={() => {
+              navigate('/settings');
+            }}
+            className="text-[1.35rem] text-zinc-700"
+          />
         </div>
       </div>
       <hr />
@@ -62,10 +67,6 @@ const MyPage: React.FC = () => {
         <div className="flex flex-col space-y-5">
           <div className="flex justify-between items-center">
             <p className="font-bold text-lg">뽀삐 주인</p>
-            {/* <div className="px-2 py-1 bg-deep-coral rounded-2xl flex items-center space-x-1">
-              <HiPencil className="text-white" />
-              <p className="text-white">수정</p>
-            </div> */}
             <PiNotePencil className="text-2xl" />
           </div>
 
@@ -97,7 +98,9 @@ const MyPage: React.FC = () => {
       <div className="p-4 bg-cream-bg space-y-4">
         <div className="flex justify-between">
           <p className="font-semibold">반려견 정보</p>
-          <div className="flex items-center space-x-1">
+          <div
+            onClick={() => {navigate('/registerdog');}}
+            className="flex items-center space-x-1">
             <p className="font-medium text-sm text-[#f7824c]">반려견 등록</p>
             <IoAddCircle className="text-xl text-deep-coral" />
           </div>
@@ -126,7 +129,6 @@ const MyPage: React.FC = () => {
         <div className="flex items-center justify-between">
           <p className="font-semibold">산책 기록</p>
           <div className="flex items-center space-x-1 text-zinc-700">
-            {/* <p>더보기</p> */}
             <FaAngleRight className="" />
           </div>
         </div>

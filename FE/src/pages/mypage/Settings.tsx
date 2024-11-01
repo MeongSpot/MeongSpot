@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoIosArrowBack } from 'react-icons/io';
 import { FaAngleRight } from 'react-icons/fa6';
+import { IoChevronBack } from 'react-icons/io5';
 
 const Settings: React.FC = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const Settings: React.FC = () => {
     <div>
       <div className="p-4">
         <div className="grid grid-cols-3 items-center">
-          <IoIosArrowBack onClick={() => navigate('/mypage')} className="text-xl" />
+          <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
           <p className="text-center text-lg font-bold">설정</p>
           <div></div>
         </div>

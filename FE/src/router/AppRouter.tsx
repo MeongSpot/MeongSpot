@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom';
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const Settings = lazy(() => import('@/pages/mypage/Settings'));
+const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
       {
         path: 'settings',
         element: <Settings />,
+      },
+      {
+        path: 'registerdog',
+        element: <AddDog />,
       },
       {
         path: 'mymeetuproom',
