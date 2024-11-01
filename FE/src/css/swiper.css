@@ -3,15 +3,9 @@
   height: 280px;
 }
 
-/* .swiper-slide {
-  text-align: center;
-  font-size: 18px;
-  background: #fff;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
+.dogSwiper .swiper-slide {
+  padding: 0 2px;
+}
 
 .swiper-pagination-bullet-active {
   background-color: #F4845F;
