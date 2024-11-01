@@ -7,6 +7,7 @@ interface TopBarProps {
   currentLocation: string;
   onSearchChange: (value: string) => void;
   onModeChange: (mode: boolean) => void;
+  onSearch: () => void;
 }
 
 export const TopBar = ({
@@ -15,6 +16,7 @@ export const TopBar = ({
   currentLocation,
   onSearchChange,
   onModeChange,
+  onSearch, // 추가
 }: TopBarProps) => {
   return (
     <div className="absolute top-4 left-4 right-4 z-50">
@@ -28,8 +30,9 @@ export const TopBar = ({
           searchKeyword={searchKeyword}
           currentLocation={currentLocation}
           onSearchChange={onSearchChange}
+          onSearch={onSearch}
         />
-        <div className="px-2">
+        <div className="pr-2">
           <ToggleButton isWalkingMode={isWalkingMode} onChange={onModeChange} />
         </div>
       </div>

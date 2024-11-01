@@ -123,8 +123,8 @@ const SignupPage = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* {showHeader && ( */}
-      <div className="flex h-16 items-center border-b">
-        <button onClick={handleBack} className="px-2">
+      <div className="flex h-[60px] items-center border-b p-4">
+        <button onClick={handleBack}>
           {showHeader && <IoChevronBack size={24} />}
         </button>
       </div>

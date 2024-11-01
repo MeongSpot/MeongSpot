@@ -6,25 +6,42 @@ interface ToggleButtonProps {
 export const ToggleButton = ({ isWalkingMode, onChange }: ToggleButtonProps) => {
   return (
     <div
-      className={`relative h-10 w-32 rounded-full flex items-center cursor-pointer transition-colors duration-300 ${
+      className={`relative h-10 w-28 rounded-full flex items-center cursor-pointer transition-colors duration-300 ${
         isWalkingMode ? 'bg-deep-coral' : 'bg-light-orange'
       }`}
       onClick={() => onChange(!isWalkingMode)}
     >
-      {/* 흰색 토글 버튼 */}
+      {/* 흰색 하이라이트 배경 */}
       <div
-        className={`absolute h-8 w-8 bg-white rounded-full transition-transform duration-300 ${
-          isWalkingMode ? 'translate-x-[5.7rem]' : 'translate-x-[0.35rem]'
+        className={`absolute h-8 w-[3.45rem] bg-white rounded-full transition-transform duration-300 ${
+          isWalkingMode ? 'translate-x-[3.3rem]' : 'translate-x-[0.35rem]'
         }`}
       />
 
-      {/* 텍스트 */}
-      <div
-        className={`absolute w-full transition-transform duration-300 ${isWalkingMode ? 'pl-6 pr-10' : 'pl-10 pr-6'}`}
-      >
-        <span className={`text-white font-semibold whitespace-nowrap ${isWalkingMode ? '' : 'float-right'}`}>
-          {isWalkingMode ? '모임 찾기' : '산책하기'}
-        </span>
+      {/* 텍스트 컨테이너 */}
+      <div className="relative w-full flex justify-between px-2 ">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange(false);
+          }}
+          className={`flex-1 text-sm font-semibold whitespace-nowrap z-10 transition-colors duration-300 ${
+            !isWalkingMode ? 'text-light-orange' : 'text-white'
+          }`}
+        >
+          모임
+        </button>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onChange(true);
+          }}
+          className={`flex-1 text-sm font-semibold whitespace-nowrap z-10 transition-colors duration-300 ${
+            isWalkingMode ? 'text-deep-coral' : 'text-white'
+          }`}
+        >
+          산책
+        </button>
       </div>
     </div>
   );
