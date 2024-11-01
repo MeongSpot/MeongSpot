@@ -224,7 +224,7 @@ const InfoStep = ({
       </div>
 
       <div className="px-6 overflow-y-auto h-[calc(100vh-250px)]" ref={scrollContainerRef}>
-        <div className="space-y-6 pb-20">
+        <div className="space-y-6 pb-16">
           <div className="w-full">
             <BoxInput
               label="이름"
