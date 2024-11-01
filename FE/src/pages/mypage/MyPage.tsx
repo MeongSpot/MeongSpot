@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import MyDogInfoCard from '@/components/mypage/MyDogInfoCard';
 import { IoNotificationsOutline } from 'react-icons/io5';
 import { HiPencil } from 'react-icons/hi';
@@ -13,6 +14,7 @@ import '../../css/swiper.css';
 import { Pagination } from 'swiper/modules';
 
 const MyPage: React.FC = () => {
+  const navigate = useNavigate();
   const userInfo = ['이름', '성별', '나이'];
 
   const dogInfo = [
@@ -46,8 +48,12 @@ const MyPage: React.FC = () => {
         <div></div>
         <h1 className="text-center text-lg font-bold">마이페이지</h1>
         <div className="w-full flex justify-end items-center space-x-4">
-          <IoNotificationsOutline className="text-2xl text-zinc-700" />
-          <SlSettings className="text-[1.35rem] text-zinc-700" />
+          <IoNotificationsOutline
+            onClick={() => {navigate('/notification')}}
+            className="text-2xl text-zinc-700" />
+          <SlSettings
+            onClick={() => {navigate('/settings')}}
+            className="text-[1.35rem] text-zinc-700" />
         </div>
       </div>
       <hr />
