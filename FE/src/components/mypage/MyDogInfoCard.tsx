@@ -1,6 +1,6 @@
 import React from 'react';
 import { DogInfo } from '@/types/dogInfo';
-import { HiPencil } from 'react-icons/hi';
+import { PiNotePencil } from 'react-icons/pi';
 
 interface MyDogInfoCardProps {
   dog: DogInfo;
@@ -35,10 +35,11 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog }) => {
             {dog.name} ({dog.breedId}, {dog.age}세)
           </p>
         </div>
-        <div className="px-2 py-1 bg-deep-coral rounded-2xl flex items-center space-x-1 cursor-pointer">
+        {/* <div className="px-2 py-1 bg-deep-coral rounded-2xl flex items-center space-x-1 cursor-pointer">
           <HiPencil className="text-white" />
-          <p className="text-sm text-white font-medium">수정</p>
-        </div>
+          <p className="text-sm text-white">수정</p>
+        </div> */}
+        <PiNotePencil className="text-2xl" />
       </div>
 
       <div className="px-5 flex flex-col space-y-1">

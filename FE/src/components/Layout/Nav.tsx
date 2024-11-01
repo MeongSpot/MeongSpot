@@ -20,7 +20,7 @@ function Nav() {
         <p className="text-xs">지도</p>
       </NavLink>
       <NavLink
-        to="myMeetUpRoom"
+        to="mymeetuproom"
         className={({ isActive }) =>
           `flex-1 flex flex-col items-center justify-center py-2 hover:text-light-orange ${
             isActive ? 'text-light-orange' : 'text-[#9B9B9B]'
@@ -42,7 +42,7 @@ function Nav() {
         <p className="text-xs">채팅</p>
       </NavLink>
       <NavLink
-        to="myPage"
+        to="mypage"
         className={({ isActive }) =>
           `flex-1 flex flex-col items-center justify-center py-2 hover:text-light-orange ${
             isActive ? 'text-light-orange' : 'text-[#9B9B9B]'
