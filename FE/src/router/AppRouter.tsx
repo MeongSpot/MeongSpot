@@ -4,7 +4,7 @@ import App from '@/App';
 import { Navigate } from 'react-router-dom';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
-const MyPage = lazy(() => import('@/pages/MyPage'));
+const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
@@ -54,7 +54,7 @@ const router = createBrowserRouter([
         element: <MyMeetUpRoomPage />,
       },
       {
-        path: 'allmeetuproom',
+        path: 'allmeetuproom/:id',
         element: <AllMeetUpRoomPage />,
       },
       {
@@ -86,11 +86,11 @@ const router = createBrowserRouter([
         element: <AlarmPage />,
       },
       {
-        path: 'participateDog/:id',
+        path: 'participatedog/:id',
         element: <ParticipateDogPage />,
       },
       {
-        path: 'allMeetUpRoom/create',
+        path: 'allmeetuproom/create',
         element: <CreateRoomPage />,
       },
     ],
