@@ -21,19 +21,16 @@ const SingleChatPage = () => {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="flex items-center bg-orange-500 text-white px-4 py-3">
+      <div className="flex items-center bg-deep-coral text-white p-4">
         <button onClick={() => navigate(-1)} className="mr-3">
-          <FaArrowLeft size={20} />
+          <FaArrowLeft size={16} />
         </button>
         <h1 className="text-lg font-bold">채팅방</h1>
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto bg-white">
         {chats.map((chat, index) => (
-          <div
-            key={index}
-            className={`flex ${chat.sender === 'me' ? 'justify-end' : 'justify-start'} mb-4`}
-          >
+          <div key={index} className={`flex ${chat.sender === 'me' ? 'justify-end' : 'justify-start'} mb-4`}>
             {chat.sender !== 'me' && (
               <div className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-3">
                 {chat.sender}
@@ -60,7 +57,7 @@ const SingleChatPage = () => {
           </div>
         ))}
       </div>
-      
+
       <div className="flex items-center p-3 border-t">
         <div className="relative flex-1">
           <input
@@ -73,7 +70,7 @@ const SingleChatPage = () => {
           {message && (
             <button
               onClick={handleSendMessage}
-              className="absolute inset-y-0 right-3 flex items-center text-orange-500"
+              className="absolute inset-y-0 right-3 flex items-center text-deep-coral"
             >
               <FaPaperPlane size={20} />
             </button>
