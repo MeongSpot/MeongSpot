@@ -1,7 +1,8 @@
 import BoxInput from '@/components/common/Input/BoxInput';
 import ValidateButton from '@/components/common/Button/ValidateButton';
 import ValidationMessage from '@/components/common/Message/ValidationMessage';
-import React from 'react';
+import React,{ useState }  from 'react';
+import useAuthStore from '@/store/useAuthStore';
 import { SignupData, REGEX } from '@/types/signup';
 
 interface AuthStepProps {
@@ -12,6 +13,9 @@ interface AuthStepProps {
 }
 
 const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProps) => {
+  const checkLoginIdAvailability = useAuthStore((state) => state.checkLoginIdAvailability);
+  const [idValidationMessage, setIdValidationMessage] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
   // 유효성 검사 조건
   const idRegex = REGEX.ID;
   const passwordLengthValid = formData.password.length >= 8 && formData.password.length <= 16;
@@ -29,10 +33,20 @@ const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProp
     }
   };
 
-  const handleDuplicateCheck = () => {
-    if (isIdValid) {
-      // API 호출 로직이 들어갈 자리
-      setIsDuplicateChecked(true);
+
+  const handleDuplicateCheck = async () => {
+    if (!isIdValid) return;
+    
+    setIsValidating(true);
+    try {
+      const result = await checkLoginIdAvailability(formData.id);
+      setIdValidationMessage(result.message);
+      setIsDuplicateChecked(result.isAvailable);
+    } catch (error) {
+      setIdValidationMessage('중복 확인 중 오류가 발생했습니다.');
+      setIsDuplicateChecked(false);
+    } finally {
+      setIsValidating(false);
     }
   };
 
@@ -53,12 +67,21 @@ const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProp
             <div className="flex-1">
               <BoxInput label="아이디" name="id" value={formData.id} onChange={handleChange} className="py-4" />
             </div>
-            <ValidateButton onClick={handleDuplicateCheck} disabled={!isIdValid}>
-              중복확인
+            <ValidateButton 
+              onClick={handleDuplicateCheck} 
+              disabled={!isIdValid || isValidating}
+            >
+              {isValidating ? '확인중...' : '중복확인'}
             </ValidateButton>
           </div>
           <div className="mt-2">
             <ValidationMessage message="4~16자의 영문 소문자, 숫자만 사용 가능합니다" isValid={isIdValid} />
+            {idValidationMessage && (
+              <ValidationMessage 
+                message={idValidationMessage} 
+                isValid={idValidationMessage === '사용 가능한 아이디입니다.'} 
+              />
+            )}
           </div>
         </div>
 
