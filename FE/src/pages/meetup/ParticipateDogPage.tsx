@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt } from 'react-icons/fa';
 import { IoChevronBack } from 'react-icons/io5';
+import { motion } from 'framer-motion';
 
 interface EventData {
   title: string;
@@ -17,6 +18,8 @@ interface EventData {
 const ParticipateDogPage = () => {
   const { roomId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const animateBack = location.state?.animateBack ?? true;
 
   const [eventData] = useState<EventData>({
     title: '저녁 산책 같이해요~',
@@ -36,16 +39,26 @@ const ParticipateDogPage = () => {
   });
 
   const handleJoinClick = () => {
-    navigate(`/chat/group/${roomId}`);
+    navigate(`/chat/group/${roomId}`, { state: { animateBack: true } });
+  };
+
+  const handleBack = () => {
+    navigate(`/allmeetuproom/${roomId}`, { state: { animateBack: true } });
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <motion.div
+      initial={{ x: animateBack ? 300 : 0, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: animateBack ? -300 : 0, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      className="flex flex-col h-screen bg-gray-100"
+    >
       <div className="flex items-center bg-deep-coral text-white p-4">
-        <button onClick={() => window.history.back()} className="mr-3">
+        <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
-        <h1 className="text-lg font-bold">참여 강아지</h1>
+        <h1 className="text-lg font-bold flex-1 text-center">참여 강아지</h1>
       </div>
 
       <div className="p-4 bg-white flex-1 overflow-auto">
@@ -99,10 +112,10 @@ const ParticipateDogPage = () => {
         </div>
       </div>
 
-      <div onClick={handleJoinClick} className="p-2 cursor-auto bg-deep-coral">
+      <div onClick={handleJoinClick} className="p-2 bg-deep-coral">
         <button className="w-full text-white py-2 rounded-lg font-bold">모임 가입</button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

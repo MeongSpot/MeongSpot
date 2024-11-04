@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { IoChevronBack } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const SingleChatPage = () => {
   const chats = [
@@ -12,18 +13,30 @@ const SingleChatPage = () => {
 
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const animateBack = location.state?.animateBack ?? true;
 
   const handleSendMessage = () => {
     if (message.trim()) {
       console.log(`Send message: ${message}`);
-      setMessage(''); // 메시지 전송 후 입력 필드 비우기
+      setMessage('');
     }
   };
 
+  const handleBack = () => {
+    navigate('/chat', { state: { withAnimation: true } }); // 뒤로 가기 버튼을 눌렀을 때만 애니메이션 적용
+  };
+
   return (
-    <div className="flex flex-col h-screen">
+    <motion.div
+      initial={{ x: animateBack ? 300 : 0, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: animateBack ? -300 : 0, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      className="flex flex-col h-screen"
+    >
       <div className="flex items-center bg-deep-coral text-white p-4">
-        <button onClick={() => navigate(-1)} className="mr-3">
+        <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
         <h1 className="text-lg font-bold">채팅방</h1>
@@ -78,7 +91,7 @@ const SingleChatPage = () => {
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
