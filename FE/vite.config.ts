@@ -8,19 +8,18 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '');
-  
+
   return {
-    // Vite config
     plugins: [
       react(),
       tsconfigPaths(),
       createHtmlPlugin({
-      inject: {
-        data: {
-          VITE_KAKAO_MAP_API_KEY: process.env.VITE_KAKAO_MAP_API_KEY
-        }
-      }
-    }),
+        inject: {
+          data: {
+            VITE_KAKAO_MAP_API_KEY: env.VITE_KAKAO_MAP_API_KEY, // loadEnv로 불러온 값을 직접 사용
+          },
+        },
+      }),
       VitePWA({
         registerType: 'autoUpdate',
         devOptions: {
@@ -72,10 +71,8 @@ export default defineConfig(({ mode }) => {
       }),
     ],
     define: {
-      // 여기서 환경변수를 전역적으로 정의
-      'process.env': env,
-      // Vite의 env 변수도 정의
-      'import.meta.env': JSON.stringify(env),
+      // Vite의 env 변수를 전역적으로 설정
+      'import.meta.env': env,
     },
   };
 });
