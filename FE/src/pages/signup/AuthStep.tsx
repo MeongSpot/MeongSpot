@@ -37,7 +37,7 @@ const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProp
   };
 
   return (
-    <div className="flex flex-col h-full auth-content pb-24">
+    <div className="flex flex-col h-full auth-content pb-16">
       <div className="p-6">
         <h2 className="text-2xl font-bold my-8">
           아이디와 비밀번호를

@@ -1,16 +1,20 @@
 import { useRef, useState, useEffect, useMemo } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { FaDog } from 'react-icons/fa';
-import { IoMdRefresh } from 'react-icons/io';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { debounce } from 'lodash';
 import type { LatLng, Marker } from '../../types/map';
+import Toast from '@/components/common/Message/Toast';
+import { ResearchButton } from '@/components/map/ResearchButton';
+import { SpotMarker } from '@/components/map/SpotMarker';
 
 type ContextType = {
   searchKeyword: string;
   currentLocation: string;
   currentPosition: LatLng;
   isTracking: boolean;
+  onMapMove: () => void;
+  searchResult: LatLng | null;
+  onSearch: () => void;
 };
 
 // 또는 크기를 조절하고 싶다면 비율을 유지하면서 조절
@@ -33,12 +37,12 @@ const SPOT_IMAGE = {
 const MeetingMap = () => {
   const navigate = useNavigate();
   const mapRef = useRef<kakao.maps.Map>(null);
-  const { searchKeyword, currentPosition, isTracking } = useOutletContext<ContextType>();
+  // searchKeyword와 함께 onSearch 함수도 context에서 받아옴
+  const { searchKeyword, currentPosition, isTracking, onMapMove, searchResult } = useOutletContext<ContextType>();
   const [center, setCenter] = useState<LatLng>(currentPosition);
-  const [isSearchMode, setIsSearchMode] = useState(false);
-  const [mapLevel, setMapLevel] = useState(5);
+  const [mapLevel, setMapLevel] = useState(4);
   const [centerChanged, setCenterChanged] = useState(false);
-  const [markers, setMarkers] = useState<Marker[]>([
+  const [allMarkers] = useState<Marker[]>([
     {
       position: {
         lat: 36.0970625,
@@ -76,112 +80,46 @@ const MeetingMap = () => {
     },
   ]);
 
-  // 지도 중심좌표 이동 감지
-  const updateCenterWhenMapMoved = useMemo(
-    () =>
-      debounce((map: kakao.maps.Map) => {
-        if (!isTracking) {
-          const newCenter = {
-            lat: map.getCenter().getLat(),
-            lng: map.getCenter().getLng(),
-          };
-          setCenter(newCenter);
+  const DISTANCE_THRESHOLD = 100;
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [isSearchPending, setIsSearchPending] = useState(false);
+  const [isProgrammaticMove, setIsProgrammaticMove] = useState(false); // 추가
 
-          // 검색 모드일 때 지도 이동하면 검색 모드 해제
-          if (isSearchMode) {
-            setIsSearchMode(false);
-            setMapLevel(5);
-          }
+  // 마커의 중심점 계산 함수
+  const calculateMarkersCenter = (markers: Marker[]) => {
+    if (markers.length === 0) return null;
 
-          // 현재 위치와 중심점의 거리가 일정 이상이면 centerChanged를 true로
-          const distance = getDistance(newCenter, currentPosition);
-          if (distance > 100) {
-            // 100m 이상 차이나면
-            setCenterChanged(true);
-          }
-        }
-      }, 500),
-    [isTracking, isSearchMode, currentPosition],
-  );
+    const sum = markers.reduce(
+      (acc, marker) => ({
+        lat: acc.lat + marker.position.lat,
+        lng: acc.lng + marker.position.lng,
+      }),
+      { lat: 0, lng: 0 },
+    );
 
-  // 현재 지도 영역 내의 마커만 필터링
-  const getMarkersInBounds = () => {
-    if (!mapRef.current) return markers;
-
-    const bounds = mapRef.current.getBounds();
-    return markers.filter((marker) => {
-      const position = new kakao.maps.LatLng(marker.position.lat, marker.position.lng);
-      const distance = getDistance(center, marker.position);
-      return bounds.contain(position) && distance <= 100; // 100m 이내
-    });
+    return {
+      lat: sum.lat / markers.length,
+      lng: sum.lng / markers.length,
+    };
   };
 
-  // isTracking이 true로 변경될 때 즉시 현재 위치로 이동
-  // isTracking 효과
-  useEffect(() => {
-    if (isTracking && mapRef.current) {
-      mapRef.current.panTo(new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
-      setCenter(currentPosition);
-      setCenterChanged(false);
-      setIsSearchMode(false); // 추적 모드 시작 시 검색 모드 해제
-    }
-  }, [isTracking, currentPosition]);
-
-  // 검색어 처리
-  useEffect(() => {
-    if (!searchKeyword.trim()) return;
-
-    const ps = new window.kakao.maps.services.Places();
-    ps.keywordSearch(searchKeyword, (data, status) => {
-      if (status === window.kakao.maps.services.Status.OK && data[0]) {
-        const newCenter = {
-          lat: parseFloat(data[0].y),
-          lng: parseFloat(data[0].x),
-        };
-        setCenter(newCenter);
-        if (mapRef.current) {
-          mapRef.current.panTo(new kakao.maps.LatLng(newCenter.lat, newCenter.lng));
-        }
-        setCenterChanged(true); // 검색 후 재검색 버튼 표시
-      }
-    });
-  }, [searchKeyword]);
-
-  // 지역 재검색 핸들러 & 내비게이션
-  const handleResearch = () => {
-    // 현재 위치로 이동
-    if (mapRef.current) {
-      mapRef.current.panTo(new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
-    }
-    setCenter(currentPosition);
-    setMapLevel(3);
-    setIsSearchMode(true);
-    setCenterChanged(false);
-
-    // 현재 위치 주변의 마커만 필터링
-    const filteredMarkers = markers.filter((marker) => {
-      const distance = getDistance(currentPosition, marker.position);
-      return distance <= 100; // 100m 이내
-    });
-    setMarkers(filteredMarkers);
+  // 토스트 메시지 표시 함수
+  const showToastMessage = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
   };
 
-  // 검색 모드에서 마커 실시간 업데이트
-  useEffect(() => {
-    if (isSearchMode && mapRef.current) {
-      const filteredMarkers = getMarkersInBounds();
-      setMarkers(filteredMarkers);
-    }
-  }, [center, isSearchMode]);
+  const [visibleMarkers, setVisibleMarkers] = useState<Marker[]>([]);
 
-  // 두 지점 간의 거리 계산
+  // 거리 계산 함수를 컴포넌트 내부로 이동
   const getDistance = (pos1: LatLng, pos2: LatLng) => {
     const lat1 = (pos1.lat * Math.PI) / 180;
     const lat2 = (pos2.lat * Math.PI) / 180;
     const lng1 = (pos1.lng * Math.PI) / 180;
     const lng2 = (pos2.lng * Math.PI) / 180;
 
-    const R = 6371e3;
+    const R = 6371e3; // 지구 반경 (미터)
     const φ1 = lat1;
     const φ2 = lat2;
     const Δφ = lat2 - lat1;
@@ -190,8 +128,134 @@ const MeetingMap = () => {
     const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    return R * c;
+    return R * c; // 미터 단위로 반환
   };
+
+  // 마커 필터링 함수
+  const updateVisibleMarkers = (centerPos: LatLng) => {
+    if (!mapRef.current) return;
+
+    const bounds = mapRef.current.getBounds();
+    const filtered = allMarkers.filter((marker) => {
+      const markerLatLng = new kakao.maps.LatLng(marker.position.lat, marker.position.lng);
+      const isInBounds = bounds.contain(markerLatLng);
+      const distance = getDistance(centerPos, marker.position);
+      // 검색 반경을 5km로 확장
+      return isInBounds && distance <= 5000;
+    });
+
+    setVisibleMarkers(filtered);
+
+    // 토스트 메시지는 검색 모드에서만 표시
+    if (isSearchPending && filtered.length === 0) {
+      showToastMessage('이 지역에는 스팟이 없습니다.');
+    }
+    setIsSearchPending(false);
+  };
+
+  // 재검색 핸들러 함수 수정
+  const handleResearch = () => {
+    if (mapRef.current) {
+      // 먼저 버튼 숨기기
+      setCenterChanged(false);
+
+      const currentMapCenter = {
+        lat: mapRef.current.getCenter().getLat(),
+        lng: mapRef.current.getCenter().getLng(),
+      };
+
+      const bounds = mapRef.current.getBounds();
+      const filtered = allMarkers.filter((marker) => {
+        const markerLatLng = new kakao.maps.LatLng(marker.position.lat, marker.position.lng);
+        const isInBounds = bounds.contain(markerLatLng);
+        const distance = getDistance(currentMapCenter, marker.position);
+        return isInBounds && distance <= 5000;
+      });
+
+      if (filtered.length > 0) {
+        const center = calculateMarkersCenter(filtered);
+        if (center) {
+          setIsProgrammaticMove(true);
+          // 지도 이동 완료 후에도 버튼이 나타나지 않도록 이벤트 핸들러 추가
+          const moveEndHandler = () => {
+            setCenterChanged(false);
+            kakao.maps.event.removeListener(mapRef.current!, 'dragend', moveEndHandler);
+          };
+          kakao.maps.event.addListener(mapRef.current, 'dragend', moveEndHandler);
+
+          mapRef.current.panTo(new kakao.maps.LatLng(center.lat, center.lng));
+          setCenter(center);
+        }
+        setVisibleMarkers(filtered);
+      } else {
+        showToastMessage('이 지역에는 스팟이 없습니다.');
+      }
+    }
+  };
+
+  // 초기 로딩 시 현재 위치로 설정 및 마커 표시
+  useEffect(() => {
+    if (currentPosition) {
+      setCenter(currentPosition);
+      if (mapRef.current) {
+        mapRef.current.setCenter(new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
+        updateVisibleMarkers(currentPosition);
+      }
+    }
+  }, [currentPosition]);
+
+  // 지도 이동 감지
+  const updateCenterWhenMapMoved = useMemo(
+    () =>
+      debounce((map: kakao.maps.Map) => {
+        if (isProgrammaticMove) {
+          setIsProgrammaticMove(false);
+          setCenterChanged(false);
+          return;
+        }
+
+        if (!isTracking) {
+          const newCenter = {
+            lat: map.getCenter().getLat(),
+            lng: map.getCenter().getLng(),
+          };
+
+          setCenter(newCenter);
+          onMapMove();
+
+          // 프로그래밍적 이동이 아닐 때만 거리 체크
+          if (!isProgrammaticMove) {
+            const distance = getDistance(newCenter, currentPosition);
+            setCenterChanged(distance > DISTANCE_THRESHOLD);
+          }
+        } else {
+          onMapMove();
+        }
+      }, 300),
+    [isTracking, onMapMove, currentPosition, isProgrammaticMove],
+  );
+
+  // center가 변경될 때마다 실행되는 효과 수정
+  useEffect(() => {
+    if (!isTracking && !isProgrammaticMove) {
+      const distance = getDistance(center, currentPosition);
+      setCenterChanged(distance > DISTANCE_THRESHOLD);
+    } else {
+      setCenterChanged(false);
+    }
+  }, [center, currentPosition, isTracking, isProgrammaticMove]);
+
+  // searchResult가 변경될 때도 버튼 상태 초기화
+  useEffect(() => {
+    if (searchResult && mapRef.current) {
+      setIsProgrammaticMove(true); // 프로그래밍적 이동 시작
+      mapRef.current.setLevel(5);
+      mapRef.current.panTo(new kakao.maps.LatLng(searchResult.lat, searchResult.lng));
+      setCenter(searchResult);
+      updateVisibleMarkers(searchResult);
+      setCenterChanged(false);
+    }
+  }, [searchResult]);
 
   return (
     <div className="relative w-full h-full">
@@ -201,30 +265,27 @@ const MeetingMap = () => {
         style={{ width: '100%', height: '100%' }}
         level={mapLevel}
         zoomable={true}
-        onCenterChanged={updateCenterWhenMapMoved}
+        onDragEnd={() => {
+          if (mapRef.current) {
+            updateCenterWhenMapMoved(mapRef.current);
+          }
+        }}
+        onZoomChanged={(target: kakao.maps.Map) => updateCenterWhenMapMoved(target)}
       >
         <MapMarker position={currentPosition} image={PRESENT_SPOT_IMAGE} />
-
-        {markers.map((marker) => (
-          <MapMarker
+        {visibleMarkers.map((marker) => (
+          <SpotMarker
             key={`${marker.position.lat}-${marker.position.lng}`}
-            position={marker.position}
+            marker={marker}
             onClick={() => navigate('/allMeetUpRoom/1')}
             image={SPOT_IMAGE}
           />
         ))}
       </Map>
 
-      {!isSearchMode && (
-        <div className="flex flex-col gap-2 absolute z-10 top-4 right-4">
-          <button
-            onClick={handleResearch}
-            className="flex items-center justify-center w-10 h-10 bg-white rounded-full shadow-md hover:bg-gray-100"
-          >
-            <IoMdRefresh className="text-xl text-gray-600" />
-          </button>
-        </div>
-      )}
+      <Toast message={toastMessage} isVisible={showToast} onHide={() => setShowToast(false)} />
+
+      {centerChanged && <ResearchButton onClick={handleResearch} />}
     </div>
   );
 };
