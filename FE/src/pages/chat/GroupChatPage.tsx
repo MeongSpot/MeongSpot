@@ -2,11 +2,21 @@ import { useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { FiMenu } from 'react-icons/fi';
 import { IoChevronBack } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import GroupChatInfoModal from '@/components/chat/GroupChatInfoModal';
+import { motion } from 'framer-motion';
 
 const GroupChatPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [message, setMessage] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const animateBack = location.state?.animateBack ?? true;
+
+  const handleBack = () => {
+    navigate('/myMeetUpRoom', { state: { animateBack: true } }); // 뒤로 갈 때 애니메이션을 위해 상태 전달
+  };
+
   const chats = [
     { sender: '뽀삐', message: '저희 강아지 조금 소심한데 참여해도 되나요?', time: '10:23' },
     { sender: 'me', message: '그럼요 괜찮아요', time: '10:23' },
@@ -15,9 +25,6 @@ const GroupChatPage = () => {
     { sender: 'me', message: '천천히 오세요~', time: '17:35' },
     { sender: 'me', message: '1주차장 옆 광장에 다들 모여있어요~', time: '17:35' },
   ];
-
-  const [message, setMessage] = useState('');
-  const navigate = useNavigate();
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -32,9 +39,15 @@ const GroupChatPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <motion.div
+      initial={{ x: animateBack ? 300 : 0, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: animateBack ? -300 : 0, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      className="flex flex-col h-screen"
+    >
       <div className="flex items-center bg-deep-coral text-white p-4">
-        <button onClick={() => navigate(-1)} className="mr-3">
+        <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
         <h1 className="text-lg font-bold flex-1">채팅방</h1>
@@ -96,7 +109,7 @@ const GroupChatPage = () => {
         onClose={() => setIsModalOpen(false)}
         onViewDetails={handleViewDetails}
       />
-    </div>
+    </motion.div>
   );
 };
 

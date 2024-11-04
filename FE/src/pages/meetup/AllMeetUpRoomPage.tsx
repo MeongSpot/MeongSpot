@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { BiPlus } from 'react-icons/bi';
 import { IoChevronBack } from 'react-icons/io5';
 import EveryRoomListCard from '@/components/meetUp/RoomListCard';
 import RoomSortButton from '@/components/meetUp/RoomSortButton';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Event {
   id: number;
@@ -20,6 +21,9 @@ interface Event {
 const AllMeetUpRoomPage = () => {
   const [sortBy, setSortBy] = useState('latest');
   const navigate = useNavigate();
+  const location = useLocation();
+  const animateBack = location.state?.animateBack ?? false;
+
   const [events, setEvents] = useState<Event[]>([
     {
       id: 1,
@@ -56,7 +60,6 @@ const AllMeetUpRoomPage = () => {
     },
   ]);
 
-
   const handleSortChange = (sortType: string) => {
     setSortBy(sortType);
 
@@ -74,9 +77,8 @@ const AllMeetUpRoomPage = () => {
     setEvents(sortedEvents);
   };
 
-  // 채팅방으로 이동하는 함수
   const handleCardClick = (roomId: number) => {
-    navigate(`/participateDog/${roomId}`);
+    navigate(`/participateDog/${roomId}`, { state: { animateBack: true } });
   };
 
   const handlePlusClick = () => {
@@ -84,9 +86,16 @@ const AllMeetUpRoomPage = () => {
   };
 
   return (
-    <div className="p-4">
+    <AnimatePresence>
+      <motion.div
+        className="p-4"
+        initial={{ opacity: 0, x: animateBack ? -50 : 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: animateBack ? 50 : -50 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      >
         <div className="flex items-center justify-between mb-4">
-          <button className="mr-3 text-gray-600" onClick={() => navigate(-1)}>
+          <button className="mr-3 text-gray-600" onClick={() => navigate('/meeting', { state: { animateBack: true } })}>
             <IoChevronBack size={24} />
           </button>
           <h1 className="text-lg font-bold">모임</h1>
@@ -97,13 +106,13 @@ const AllMeetUpRoomPage = () => {
           <span className="text-gray-600">총 {events.length}개</span>
           <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
         </div>
-
         <div className="space-y-4">
           {events.map((event) => (
             <EveryRoomListCard key={event.id} event={event} onClick={handleCardClick} />
           ))}
         </div>
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
