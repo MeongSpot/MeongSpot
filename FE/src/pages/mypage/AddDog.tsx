@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DogInputForm from '@/components/mypage/DogInputForm';
 import { IoClose } from 'react-icons/io5';
 import { DogInfo } from '@/types/dogInfo';
+import FooterButton from '@/components/common/Button/FooterButton';
 
 const AddDog: React.FC = () => {
   const navigate = useNavigate();
@@ -10,13 +11,17 @@ const AddDog: React.FC = () => {
   const [DogData, setDogData] = useState<DogInfo>({
     name: '',
     breedId: '',
-    age: 0,
+    age: null,
     size: '',
-    isNeuter: false,
-    birthday: '',
-    gender: '수컷',
+    isNeuter: null,
+    birth: {
+      year: '',
+      month: '',
+      day: '',
+    },
+    gender: '',
     introduction: '',
-    character: [],
+    personality: [],
   });
 
   return (
@@ -39,9 +44,14 @@ const AddDog: React.FC = () => {
       </div>
 
       {/* 반려견 정보 input */}
-      <div className="p-4">
+      <div className="relative p-4">
         <DogInputForm formData={DogData} setFormData={setDogData} />
       </div>
+
+      {/* 등록 버튼 */}
+      <FooterButton onClick={() => {}} disabled={false}>
+        등록하기
+      </FooterButton>
     </div>
   );
 };

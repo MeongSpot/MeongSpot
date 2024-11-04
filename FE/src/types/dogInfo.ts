@@ -1,11 +1,15 @@
 export interface DogInfo {
   name: string;
   breedId: string;
-  age: number;
+  age: number | null;
   size: string;
-  birthday: string;
+  birth: {
+    year: string;
+    month: string;
+    day: string;
+  }
   gender: string;
-  isNeuter: boolean;
+  isNeuter: boolean | null;
   introduction: string;
-  character: string[];
+  personality: number[];
 };

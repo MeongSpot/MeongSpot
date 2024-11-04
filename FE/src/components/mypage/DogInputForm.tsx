@@ -4,37 +4,55 @@ import ValidationMessage from '@/components/common/Message/ValidationMessage';
 import React from 'react';
 import { SignupData, REGEX } from '@/types/signup';
 import { DogInfo } from '@/types/dogInfo';
+import { FaAngleRight } from 'react-icons/fa6';
+import GenderButton from '../common/Button/GenderButton';
+import DogBirthdayInput from '../common/DogInput/DogBirthdayInput';
+import DogPersonalityInput from '../common/DogInput/DogPersonalityInput';
 
 interface DogInputFormProps {
   formData: DogInfo;
   setFormData: React.Dispatch<React.SetStateAction<DogInfo>>;
-  // isDuplicateChecked: boolean;
-  // setIsDuplicateChecked: (checked: boolean) => void;
 }
 
 const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
-  // 유효성 검사 조건
   const idRegex = REGEX.ID;
-  // const passwordLengthValid = formData.password.length >= 8 && formData.password.length <= 16;
-  // const passwordCharValid = REGEX.PASSWORD.test(formData.password);
-  // const isIdValid = idRegex.test(formData.id);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    if (name === 'id') {
-      // setIsDuplicateChecked(false);
-    }
   };
 
-  const handleDuplicateCheck = () => {
-    // if (isIdValid) {
-    //   // API 호출 로직이 들어갈 자리
-    //   setIsDuplicateChecked(true);
-    // }
+  const handleGenderChange = (gender: '남' | '여') => {
+    setFormData((prev) => ({
+      ...prev,
+      gender,
+    }));
+  };
+
+  const handleSizeChange = (size: '대형견' | '중형견' | '소형견') => {
+    setFormData((prev) => ({
+      ...prev,
+      size,
+    }));
+  };
+
+  const handleNeuterChange = (isNeuter: boolean) => {
+    setFormData((prev) => ({
+      ...prev,
+      isNeuter,
+    }));
+  };
+
+  const handlePersonalityChange = (personalityId: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      personality: prev.personality.includes(personalityId)
+        ? prev.personality.filter((id) => id !== personalityId)
+        : [...prev.personality, personalityId],
+    }));
   };
 
   return (
@@ -45,17 +63,91 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
           <div className="flex-1">
             <DogBoxInput label="이름" name="name" value={formData.name} onChange={handleChange} className="py-3" />
           </div>
-
-          <div className="mt-2"></div>
         </div>
 
-        {/* Password Input */}
-        <div className="w-full">
-          <DogBoxInput label="견종" name="breedId" value={formData.breedId} onChange={handleChange} className="py-3" />
-          <div className="mt-2 space-y-1">
-            {/* <ValidationMessage message="최소 8자리 이상, 최대 16자리 이하" isValid={passwordLengthValid} /> */}
-            {/* <ValidationMessage message="영문자, 숫자, 특수문자 포함" isValid={passwordCharValid} /> */}
+        {/* 견종 Input */}
+        <div className="w-full relative">
+          <DogBoxInput
+            label="견종 선택"
+            name="breedId"
+            value={formData.breedId}
+            onChange={handleChange}
+            className="py-3"
+          />
+          <FaAngleRight className="absolute right-4 top-[2.8rem] text-zinc-500" />
+        </div>
+
+        {/* 크기 선택 버튼 */}
+        <div className="flex space-x-3">
+          <GenderButton selected={formData.size === '대형견'} onClick={() => handleSizeChange('대형견')}>
+            대형견
+          </GenderButton>
+          <GenderButton selected={formData.size === '중형견'} onClick={() => handleSizeChange('중형견')}>
+            중형견
+          </GenderButton>
+          <GenderButton selected={formData.size === '소형견'} onClick={() => handleSizeChange('소형견')}>
+            소형견
+          </GenderButton>
+        </div>
+
+        {/* 나이 입력 Input */}
+        <div>
+          <DogBoxInput
+            label="나이"
+            name="age"
+            value={formData.age}
+            onChange={handleChange}
+            className="py-3"
+            type={'number'}
+          />
+        </div>
+
+        {/* 성별 선택 버튼 */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium">성별</p>
+          <div className="flex space-x-3">
+            <GenderButton selected={formData.gender === '남'} onClick={() => handleGenderChange('남')}>
+              남
+            </GenderButton>
+            <GenderButton selected={formData.gender === '여'} onClick={() => handleGenderChange('여')}>
+              여
+            </GenderButton>
           </div>
+        </div>
+
+        {/* 중성화 여부 버튼 */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium">중성화 여부</p>
+          <div className="flex space-x-3">
+            <GenderButton selected={formData.isNeuter === false} onClick={() => handleNeuterChange(false)}>
+              안했음
+            </GenderButton>
+            <GenderButton selected={formData.isNeuter === true} onClick={() => handleNeuterChange(true)}>
+              했음
+            </GenderButton>
+          </div>
+        </div>
+
+        {/* 생년월일 입력 */}
+        <div className="w-full">
+          <DogBirthdayInput formData={formData} setFormData={setFormData} />
+        </div>
+
+        {/* 반려견 소개 */}
+        <div>
+          <DogBoxInput
+            label="반려견 소개"
+            name="introduction"
+            value={formData.introduction}
+            onChange={handleChange}
+            className="py-3"
+          />
+        </div>
+
+        {/* 반려견 성격 */}
+        <div className="space-y-2">
+          <p className="text-sm font-medium">반려견 성격</p>
+          <DogPersonalityInput value={formData.personality} onChange={handlePersonalityChange} />
         </div>
       </div>
     </div>

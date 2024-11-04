@@ -174,3 +174,7 @@ body {
     @apply pb-16;
   }
 }
+
+.text-outline {
+  text-shadow: -1px 0px #F4845F, 0px 1px #F4845F, 1px 0px #F4845F, 0px -1px #F4845F;
+}
