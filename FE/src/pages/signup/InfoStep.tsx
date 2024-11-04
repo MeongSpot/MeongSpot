@@ -23,8 +23,16 @@ const InfoStep = ({
   isPhoneVerified,
   setIsPhoneVerified,
 }: InfoStepProps) => {
-  const { isValidating, validationMessage, phoneValidationMessage, isPhoneAvailable, checkNickname, checkPhone } =
-    useAuth();
+  const {
+    isValidating,
+    validationMessage,
+    phoneValidationMessage,
+    isPhoneAvailable,
+    checkNickname,
+    checkPhone,
+    sendPhoneAuthCode,
+    verifyPhoneCode,
+  } = useAuth();
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState(false);
   const [timer, setTimer] = useState<number>(180);
@@ -199,18 +207,31 @@ const InfoStep = ({
   };
 
   // 인증하기 버튼
-  const handleVerifyPhone = () => {
-    setShowVerification(true);
-    setTimer(180);
-    setTimerActive(true);
-    setIsPhoneEditable(false);
+  const handleVerifyPhone = async () => {
+    const rawPhone = formData.info.phone.replace(/-/g, '');
+    const success = await sendPhoneAuthCode(rawPhone);
+
+    if (success) {
+      setShowVerification(true);
+      setTimer(180);
+      setTimerActive(true);
+      setIsPhoneEditable(false);
+    }
   };
 
   // 인증번호 확인
-  const handleConfirmVerification = () => {
-    setIsPhoneVerified(true);
-    setTimerActive(false);
-    setShowVerification(false);
+  const handleConfirmVerification = async () => {
+    if (!verificationCode) return;
+
+    const rawPhone = formData.info.phone.replace(/-/g, '');
+    const success = await verifyPhoneCode(rawPhone, verificationCode);
+
+    if (success) {
+      setIsPhoneVerified(true);
+      setTimerActive(false);
+      setShowVerification(false);
+      console.log('Phone verification completed'); // 디버깅용
+    }
   };
 
   const handleGenderSelect = (gender: 'male' | 'female') => {

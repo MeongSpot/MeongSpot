@@ -1,9 +1,6 @@
 import axiosInstance from '@/services/axiosInstance';
-
-interface ValidationResponse {
-  isAvailable: boolean;
-  message: string;
-}
+import type { ValidationResponse, AuthResponse, SignupRequest } from '@/types/auth';
+import type { SignupData } from '@/types/signup';
 
 export const authService = {
   checkLoginIdAvailability: async (loginId: string): Promise<ValidationResponse> => {
@@ -85,6 +82,57 @@ export const authService = {
     } catch (error) {
       console.error('Phone verification request failed:', error);
       return { isSuccess: false, message: '인증번호 발송에 실패했습니다.' };
+    }
+  },
+
+  sendPhoneAuthCode: async (phone: string): Promise<AuthResponse> => {
+    try {
+      const response = await axiosInstance.post('/api/auth/phone/send-auth-code', {
+        phone: phone.replace(/-/g, ''),
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Phone auth code send failed:', error);
+      throw error;
+    }
+  },
+
+  verifyPhoneAuthCode: async (phone: string, authCode: string): Promise<AuthResponse> => {
+    try {
+      const response = await axiosInstance.post('/api/auth/phone/verify-auth-code', {
+        phone: phone.replace(/-/g, ''),
+        authCode,
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Phone code verification failed:', error);
+      throw error;
+    }
+  },
+
+  // 회원가입 메서드 추가
+  signup: async (data: SignupData, uuid: string): Promise<AuthResponse> => {
+    try {
+      const { birth } = data.info;
+      const formattedBirth = `${birth.year}-${birth.month.padStart(2, '0')}-${birth.day.padStart(2, '0')}`;
+
+      const requestData = {
+        loginId: data.id,
+        password: data.password,
+        name: data.info.name,
+        nickname: data.info.nickname,
+        birth: formattedBirth,
+        phone: data.info.phone.replace(/-/g, ''),
+        gender: data.info.gender === 'male' ? 'MALE' : 'FEMALE',
+        uuid: uuid,
+      };
+
+      const response = await axiosInstance.post('/api/members', requestData);
+      console.log('Signup response:', response.data); // 디버깅용
+      return response.data;
+    } catch (error) {
+      console.error('Signup failed:', error);
+      throw error;
     }
   },
 };
