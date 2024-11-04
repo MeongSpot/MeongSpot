@@ -3,7 +3,8 @@ import BoxInput from '@/components/common/Input/BoxInput';
 import ValidateButton from '@/components/common/Button/ValidateButton';
 import GenderButton from '@/components/common/Button/GenderButton';
 import { SignupData, REGEX } from '@/types/signup';
-import ValidationMessage from '../../components/common/Message/ValidationMessage';
+import ValidationMessage from '@/components/common/Message/ValidationMessage';
+import { useAuth } from '@/hooks/useAuth';
 
 interface InfoStepProps {
   formData: SignupData;
@@ -22,11 +23,14 @@ const InfoStep = ({
   isPhoneVerified,
   setIsPhoneVerified,
 }: InfoStepProps) => {
+  const { isValidating, validationMessage, phoneValidationMessage, isPhoneAvailable, checkNickname, checkPhone } =
+    useAuth();
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState(false);
   const [timer, setTimer] = useState<number>(180);
   const [timerActive, setTimerActive] = useState(false);
   const [isPhoneEditable, setIsPhoneEditable] = useState(true);
+
   // 닉네임 유효성 검사
   const nicknameLength = formData.info.nickname.length >= 2 && formData.info.nickname.length <= 8;
   const nicknameContent = REGEX.NICKNAME.test(formData.info.nickname);
@@ -87,6 +91,17 @@ const InfoStep = ({
             phone: formatted,
           },
         }));
+
+        // 전화번호가 완성되면 중복 검사 실행
+        if (formatted.length === 13) {
+          const rawPhone = formatted.replace(/-/g, '');
+          checkPhone(rawPhone, (isAvailable) => {
+            if (!isAvailable) {
+              setIsPhoneEditable(true);
+              setIsPhoneVerified(false);
+            }
+          });
+        }
       }
     } else if (name === 'birth.year') {
       const yearValue = value.replace(/[^\d]/g, '');
@@ -177,8 +192,10 @@ const InfoStep = ({
     }
   };
 
+  // 닉네임 중복 검사 핸들러
   const handleCheckNickname = () => {
-    setIsNicknameChecked(true);
+    if (!isNicknameValid) return;
+    checkNickname(formData.info.nickname, setIsNicknameChecked);
   };
 
   // 인증하기 버튼
@@ -248,15 +265,21 @@ const InfoStep = ({
                   className="py-4"
                 />
               </div>
-              <ValidateButton onClick={handleCheckNickname} disabled={!isNicknameValid || isNicknameChecked}>
-                {isNicknameChecked ? '확인완료' : '중복확인'}
+              <ValidateButton
+                onClick={handleCheckNickname}
+                disabled={!isNicknameValid || isValidating || isNicknameChecked}
+              >
+                {isNicknameChecked ? '확인완료' : isValidating ? '확인중...' : '중복확인'}
               </ValidateButton>
             </div>
             <div className="mt-2 space-y-1">
               <ValidationMessage message="닉네임은 2~8자 사이여야 합니다" isValid={nicknameLength} />
               <ValidationMessage message="영문, 한글, 숫자만 사용 가능합니다" isValid={nicknameContent} />
-              {isNicknameChecked && (
-                <ValidationMessage message="사용 가능한 닉네임입니다." isValid={isNicknameChecked} />
+              {validationMessage && (
+                <ValidationMessage
+                  message={validationMessage}
+                  isValid={validationMessage === '사용 가능한 닉네임입니다.'}
+                />
               )}
             </div>
           </div>
@@ -277,11 +300,21 @@ const InfoStep = ({
               </div>
               <ValidateButton
                 onClick={isPhoneVerified ? handleResetVerification : handleVerifyPhone}
-                disabled={!isPhoneValid && !isPhoneVerified}
+                disabled={!isPhoneValid || !isPhoneAvailable || isValidating || isPhoneVerified}
               >
-                {isPhoneVerified ? '다시받기' : '인증하기'}
+                {isPhoneVerified ? '다시받기' : isValidating ? '확인중...' : '인증하기'}
               </ValidateButton>
             </div>
+
+            {/* 전화번호 검증 메시지 */}
+            {phoneValidationMessage && (
+              <div className="mt-2">
+                <ValidationMessage
+                  message={phoneValidationMessage}
+                  isValid={isPhoneAvailable} // 사용 가능한 번호일 때 true
+                />
+              </div>
+            )}
 
             {/* 인증번호 입력과 인증 완료 메시지를 휴대폰 번호 입력 div 안에 포함 */}
             {showVerification && !isPhoneVerified && (
@@ -306,7 +339,7 @@ const InfoStep = ({
 
             {isPhoneVerified && (
               <div className="mt-2">
-                <ValidationMessage message="휴대폰 인증이 완료되었습니다." isValid={isPhoneVerified} />
+                <ValidationMessage message="휴대폰 인증이 완료되었습니다." isValid={true} />
               </div>
             )}
           </div>
