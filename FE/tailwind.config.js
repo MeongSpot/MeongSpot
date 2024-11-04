@@ -12,6 +12,36 @@ export default {
         'peach-orange': '#F79D65', // 복숭아 주황
         'warm-orange': '#F79D65', // 따뜻한 주황
       },
+      fontWeight: {
+        thin: 100,
+        extralight: 200,
+        light: 300,
+        regular: 400,
+        medium: 500,
+        semibold: 600,
+        bold: 700,
+        extrabold: 800,
+        black: 900,
+      },
+      keyframes: {
+        slideDown: {
+          '0%': { transform: 'translateY(-100%) translateX(-50%)', opacity: 0 },
+          '100%': { transform: 'translateY(0) translateX(-50%)', opacity: 1 },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(0) translateX(-50%)', opacity: 1 },
+          '100%': { transform: 'translateY(-100%) translateX(-50%)', opacity: 0 },
+        },
+        marquee: {
+          '0%, 5%': { transform: 'translateX(0)' },
+          '95%, 100%': { transform: 'translateX(-100%)' },
+        },
+      },
+      animation: {
+        slideDown: 'slideDown 0.3s ease-out forwards',
+        slideUp: 'slideUp 0.3s ease-out forwards',
+        marquee: 'marquee 8s linear infinite',
+      },
     },
   },
   plugins: [daisyui],

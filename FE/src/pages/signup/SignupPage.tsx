@@ -2,9 +2,9 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-
 import { useState } from 'react';
 import { IoChevronBack } from 'react-icons/io5';
 import { AnimatePresence, motion } from 'framer-motion';
-import AuthStep from '@/components/signup/AuthStep';
-import InfoStep from '@/components/signup/InfoStep';
-import CompleteStep from '@/components/signup/CompleteStep';
+import AuthStep from '@/pages/signup/AuthStep';
+import InfoStep from '@/pages/signup/InfoStep';
+import CompleteStep from '@/pages/signup/CompleteStep';
 import FooterButton from '@/components/common/Button/FooterButton';
 import { SignupData } from '@/types/signup';
 import { REGEX } from '@/types/signup';
@@ -123,8 +123,8 @@ const SignupPage = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* {showHeader && ( */}
-      <div className="flex h-16 items-center border-b">
-        <button onClick={handleBack} className="px-2">
+      <div className="flex h-[60px] items-center border-b p-4">
+        <button onClick={handleBack}>
           {showHeader && <IoChevronBack size={24} />}
         </button>
       </div>

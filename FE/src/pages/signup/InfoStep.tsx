@@ -3,7 +3,7 @@ import BoxInput from '@/components/common/Input/BoxInput';
 import ValidateButton from '@/components/common/Button/ValidateButton';
 import GenderButton from '@/components/common/Button/GenderButton';
 import { SignupData, REGEX } from '@/types/signup';
-import ValidationMessage from '../common/Message/ValidationMessage';
+import ValidationMessage from '../../components/common/Message/ValidationMessage';
 
 interface InfoStepProps {
   formData: SignupData;
@@ -224,7 +224,7 @@ const InfoStep = ({
       </div>
 
       <div className="px-6 overflow-y-auto h-[calc(100vh-250px)]" ref={scrollContainerRef}>
-        <div className="space-y-6 pb-20">
+        <div className="space-y-6 pb-16">
           <div className="w-full">
             <BoxInput
               label="이름"

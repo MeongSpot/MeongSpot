@@ -1,5 +1,5 @@
-import React from 'react';
-import { FiArrowRight, FiBell, FiCalendar, FiClock, FiMapPin,  FiSettings, FiLogOut } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { FiArrowRight, FiBell, FiBellOff, FiCalendar, FiClock, FiMapPin, FiSettings, FiLogOut } from 'react-icons/fi';
 
 interface GroupChatInfoModalProps {
   isOpen: boolean;
@@ -8,6 +8,11 @@ interface GroupChatInfoModalProps {
 }
 
 const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose, onViewDetails }) => {
+  const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const toggleNotification = () => {
+    setIsNotificationEnabled((prev) => !prev);
+    // 나중에 여기다가 알림 서버요청 추가
+  };
   return (
     <div
       className={`fixed inset-0 z-20 bg-gray-800 bg-opacity-50 flex justify-end transition-opacity duration-300 ${
@@ -22,8 +27,10 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold flex items-center">
-            <FiBell className="mr-2" />
+          <h2 className="text-lg font-bold flex items-center">
+            <button onClick={toggleNotification} className="mr-2">
+              {isNotificationEnabled ? <FiBell /> : <FiBellOff />}
+            </button>
             채팅 푸시 알림
           </h2>
           <button onClick={onClose} className="text-gray-500">
@@ -56,15 +63,9 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose
         <div className="mb-4">
           <h3 className="text-gray-700 mb-2">해시태그</h3>
           <div className="flex flex-wrap gap-2">
-            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm">
-              # 활발한_강아지_환영
-            </span>
-            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm">
-              # 1시간정도
-            </span>
-            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm">
-              # 소형견만
-            </span>
+            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm"># 활발한_강아지_환영</span>
+            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm"># 1시간정도</span>
+            <span className="bg-cream-bg text-orange-600 px-2 py-1 rounded-full text-sm"># 소형견만</span>
           </div>
         </div>
 
@@ -86,15 +87,14 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose
               <span className="text-gray-800 font-semibold">5</span>
               <span className="text-gray-500">/ 6</span>
             </div>
-            <button onClick={onViewDetails} className="text-sm text-gray-700">상세보기</button>
+            <button onClick={onViewDetails} className="text-sm text-gray-700">
+              상세보기
+            </button>
           </div>
-          
+
           <div className="flex space-x-2 mt-2">
             {[...Array(5)].map((_, index) => (
-              <div
-                key={index}
-                className="w-8 h-8 bg-gray-300 rounded-full"
-              ></div>
+              <div key={index} className="w-8 h-8 bg-gray-300 rounded-full"></div>
             ))}
           </div>
         </div>

@@ -4,14 +4,71 @@
 
 /* 폰트 민산스 */
 @font-face {
-  font-family: 'MinSans-Regular';
-  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/MinSans-Regular.woff') format('woff');
-  font-weight: normal;
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-Thin.otf") format("opentype");
   font-style: normal;
+  font-weight: 100;
 }
 
-* {
-  font-family: 'MinSans-Regular';
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-ExtraLight.otf") format("opentype");
+  font-style: normal;
+  font-weight: 200;
+}
+
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-Light.otf") format("opentype");
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-Regular.otf") format("opentype");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-Medium.otf") format("opentype");
+  font-style: normal;
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-SemiBold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 600;
+}
+
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-Bold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 700;
+}
+
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-ExtraBold.otf") format("opentype");
+  font-style: normal;
+  font-weight: 800;
+}
+
+@font-face {
+  font-family: 'MinSans';
+  src: url("./fonts/MinSans-Black.otf") format("opentype");
+  font-style: normal;
+  font-weight: 900;
+}
+
+body {
+  margin: 0;
+  font-family: 'MinSans' !important;
 }
 
 *::-webkit-scrollbar {

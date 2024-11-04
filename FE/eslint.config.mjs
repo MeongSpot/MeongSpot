@@ -13,7 +13,10 @@ export default [
     files: ['**/*.{js,mjs,cjs,ts,jsx,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.browser,
+        kakao: 'readonly', // kakao 전역변수 추가
+      },
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
@@ -36,6 +39,7 @@ export default [
       'react/jsx-uses-react': 'off',
       'react/prop-types': 'off',
       'react/jsx-uses-vars': 'error', // JSX 내부에서 변수 사용 여부 확인
+      'no-undef': 'error', // undefined 변수 사용 체크
     },
     settings: {
       react: {

@@ -1,9 +1,6 @@
 {
   "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]
@@ -11,5 +8,7 @@
     "noEmitOnError": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "types": ["kakao.maps"]
   }
 }

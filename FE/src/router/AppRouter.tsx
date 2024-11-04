@@ -1,18 +1,25 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import App from '@/App';
+import { Navigate } from 'react-router-dom';
 
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
-const MyPage = lazy(() => import('@/pages/MyPage'));
-const MyMeetUpRoomPage = lazy(() => import('@/pages/MyMeetUpRoomPage'));
-const AllMeetUpRoomPage = lazy(() => import('@/pages/AllMeetUpRoomPage'));
-const ChatPage = lazy(() => import('@/pages/ChatPage'));
-const GroupChatPage = lazy(() => import('@/pages/GroupChatPage'));
-const KakaoMapPage = lazy(() => import('@/pages/KakaoMapPage'));
+const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
+const Settings = lazy(() => import('@/pages/mypage/Settings'));
+const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
+const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
+const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
+const GroupChatPage = lazy(() => import('@/pages/chat/GroupChatPage'));
+const MapPage = lazy(() => import('@/pages/map/MapPage'));
+const MeetingMap = lazy(() => import('@/pages/map/MeetingMap'));
+const WalkingMap = lazy(() => import('@/pages/map/WalkingMap'));
 const LoginPage = lazy(() => import('@/pages/LoginPage'));
-const SignupPage = lazy(() => import('@/pages/SignupPage'));
-const SingleChatPage = lazy(() => import('@/pages/SingleChatPage'));
-const MeetUpDogListPage = lazy(() => import('@/pages/MeetUpDogListPage'));
+const SignupPage = lazy(() => import('@/pages/signup/SignupPage'));
+const SingleChatPage = lazy(() => import('@/pages/chat/SingleChatPage'));
+const MeetUpDogListPage = lazy(() => import('@/pages/meetup/MeetUpDogListPage'));
+const AlarmPage = lazy(() => import('@/pages/mypage/AlarmPage'));
+const ParticipateDogPage = lazy(() => import('@/pages/meetup/ParticipateDogPage'));
+const CreateRoomPage = lazy(() => import('@/pages/meetup/CreateRoomPage'));
 
 const router = createBrowserRouter([
   {
@@ -21,19 +28,38 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <KakaoMapPage />,
+        path: '/', // 메인 경로
+        element: <MapPage />,
+        children: [
+          // MapPage의 중첩 라우트
+          {
+            index: true,
+            element: <Navigate to="/meeting" replace />,
+          },
+          {
+            path: 'meeting',
+            element: <MeetingMap />,
+          },
+          {
+            path: 'walking',
+            element: <WalkingMap />,
+          },
+        ],
       },
       {
-        path: 'myPage',
+        path: 'mypage',
         element: <MyPage />,
       },
       {
-        path: 'myMeetUpRoom',
+        path: 'settings',
+        element: <Settings />,
+      },
+      {
+        path: 'mymeetuproom',
         element: <MyMeetUpRoomPage />,
       },
       {
-        path: 'allMeetUpRoom',
+        path: 'allmeetuproom/:id',
         element: <AllMeetUpRoomPage />,
       },
       {
@@ -57,8 +83,20 @@ const router = createBrowserRouter([
         element: <SignupPage />,
       },
       {
-        path: 'MeetUpDogList',
-        element: <MeetUpDogListPage />
+        path: 'meetupdoglist',
+        element: <MeetUpDogListPage />,
+      },
+      {
+        path: 'notification',
+        element: <AlarmPage />,
+      },
+      {
+        path: 'participatedog/:id',
+        element: <ParticipateDogPage />,
+      },
+      {
+        path: 'allmeetuproom/create',
+        element: <CreateRoomPage />,
       },
     ],
   },

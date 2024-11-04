@@ -28,18 +28,18 @@ const MyMeetUpRoomPage = () => {
       participants: ['감자', '깅깅'],
       maxParticipants: 6,
       currentParticipants: 5,
-      tags: ['#강아지_친구_모집', '#1시간정도', '#소형견만']
+      tags: ['#강아지_친구_모집', '#1시간정도', '#소형견만'],
     },
     {
       id: 2,
-      title: '저녁 산책 같이해요~',
+      title: '새벽 산책 같이해요~',
       date: '2024-01-22',
       time: '04:30',
       location: '제 2주차장',
       participants: ['감자', '깅깅', '오리미'],
       maxParticipants: 6,
       currentParticipants: 5,
-      tags: ['#활발한_강아지_환영', '#2시간정도', '#대형견만']
+      tags: ['#활발한_강아지_환영', '#2시간정도', '#대형견만'],
     },
   ]);
 
@@ -49,7 +49,7 @@ const MyMeetUpRoomPage = () => {
     const sortedEvents = [...events].sort((a, b) => {
       const dateA = new Date(`${a.date} ${a.time}`);
       const dateB = new Date(`${b.date} ${b.time}`);
-      
+
       if (sortType === 'latest') {
         return dateB.getTime() - dateA.getTime(); // 최신순
       } else {
@@ -68,7 +68,7 @@ const MyMeetUpRoomPage = () => {
   return (
     <div className="p-4">
       <h1 className="text-center text-lg font-bold mb-4">모임</h1>
-      <hr className="my-4" />
+      <hr className="my-4 -mx-4 w-screen" />
       <div className="flex justify-between items-center mb-4">
         <span className="text-gray-600">총 {events.length}개</span>
         <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />

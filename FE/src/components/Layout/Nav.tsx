@@ -3,7 +3,8 @@ import { FaMap, FaComments, FaUsers, FaUser } from 'react-icons/fa';
 
 function Nav() {
   const location = useLocation();
-  const isRootActive = location.pathname === '/';
+  // 지도 관련 경로들을 모두 체크
+  const isMapActive = ['/', '/meeting', '/walking'].includes(location.pathname);
 
   return (
     <nav className="fixed bottom-0 min-w-96 max-w-xl w-full flex bg-white shadow-[0_-2px_4px_rgba(0,0,0,0.1)] text-[#9B9B9B] z-10">
@@ -11,16 +12,16 @@ function Nav() {
         to="/"
         className={({ isActive }) =>
           `flex-1 flex flex-col items-center justify-center py-3 hover:text-light-orange ${
-            isActive || isRootActive ? 'text-light-orange' : 'text-[#9B9B9B]'
+            isActive || isMapActive ? 'text-light-orange' : 'text-[#9B9B9B]'
           }`
         }
-        end // end prop 추가하여 정확한 경로 매칭
       >
         <FaMap className="text-xl mb-1" />
         <p className="text-xs">지도</p>
       </NavLink>
+      {/* 나머지 NavLink들은 그대로 유지 */}
       <NavLink
-        to="myMeetUpRoom"
+        to="mymeetuproom"
         className={({ isActive }) =>
           `flex-1 flex flex-col items-center justify-center py-2 hover:text-light-orange ${
             isActive ? 'text-light-orange' : 'text-[#9B9B9B]'
@@ -42,7 +43,7 @@ function Nav() {
         <p className="text-xs">채팅</p>
       </NavLink>
       <NavLink
-        to="myPage"
+        to="mypage"
         className={({ isActive }) =>
           `flex-1 flex flex-col items-center justify-center py-2 hover:text-light-orange ${
             isActive ? 'text-light-orange' : 'text-[#9B9B9B]'

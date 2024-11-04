@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BiPlus } from 'react-icons/bi';
+import { IoChevronBack } from 'react-icons/io5';
 import EveryRoomListCard from '@/components/meetUp/RoomListCard';
 import RoomSortButton from '@/components/meetUp/RoomSortButton';
 
@@ -74,23 +76,33 @@ const AllMeetUpRoomPage = () => {
 
   // 채팅방으로 이동하는 함수
   const handleCardClick = (roomId: number) => {
-    navigate(`/chat/group/${roomId}`);
+    navigate(`/participateDog/${roomId}`);
+  };
+
+  const handlePlusClick = () => {
+    navigate(`/allMeetUpRoom/create`);
   };
 
   return (
     <div className="p-4">
-      <h1 className="text-center text-lg font-bold mb-4">모임</h1>
-      <hr className="my-4" />
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-gray-600">총 {events.length}개</span>
-        <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
-      </div>
+        <div className="flex items-center justify-between mb-4">
+          <button className="mr-3 text-gray-600" onClick={() => navigate(-1)}>
+            <IoChevronBack size={24} />
+          </button>
+          <h1 className="text-lg font-bold">모임</h1>
+          <BiPlus onClick={handlePlusClick} className="text-xl cursor-pointer" />
+        </div>
+        <hr className="my-4 -mx-4 w-screen" />
+        <div className="flex justify-between items-center mb-4">
+          <span className="text-gray-600">총 {events.length}개</span>
+          <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
+        </div>
 
-      <div className="space-y-4">
-        {events.map((event) => (
-          <EveryRoomListCard key={event.id} event={event} onClick={handleCardClick} />
-        ))}
-      </div>
+        <div className="space-y-4">
+          {events.map((event) => (
+            <EveryRoomListCard key={event.id} event={event} onClick={handleCardClick} />
+          ))}
+        </div>
     </div>
   );
 };

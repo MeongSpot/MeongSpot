@@ -5,7 +5,7 @@ export interface Chat {
   sender: string;
   time: string;
   profileImage: string;
-} 
+}
 
 export interface ChatRoom {
   id: number;

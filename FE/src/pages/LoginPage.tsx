@@ -14,8 +14,8 @@ const LoginPage = () => {
     console.log('Login attempt:', { userId, password });
   };
 
-  const inputClassName = "py-4"; // BoxInput의 높이 조절
-  const buttonClassName = "py-4"; // PrimaryButton의 높이 조절
+  const inputClassName = 'py-4'; // BoxInput의 높이 조절
+  const buttonClassName = 'py-4'; // PrimaryButton의 높이 조절
 
   return (
     <div className="auth-content flex h-full items-center justify-center bg-cream-bg">
@@ -47,22 +47,17 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               icon={FaLock}
               showPasswordToggle
-              className={inputClassName} 
+              className={inputClassName}
             />
-            
+
             <div className="pt-2">
-              <PrimaryButton 
-                onClick={handleLogin}
-                className={buttonClassName}
-              >
+              <PrimaryButton onClick={handleLogin} className={buttonClassName}>
                 로그인
               </PrimaryButton>
             </div>
 
             <div className="flex justify-between text-sm text-gray-600 px-1">
-              <p>
-                아직 계정이 없으신가요?
-              </p>
+              <p>아직 계정이 없으신가요?</p>
               <Link to="/signup" className="hover:text-deep-coral">
                 회원 가입
               </Link>
