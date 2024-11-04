@@ -35,6 +35,8 @@ const SPOT_IMAGE = {
 };
 
 const MeetingMap = () => {
+  console.log(process.env.VITE_KAKAO_MAP_API_KEY);
+
   const navigate = useNavigate();
   const mapRef = useRef<kakao.maps.Map>(null);
   // searchKeyword와 함께 onSearch 함수도 context에서 받아옴
