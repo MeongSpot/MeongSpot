@@ -2,10 +2,14 @@ import { defineConfig, loadEnv } from 'vite';
 import { createHtmlPlugin } from 'vite-plugin-html';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-// https://vitejs.dev/config/
-export default defineConfig(({ mode }) => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default defineConfig(({ command, mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '');
 
@@ -16,20 +20,19 @@ export default defineConfig(({ mode }) => {
       createHtmlPlugin({
         inject: {
           data: {
-            VITE_KAKAO_MAP_API_KEY: env.VITE_KAKAO_MAP_API_KEY, // loadEnv로 불러온 값을 직접 사용
+            VITE_KAKAO_MAP_API_KEY: env.VITE_KAKAO_MAP_API_KEY,
           },
         },
       }),
       VitePWA({
-        registerType: 'autoUpdate',
-        devOptions: {
-          enabled: false,
-        },
         manifest: {
           name: '멍스팟',
           short_name: '멍스팟',
           description: '위치기반 반려견 산책 기록 및 친구 만들기 서비스',
           theme_color: '#FEECCE',
+          background_color: '#ffffff',
+          display: 'standalone',
+          start_url: '/',
           icons: [
             {
               src: 'icons/favicon/android-icon-192x192.png',
@@ -68,11 +71,67 @@ export default defineConfig(({ mode }) => {
             },
           ],
         },
+        injectRegister: null,
+        registerType: 'autoUpdate',
+        devOptions: {
+          enabled: false,
+        },
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          navigateFallback: null,
+        },
       }),
     ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
     define: {
-      // Vite의 env 변수를 전역적으로 설정
       'import.meta.env': env,
+    },
+    publicDir: 'public',
+    server: {
+      headers: {
+        'Service-Worker-Allowed': '/',
+      },
+      proxy: {
+        '/api': {
+          target: 'https://meongspot.kro.kr',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+          secure: false,
+          configure: (proxy, _options) => {
+            proxy.on('error', (err, _req, _res) => {
+              console.log('proxy error', err);
+            });
+            proxy.on('proxyReq', (_proxyReq, req, _res) => {
+              console.log('Sending Request:', req.method, req.url);
+            });
+            proxy.on('proxyRes', (proxyRes, req, _res) => {
+              console.log('Received Response:', proxyRes.statusCode, req.url);
+            });
+          },
+        },
+      },
+    },
+    build: {
+      chunkSizeWarningLimit: 1000,
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+        },
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          },
+        },
+      },
+    },
+    esbuild: {
+      drop: command === 'build' ? ['console', 'debugger'] : [],
     },
   };
 });
