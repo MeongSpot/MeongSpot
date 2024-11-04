@@ -2,6 +2,18 @@ import axiosInstance from '@/services/axiosInstance';
 import type { ValidationResponse, AuthResponse, SignupRequest } from '@/types/auth';
 import type { SignupData } from '@/types/signup';
 
+interface LoginResponse {
+  code: string;
+  message: string;
+  data: null;
+}
+
+interface LoginRequest {
+  loginId: string;
+  password: string;
+}
+
+
 export const authService = {
   checkLoginIdAvailability: async (loginId: string): Promise<ValidationResponse> => {
     try {
@@ -132,6 +144,36 @@ export const authService = {
       return response.data;
     } catch (error) {
       console.error('Signup failed:', error);
+      throw error;
+    }
+  },
+
+  login: async (loginId: string, password: string): Promise<LoginResponse> => {
+    try {
+      const response = await axiosInstance.post('/api/auth/login', {
+        loginId,
+        password
+      });
+      
+      // 응답 헤더에서 토큰 추출하여 AxiosInstance에 설정
+      const authToken = response.headers['authorization'];
+      if (authToken) {
+        axiosInstance.defaults.headers.common['Authorization'] = authToken;
+      }
+
+      return response.data;
+    } catch (error) {
+      console.error('Login failed:', error);
+      throw error;
+    }
+  },
+
+  logout: async (): Promise<{ code: string; message: string }> => {
+    try {
+      const response = await axiosInstance.post('/api/auth/logout');
+      return response.data;
+    } catch (error) {
+      console.error('Logout failed:', error);
       throw error;
     }
   },
