@@ -4,6 +4,8 @@ import { debounce } from 'lodash';
 import { useCallback } from 'react';
 import type { SignupData } from '@/types/signup';
 import useAuthStore from '@/store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
+import axiosInstance from '@/services/axiosInstance';
 
 export const useAuth = () => {
   const [isValidating, setIsValidating] = useState(false);
@@ -12,6 +14,13 @@ export const useAuth = () => {
   const [isPhoneAvailable, setIsPhoneAvailable] = useState(false);
   const [authError, setAuthError] = useState('');
   const { setVerificationUuid, verificationUuid } = useAuthStore();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { logout: storeLogout } = useAuthStore();
+  const authStore = useAuthStore();
+  const { login: storeLogin } = useAuthStore();
+
   const checkLoginId = async (loginId: string, onSuccess: (isAvailable: boolean) => void) => {
     if (!loginId) return;
 
@@ -141,6 +150,46 @@ export const useAuth = () => {
     }
   };
 
+
+  const login = async (loginId: string, password: string) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await authService.login(loginId, password);
+      const authToken = axiosInstance.defaults.headers.common['Authorization'] as string;
+      
+      if (response.code === 'AU100' && authToken) {
+        storeLogin(loginId, authToken);
+        navigate('/');
+        return true;
+      }
+      
+      setError(response.message || '로그인에 실패했습니다.');
+      return false;
+    } catch (error) {
+      setError('로그인 중 오류가 발생했습니다.');
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const response = await authService.logout();
+      if (response.code === 'AU104') {
+        await storeLogout();
+        navigate('/login');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Logout failed:', error);
+      return false;
+    }
+  };
+
   return {
     isValidating,
     validationMessage,
@@ -154,5 +203,9 @@ export const useAuth = () => {
     signup,
     verificationUuid,
     authError,
+    login,
+    logout,
+    isLoading,
+    error,
   };
 };
