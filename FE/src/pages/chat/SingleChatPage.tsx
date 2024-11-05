@@ -24,8 +24,12 @@ const SingleChatPage = () => {
   };
 
   const handleBack = () => {
-    navigate('/chat', { state: { withAnimation: true } }); // 뒤로 가기 버튼을 눌렀을 때만 애니메이션 적용
+    navigate('/chat', { state: { withAnimation: true } });
   };
+
+  const userClick = () => { // 나중에 상대방 유저페이지로 경로 변경
+    navigate('/mypage')
+  }
 
   return (
     <motion.div
@@ -46,27 +50,30 @@ const SingleChatPage = () => {
         {chats.map((chat, index) => (
           <div key={index} className={`flex ${chat.sender === 'me' ? 'justify-end' : 'justify-start'} mb-4`}>
             {chat.sender !== 'me' && (
-              <div className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-3">
+              <div onClick={userClick} className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-3 cursor-pointer">
                 {chat.sender}
               </div>
             )}
-            <div className={`flex items-end ${chat.sender === 'me' ? 'flex-row-reverse' : ''}`}>
-              <p
-                className={`${
-                  chat.sender === 'me' ? 'bg-cream-bg' : 'bg-gray-200'
-                } text-gray-800 rounded-lg px-4 py-2 inline-block`}
-              >
-                {chat.message}
-              </p>
-              <span
-                className={`text-xs text-gray-400 ${chat.sender === 'me' ? 'mr-2' : 'ml-2'}`}
-                style={{
-                  alignSelf: 'flex-end',
-                  marginBottom: '4px',
-                }}
-              >
-                {chat.time}
-              </span>
+            <div className="flex flex-col max-w-xs">
+            {chat.sender !== 'me' && chat.sender}
+              <div className={`flex items-end ${chat.sender === 'me' ? 'flex-row-reverse' : ''}`}>
+                <p
+                  className={`${
+                    chat.sender === 'me' ? 'bg-cream-bg' : 'bg-gray-200'
+                  } text-gray-800 rounded-lg px-4 py-2 inline-block`}
+                >
+                  {chat.message}
+                </p>
+                <span
+                  className={`text-xs text-gray-400 ${chat.sender === 'me' ? 'mr-2' : 'ml-2'}`}
+                  style={{
+                    alignSelf: 'flex-end',
+                    marginBottom: '4px',
+                  }}
+                >
+                  {chat.time}
+                </span>
+              </div>
             </div>
           </div>
         ))}

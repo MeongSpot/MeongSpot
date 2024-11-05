@@ -35,6 +35,17 @@ const ParticipateDogPage = () => {
       { id: 3, name: '깜자', breed: '코카스파니엘' },
       { id: 4, name: '카트시', breed: '스피츠' },
       { id: 5, name: '꺼양', breed: '포메라니안' },
+
+      { id: 6, name: '뽀삐', breed: '말티즈' },
+      { id: 7, name: '두부', breed: '치와와' },
+      { id: 8, name: '깜자', breed: '코카스파니엘' },
+      { id: 9, name: '카트시', breed: '스피츠' },
+      { id: 10, name: '꺼양', breed: '포메라니안' },
+      { id: 6, name: '뽀삐', breed: '말티즈' },
+      { id: 7, name: '두부', breed: '치와와' },
+      { id: 8, name: '깜자', breed: '코카스파니엘' },
+      { id: 9, name: '카트시', breed: '스피츠' },
+      { id: 10, name: '꺼양', breed: '포메라니안' },
     ],
   });
 
@@ -96,7 +107,7 @@ const ParticipateDogPage = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 p-4">
+        <div className="border-t border-gray-200 pt-4 flex-1 overflow-y-auto no-scrollbar">
           <h3 className="font-semibold mb-2">
             참여 강아지 <span className="text-deep-coral">{eventData.participants.length}</span>
           </h3>

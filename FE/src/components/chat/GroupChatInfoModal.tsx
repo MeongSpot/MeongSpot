@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FiArrowRight, FiBell, FiBellOff, FiCalendar, FiClock, FiMapPin, FiSettings, FiLogOut } from 'react-icons/fi';
+import { FiArrowRight, FiBellOff, FiCalendar, FiClock, FiMapPin, FiSettings, FiLogOut } from 'react-icons/fi';
+import { FaBell } from 'react-icons/fa';
 
 interface GroupChatInfoModalProps {
   isOpen: boolean;
@@ -29,7 +30,7 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold flex items-center">
             <button onClick={toggleNotification} className="mr-2">
-              {isNotificationEnabled ? <FiBell /> : <FiBellOff />}
+              {isNotificationEnabled ? <FaBell /> : <FiBellOff />}
             </button>
             채팅 푸시 알림
           </h2>

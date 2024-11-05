@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
 import { FaCalendarAlt, FaClock } from 'react-icons/fa';
 import CreateTimeModal from './CreateTimeModal';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const RoomCreatForm = () => {
   const [title, setTitle] = useState('');
@@ -12,10 +13,12 @@ const RoomCreatForm = () => {
   const [endTime, setEndTime] = useState('');
   const [location, setLocation] = useState('');
   const [tags, setTags] = useState<string[]>(['활발한_강아지_환영']);
-  const [maxParticipants, setMaxParticipants] = useState('');
+  const [maxParticipants, setMaxParticipants] = useState(1);
   const [selectedDogs, setSelectedDogs] = useState<string[]>([]);
   const availableDogs = ['뽀삐', '코킹', '초코', '바둑이']; // 선택할 수 있는 강아지 목록
   const [isTimeModalOpen, setIsTimeModalOpen] = useState(false);
+  const navigate = useNavigate()
+  const { id: placeId } = useParams()
 
   const handleTagAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -50,6 +53,13 @@ const RoomCreatForm = () => {
     setIsTimeModalOpen(false);
   };
 
+  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setMaxParticipants(Number(e.target.value));
+  };
+  
+  const createClick = () => {
+    navigate(`/allmeetuproom/${placeId}`)
+  }
   return (
     <div className="pb-24">
       <label className="block text-sm font-semibold text-gray-700 mb-1">산책 모임 제목을 입력해주세요</label>
@@ -123,16 +133,20 @@ const RoomCreatForm = () => {
         ))}
       </div>
 
-      <label className="block text-sm font-semibold text-gray-700 mb-1">산책 모임 최대 인원을 입력해주세요</label>
-      <input
-        type="number"
-        placeholder="최대 참석 인원 입력"
+      <label className="block text-sm font-semibold text-gray-700 mb-1">산책 모임 최대 인원을 선택해주세요</label>
+      <select
         value={maxParticipants}
-        onChange={(e) => setMaxParticipants(e.target.value)}
-        className="w-full mb-4 p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-deep-coral"
-      />
+        onChange={handleSelectChange}
+        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-deep-coral"
+      >
+        {[...Array(10)].map((_, index) => (
+          <option key={index + 1} value={index + 1}>
+            {index + 1}명
+          </option>
+        ))}
+      </select>
 
-      <label className="block text-sm font-semibold text-gray-700 mb-1">누구와 함께 갈까요?</label>
+      <label className="block text-sm font-semibold text-gray-700 mb-1 mt-4">누구와 함께 갈까요?</label>
       <div className="relative mb-4">
         <select
           onChange={(e) => handleDogAdd(e.target.value)}
@@ -161,7 +175,7 @@ const RoomCreatForm = () => {
       </div>
 
       <div className="mt-8">
-        <button className="w-full bg-deep-coral text-white py-2 rounded-lg font-bold">모임 생성하기</button>
+        <button onClick={createClick} className="w-full bg-deep-coral text-white py-2 rounded-lg font-bold">모임 생성하기</button>
       </div>
     </div>
   );

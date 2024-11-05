@@ -49,7 +49,7 @@ const RoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
     <div onClick={() => onClick(event.id)} className="bg-white p-4 rounded-lg shadow cursor-pointer">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-semibold">{event.title}</h2>
-        {location.pathname.includes('/myMeetUpRoom') && (
+        {location.pathname.includes('/mymeetuproom') && (
           <button
             onClick={(e) => {
               e.stopPropagation();

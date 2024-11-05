@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { BiPlus } from 'react-icons/bi';
 import { IoChevronBack } from 'react-icons/io5';
 import EveryRoomListCard from '@/components/meetUp/RoomListCard';
@@ -23,6 +23,7 @@ const AllMeetUpRoomPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? false;
+  const { id: placeId } = useParams<{ id: string }>();
 
   const [events, setEvents] = useState<Event[]>([
     {
@@ -66,7 +67,7 @@ const AllMeetUpRoomPage = () => {
     const sortedEvents = [...events].sort((a, b) => {
       const dateA = new Date(`${a.date} ${a.time}`);
       const dateB = new Date(`${b.date} ${b.time}`);
-      
+
       if (sortType === 'latest') {
         return dateB.getTime() - dateA.getTime(); // 최신순
       } else {
@@ -82,16 +83,16 @@ const AllMeetUpRoomPage = () => {
   };
 
   const handlePlusClick = () => {
-    navigate(`/allMeetUpRoom/create`);
+    navigate(`/allMeetUpRoom/${placeId}/create`);
   };
 
   return (
     <AnimatePresence>
       <motion.div
         className="p-4"
-        initial={{ opacity: 0, x: animateBack ? -50 : 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: animateBack ? 50 : -50 }}
+        initial={{ x: animateBack ? -300 : 0, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: animateBack ? 300 : 0, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
         <div className="flex items-center justify-between mb-4">
