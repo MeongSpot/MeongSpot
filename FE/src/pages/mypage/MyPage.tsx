@@ -11,35 +11,47 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import '../../css/swiper.css';
 import { Pagination } from 'swiper/modules';
+import { DogInfo } from '@/types/dogInfo';
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const userInfo = ['이름', '성별', '나이'];
 
-  const dogInfo = [
-    {
-      name: '뽀삐',
-      breedId: '시바견',
-      age: 3,
-      birthday: '2018-01-01',
-      size: '소형견',
-      gender: '수컷',
-      isNeuter: true,
-      introduction: '안녕하세요',
-      character: ['사람을 좋아함', '낯선 사람을 좋아함', '낯선 사람을 좋아함'],
+const dogInfoList: DogInfo[] = [
+  {
+    profile_image: 'url-to-image1.jpg',
+    name: '뽀삐',
+    breedId: '시바견',
+    age: 3,
+    birth: {
+      year: '2018',
+      month: '01',
+      day: '01',
     },
-    {
-      name: '쿠키',
-      breedId: '말티즈',
-      age: 3,
-      birthday: '2018-01-01',
-      size: '소형견',
-      gender: '암컷',
-      isNeuter: false,
-      introduction: '안녕하세요',
-      character: ['사람을 좋아함', '낯선 사람을 좋아함', '낯선 사람을 좋아함'],
+    size: '소형견',
+    gender: '수컷',
+    isNeuter: true,
+    introduction: '안녕하세요',
+    personality: [1, 2, 3], // 가상의 성격 아이디로 설정
+  },
+  {
+    profile_image: 'url-to-image2.jpg',
+    name: '쿠키',
+    breedId: '말티즈',
+    age: 3,
+    birth: {
+      year: '2018',
+      month: '01',
+      day: '01',
     },
-  ];
+    size: '소형견',
+    gender: '암컷',
+    isNeuter: false,
+    introduction: '안녕하세요',
+    personality: [1, 2, 3], // 동일하게 가상의 성격 아이디 사용
+  },
+];
+
 
   return (
     <div className="pb-16">
@@ -99,8 +111,11 @@ const MyPage: React.FC = () => {
         <div className="flex justify-between">
           <p className="font-semibold">반려견 정보</p>
           <div
-            onClick={() => {navigate('/registerdog');}}
-            className="flex items-center space-x-1">
+            onClick={() => {
+              navigate('/registerdog');
+            }}
+            className="flex items-center space-x-1"
+          >
             <p className="font-medium text-sm text-[#f7824c]">반려견 등록</p>
             <IoAddCircle className="text-xl text-deep-coral" />
           </div>
@@ -114,7 +129,7 @@ const MyPage: React.FC = () => {
             modules={[Pagination]}
             className="dogSwiper rounded-lg"
           >
-            {dogInfo.map((dog, idx) => (
+            {dogInfoList.map((dog, idx) => (
               <SwiperSlide key={idx}>
                 <MyDogInfoCard dog={dog} />
               </SwiperSlide>

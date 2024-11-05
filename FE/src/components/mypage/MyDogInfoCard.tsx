@@ -10,13 +10,13 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog }) => {
   const dogInfo = [
     { label: '성별', value: dog.gender },
     { label: '중성화', value: dog.isNeuter ? '예' : '아니오' },
-    { label: '생일', value: dog.birthday },
+    { label: '생일', value: dog.birth.year + '년 ' + dog.birth.month + '월 ' + dog.birth.day + '일' },
     { label: '소개', value: dog.introduction },
     {
       label: '성격',
       value: (
         <div className="flex flex-wrap gap-x-3 gap-y-2">
-          {dog.character?.map((trait, index) => (
+          {dog.personality?.map((trait, index) => (
             <span key={index} className="text-sm">
               #{trait}
             </span>
