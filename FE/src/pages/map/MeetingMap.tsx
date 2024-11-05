@@ -80,6 +80,24 @@ const MeetingMap = () => {
     },
   ]);
 
+  // // SDK 로드 완료 여부를 확인하기 위한 상태
+  // const [isSdkLoaded, setIsSdkLoaded] = useState(false);
+
+  // // Kakao Maps SDK를 동적으로 로드
+  // useEffect(() => {
+  //   const loadKakaoMapSDK = () => {
+  //     const kakaoMapApiKey = import.meta.env.VITE_KAKAO_MAP_API_KEY;
+  //     const script = document.createElement('script');
+  //     script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapApiKey}&libraries=services,drawing`;
+  //     script.onload = () => setIsSdkLoaded(true);
+  //     document.head.appendChild(script);
+  //   };
+
+  //   if (!isSdkLoaded) {
+  //     loadKakaoMapSDK();
+  //   }
+  // }, [isSdkLoaded]);
+
   const DISTANCE_THRESHOLD = 100;
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
