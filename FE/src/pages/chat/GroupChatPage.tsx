@@ -14,7 +14,7 @@ const GroupChatPage = () => {
   const animateBack = location.state?.animateBack ?? true;
 
   const handleBack = () => {
-    navigate('/myMeetUpRoom', { state: { animateBack: true } }); // 뒤로 갈 때 애니메이션을 위해 상태 전달
+    navigate('/mymeetuproom', { state: { animateBack: true } }); // 뒤로 갈 때 애니메이션을 위해 상태 전달
   };
 
   const chats = [
@@ -36,6 +36,11 @@ const GroupChatPage = () => {
   const handleViewDetails = () => {
     setIsModalOpen(false);
     navigate('/meetUpDogList');
+  };
+
+  const userClick = () => {
+    // 나중에 상대방 유저페이지로 경로 변경
+    navigate('/mypage');
   };
 
   return (
@@ -60,11 +65,13 @@ const GroupChatPage = () => {
         {chats.map((chat, index) => (
           <div key={index} className={`flex mb-4 ${chat.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
             {chat.sender !== 'me' && (
-              <div className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-2">
-                {chat.sender}
-              </div>
+              <div
+                onClick={userClick}
+                className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-2 cursor-pointer"
+              ></div>
             )}
             <div className="flex flex-col max-w-xs">
+              {chat.sender !== 'me' && chat.sender}
               <div className={`flex items-end ${chat.sender === 'me' ? 'flex-row-reverse' : ''}`}>
                 <div
                   className={`${

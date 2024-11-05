@@ -105,7 +105,7 @@ const router = createBrowserRouter([
         element: <ParticipateDogPage />,
       },
       {
-        path: 'allmeetuproom/create',
+        path: 'allmeetuproom/:id/create',
         element: <CreateRoomPage />,
       },
     ],

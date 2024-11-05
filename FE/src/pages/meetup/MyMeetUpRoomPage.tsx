@@ -54,9 +54,7 @@ const MyMeetUpRoomPage = () => {
       const dateA = new Date(`${a.date} ${a.time}`);
       const dateB = new Date(`${b.date} ${b.time}`);
 
-      return sortType === 'latest'
-        ? dateB.getTime() - dateA.getTime()
-        : dateA.getTime() - dateB.getTime();
+      return sortType === 'latest' ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
     });
 
     setEvents(sortedEvents);
@@ -71,9 +69,9 @@ const MyMeetUpRoomPage = () => {
       {location.state?.animateBack ? (
         <motion.div
           className="p-4"
-          initial={{ opacity: animateBack ? 0 : 1, x: animateBack ? -50 : 0 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 50 }}
+          initial={{ x: animateBack ? -300 : 0, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: animateBack ? 300 : 0, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
           <h1 className="text-center text-lg font-bold mb-4">모임</h1>
