@@ -9,6 +9,7 @@ const Settings = lazy(() => import('@/pages/mypage/Settings'));
 const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
 const SelectBreed = lazy(() => import('@/pages/mypage/SelectBreed'));
 const FriendsList = lazy(() => import('@/pages/mypage/FriendsList'));
+const SearchUser = lazy(() => import('@/pages/mypage/SearchUser'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: 'friendslist',
         element: <FriendsList />,
+      },
+      {
+        path: 'searchuser',
+        element: <SearchUser />,
       },
       {
         path: 'mymeetuproom',

@@ -102,7 +102,10 @@ const dogInfoList: DogInfo[] = [
             </div>
             <div>
               <button
-                onClick={() => { }}
+                onClick={(e) => {
+                  navigate('/searchuser');
+                  e.stopPropagation();
+                }}
                 className="p-2 px-3 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm">친구찾기</p>
               </button>

@@ -1,12 +1,14 @@
+import React, { useState } from 'react';
 import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { IoMdSearch } from 'react-icons/io';
 import FriendsListCard from '@/components/mypage/FriendsListCard';
+import SearchBar from '@/components/common/SearchBar';
 
 const FriendsList: React.FC = () => {
   const navigate = useNavigate();
 
-  const myFriendsList = [
+  const [myFriendsList, setMyFriendsList] = useState([
     {
       id: 1,
       name: '뽀삐언니',
@@ -25,7 +27,9 @@ const FriendsList: React.FC = () => {
       profile_image: null,
       dogs: ['모카', '우유'],
     },
-  ];
+  ]);
+
+  const [filteredFriendsList, setFilteredFriendsList] = useState(myFriendsList);
 
   return (
     <div className="space-y-2">
@@ -33,15 +37,18 @@ const FriendsList: React.FC = () => {
         <div className="p-4 grid grid-cols-3 items-center">
           <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
           <p className="text-center text-lg font-bold">친구 목록</p>
-          <div className="flex justify-end">
-            <IoMdSearch size={24} />
-          </div>
         </div>
         <hr />
       </div>
 
-      <div className="p-4">
-        <FriendsListCard data={myFriendsList} />
+      <div className="p-4 space-y-3">
+        <SearchBar
+          placeholder="친구 검색"
+          data={filteredFriendsList}
+          setData={setFilteredFriendsList}
+          filterField="name"
+        />
+        <FriendsListCard data={filteredFriendsList} />
       </div>
     </div>
   );
