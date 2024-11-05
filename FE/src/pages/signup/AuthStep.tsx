@@ -1,8 +1,10 @@
 import BoxInput from '@/components/common/Input/BoxInput';
 import ValidateButton from '@/components/common/Button/ValidateButton';
 import ValidationMessage from '@/components/common/Message/ValidationMessage';
-import React from 'react';
+import React, { useState } from 'react';
+import useAuthStore from '@/store/useAuthStore';
 import { SignupData, REGEX } from '@/types/signup';
+import { useAuth } from '@/hooks/useAuth';
 
 interface AuthStepProps {
   formData: SignupData;
@@ -12,6 +14,8 @@ interface AuthStepProps {
 }
 
 const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProps) => {
+  const { isValidating, validationMessage, checkLoginId } = useAuth();
+
   // 유효성 검사 조건
   const idRegex = REGEX.ID;
   const passwordLengthValid = formData.password.length >= 8 && formData.password.length <= 16;
@@ -30,10 +34,8 @@ const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProp
   };
 
   const handleDuplicateCheck = () => {
-    if (isIdValid) {
-      // API 호출 로직이 들어갈 자리
-      setIsDuplicateChecked(true);
-    }
+    if (!isIdValid) return;
+    checkLoginId(formData.id, setIsDuplicateChecked);
   };
 
   return (
@@ -53,12 +55,18 @@ const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProp
             <div className="flex-1">
               <BoxInput label="아이디" name="id" value={formData.id} onChange={handleChange} className="py-4" />
             </div>
-            <ValidateButton onClick={handleDuplicateCheck} disabled={!isIdValid}>
-              중복확인
+            <ValidateButton onClick={handleDuplicateCheck} disabled={!isIdValid || isValidating}>
+              {isValidating ? '확인중...' : '중복확인'}
             </ValidateButton>
           </div>
           <div className="mt-2">
             <ValidationMessage message="4~16자의 영문 소문자, 숫자만 사용 가능합니다" isValid={isIdValid} />
+            {validationMessage && (
+              <ValidationMessage
+                message={validationMessage}
+                isValid={validationMessage === '사용 가능한 아이디입니다.'}
+              />
+            )}
           </div>
         </div>
 

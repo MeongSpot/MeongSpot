@@ -8,8 +8,10 @@ import CompleteStep from '@/pages/signup/CompleteStep';
 import FooterButton from '@/components/common/Button/FooterButton';
 import { SignupData } from '@/types/signup';
 import { REGEX } from '@/types/signup';
+import { useAuth } from '@/hooks/useAuth';
 
 const SignupPage = () => {
+  const { signup, authError } = useAuth(); // authError도 가져옴
   const location = useLocation();
   const navigate = useNavigate();
   const [direction, setDirection] = useState(1);
@@ -58,13 +60,21 @@ const SignupPage = () => {
     }
   };
 
-  const handleNext = () => {
-    setDirection(1);
+  const handleNext = async () => {
     const currentPath = location.pathname;
+
     if (currentPath.includes('auth')) {
       navigate('/signup/info');
     } else if (currentPath.includes('info')) {
-      navigate('/signup/complete');
+      console.log('Attempting signup with data:', signupData); // 디버깅용
+      const success = await signup(signupData);
+      if (success) {
+        setDirection(1);
+        navigate('/signup/complete');
+      } else {
+        // 에러 메시지 표시 (토스트나 알림으로 표시하면 좋습니다)
+        console.error('Signup failed:', authError);
+      }
     } else if (currentPath.includes('complete')) {
       navigate('/login');
     }
@@ -124,9 +134,7 @@ const SignupPage = () => {
     <div className="min-h-screen bg-white flex flex-col">
       {/* {showHeader && ( */}
       <div className="flex h-[60px] items-center border-b p-4">
-        <button onClick={handleBack}>
-          {showHeader && <IoChevronBack size={24} />}
-        </button>
+        <button onClick={handleBack}>{showHeader && <IoChevronBack size={24} />}</button>
       </div>
       {/* )} */}
 

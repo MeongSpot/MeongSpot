@@ -32,10 +32,10 @@ const DogPersonalityInput: React.FC<DogPersonalityInputProps> = ({ value, onChan
             ${
               value.includes(personality.id)
                 ? 'bg-deep-coral text-white border-deep-coral'
-                : 'bg-white text-deep-coral border-deep-coral'
+                : 'bg-gray-100 text-gray-500 border-gray-100'
             }`}
         >
-          <p className="font-bold">{personality.name}</p>
+          <p className="font-semibold">{personality.name}</p>
         </button>
       ))}
     </div>

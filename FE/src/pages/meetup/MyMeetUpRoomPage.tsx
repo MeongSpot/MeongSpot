@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import MyRoomListCard from '@/components/meetUp/RoomListCard';
 import RoomSortButton from '@/components/meetUp/RoomSortButton';
 
@@ -18,6 +19,9 @@ interface Event {
 const MyMeetUpRoomPage = () => {
   const [sortBy, setSortBy] = useState('latest');
   const navigate = useNavigate();
+  const location = useLocation();
+  const animateBack = location.state?.animateBack ?? false;
+
   const [events, setEvents] = useState<Event[]>([
     {
       id: 1,
@@ -50,36 +54,56 @@ const MyMeetUpRoomPage = () => {
       const dateA = new Date(`${a.date} ${a.time}`);
       const dateB = new Date(`${b.date} ${b.time}`);
 
-      if (sortType === 'latest') {
-        return dateB.getTime() - dateA.getTime(); // 최신순
-      } else {
-        return dateA.getTime() - dateB.getTime(); // 남은 시간순
-      }
+      return sortType === 'latest'
+        ? dateB.getTime() - dateA.getTime()
+        : dateA.getTime() - dateB.getTime();
     });
 
     setEvents(sortedEvents);
   };
 
-  // 채팅방으로 이동하는 함수
   const handleCardClick = (roomId: number) => {
-    navigate(`/chat/group/${roomId}`);
+    navigate(`/chat/group/${roomId}`, { state: { animateBack: true } });
   };
 
   return (
-    <div className="p-4">
-      <h1 className="text-center text-lg font-bold mb-4">모임</h1>
-      <hr className="my-4 -mx-4 w-screen" />
-      <div className="flex justify-between items-center mb-4">
-        <span className="text-gray-600">총 {events.length}개</span>
-        <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
-      </div>
-
-      <div className="space-y-4">
-        {events.map((event) => (
-          <MyRoomListCard key={event.id} event={event} onClick={handleCardClick} />
-        ))}
-      </div>
-    </div>
+    <AnimatePresence>
+      {location.state?.animateBack ? (
+        <motion.div
+          className="p-4"
+          initial={{ opacity: animateBack ? 0 : 1, x: animateBack ? -50 : 0 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 50 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        >
+          <h1 className="text-center text-lg font-bold mb-4">모임</h1>
+          <hr className="my-4 -mx-4 w-screen" />
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-gray-600">총 {events.length}개</span>
+            <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
+          </div>
+          <div className="space-y-4">
+            {events.map((event) => (
+              <MyRoomListCard key={event.id} event={event} onClick={handleCardClick} />
+            ))}
+          </div>
+        </motion.div>
+      ) : (
+        <div className="p-4">
+          <h1 className="text-center text-lg font-bold mb-4">모임</h1>
+          <hr className="my-4 -mx-4 w-screen" />
+          <div className="flex justify-between items-center mb-4">
+            <span className="text-gray-600">총 {events.length}개</span>
+            <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
+          </div>
+          <div className="space-y-4">
+            {events.map((event) => (
+              <MyRoomListCard key={event.id} event={event} onClick={handleCardClick} />
+            ))}
+          </div>
+        </div>
+      )}
+    </AnimatePresence>
   );
 };
 

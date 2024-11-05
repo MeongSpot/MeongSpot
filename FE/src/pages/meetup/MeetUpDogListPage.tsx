@@ -1,5 +1,8 @@
-import DogListHeader from '@/components/meetUp/DogListHeader';
+import React from 'react';
 import DogCard from '@/components/meetUp/DogListCard';
+import { useNavigate } from 'react-router-dom';
+import { IoChevronBack } from 'react-icons/io5';
+import { motion } from 'framer-motion';
 
 const MeetUpDogListPage = () => {
   const dogs = [
@@ -45,16 +48,32 @@ const MeetUpDogListPage = () => {
     },
   ];
 
+  const navigate = useNavigate();
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   return (
-    <div className="flex flex-col h-screen">
-      <DogListHeader title="저녁 산책 같이해요~" />
+    <motion.div
+      className="flex flex-col h-screen"
+      initial={{ opacity: 0, x: 100 }}   // 오른쪽에서 시작
+      animate={{ opacity: 1, x: 0 }}     // 정중앙으로 이동
+      exit={{ opacity: 0, x: -100 }}     // 왼쪽으로 사라짐
+      transition={{ duration: 0.5 }}
+    >
+      <div className="flex items-center bg-deep-coral text-white p-4">
+        <button onClick={handleBack} className="mr-3">
+          <IoChevronBack size={24} />
+        </button>
+        <h1 className="text-lg font-bold">저녁 산책 같이해요~</h1>
+      </div>
       <div className="p-4">
         <h2 className="text-lg font-bold mb-4">참여 강아지 {dogs.length}</h2>
         {dogs.map((dog) => (
           <DogCard key={dog.id} dog={dog} />
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

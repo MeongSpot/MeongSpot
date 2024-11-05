@@ -1,4 +1,5 @@
 export interface DogInfo {
+  profile_image: string;
   name: string;
   breedId: string;
   age: number | null;
