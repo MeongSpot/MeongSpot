@@ -3,7 +3,7 @@ import { DogInfo } from '@/types/dogInfo';
 
 interface DogBirthdayInputProps {
   formData: DogInfo;
-  setFormData: React.Dispatch<React.SetStateAction<DogInfo>>;
+  setFormData: (info: Partial<DogInfo>) => void;
 }
 
 const DogBirthdayInput: React.FC<DogBirthdayInputProps> = ({ formData, setFormData }) => {
@@ -16,25 +16,23 @@ const DogBirthdayInput: React.FC<DogBirthdayInputProps> = ({ formData, setFormDa
   const handleYearChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^\d]/g, '');
     if (value.length <= 4) {
-      setFormData((prev) => ({
-        ...prev,
+      setFormData({
         birth: {
-          ...prev.birth,
+          ...formData.birth,
           year: value,
         },
-      }));
+      });
     }
   };
 
   const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
+    setFormData({
       birth: {
-        ...prev.birth,
+        ...formData.birth,
         [name]: value,
       },
-    }));
+    });
   };
 
   const months = Array.from({ length: 12 }, (_, i) => i + 1);

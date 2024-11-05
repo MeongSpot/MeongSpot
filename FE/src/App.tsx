@@ -14,6 +14,7 @@ const App = () => {
       '/settings',
       '/notification',
       '/registerdog',
+      '/selectbreed',
     ].includes(location.pathname) ||
     (location.pathname.startsWith('/chat/') && id) ||
     (location.pathname.startsWith('/participateDog/') && id);

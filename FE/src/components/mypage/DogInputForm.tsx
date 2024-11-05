@@ -1,6 +1,5 @@
 import DogBoxInput from '@/components/common/DogInput/DogBoxInput';
-import ValidateButton from '@/components/common/Button/ValidateButton';
-import ValidationMessage from '@/components/common/Message/ValidationMessage';
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import { SignupData, REGEX } from '@/types/signup';
 import { DogInfo } from '@/types/dogInfo';
@@ -11,48 +10,37 @@ import DogPersonalityInput from '../common/DogInput/DogPersonalityInput';
 
 interface DogInputFormProps {
   formData: DogInfo;
-  setFormData: React.Dispatch<React.SetStateAction<DogInfo>>;
+  setFormData: (info: Partial<DogInfo>) => void;
 }
 
 const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
-  const idRegex = REGEX.ID;
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData({
+      [name]: name === 'age' ? Number(value) : value,
+    });
   };
 
   const handleGenderChange = (gender: '남' | '여') => {
-    setFormData((prev) => ({
-      ...prev,
-      gender,
-    }));
+    setFormData({ gender });
   };
 
   const handleSizeChange = (size: '대형견' | '중형견' | '소형견') => {
-    setFormData((prev) => ({
-      ...prev,
-      size,
-    }));
+    setFormData({ size });
   };
 
   const handleNeuterChange = (isNeuter: boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      isNeuter,
-    }));
+    setFormData({ isNeuter });
   };
 
   const handlePersonalityChange = (personalityId: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      personality: prev.personality.includes(personalityId)
-        ? prev.personality.filter((id) => id !== personalityId)
-        : [...prev.personality, personalityId],
-    }));
+    setFormData({
+      personality: formData.personality.includes(personalityId)
+        ? formData.personality.filter((id) => id !== personalityId)
+        : [...formData.personality, personalityId],
+    });
   };
 
   return (
@@ -66,13 +54,18 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
         </div>
 
         {/* 견종 Input */}
-        <div className="w-full relative">
+        <div
+          onClick={() => {
+            navigate('/selectbreed');
+          }}
+          className="w-full relative"
+        >
           <DogBoxInput
             label="견종 선택"
             name="breedId"
             value={formData.breedId}
             onChange={handleChange}
-            className="py-3"
+            className="py-3 cursor-pointer"
           />
           <FaAngleRight className="absolute right-4 top-[2.8rem] text-zinc-500" />
         </div>

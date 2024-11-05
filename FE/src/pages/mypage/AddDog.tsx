@@ -4,37 +4,49 @@ import DogInputForm from '@/components/mypage/DogInputForm';
 import { IoClose } from 'react-icons/io5';
 import { DogInfo } from '@/types/dogInfo';
 import FooterButton from '@/components/common/Button/FooterButton';
-import { IoIosAdd } from 'react-icons/io';
+import useDogInfoStore from '@/store/dogInfoStore';
 
 const AddDog: React.FC = () => {
   const navigate = useNavigate();
-
-  const [DogData, setDogData] = useState<DogInfo>({
-    profile_image: '',
-    name: '',
-    breedId: '',
-    age: null,
-    size: '',
-    isNeuter: null,
-    birth: {
-      year: '',
-      month: '',
-      day: '',
-    },
-    gender: '',
-    introduction: '',
-    personality: [],
-  });
+  const { dogRegisterInfo, setDogRegisterInfo } = useDogInfoStore();
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
-      setDogData((prevData) => ({
-        ...prevData,
+      setDogRegisterInfo({
         profile_image: imageUrl,
-      }));
+      });
     }
+  };
+
+  const handleRegister = () => {
+    navigate('/mypage');
+    resetDogInfo();
+  };
+
+  const handleBack = () => {
+    navigate('/mypage');
+    resetDogInfo();
+  };
+
+  const resetDogInfo = () => {
+    setDogRegisterInfo({
+      profile_image: '',
+      name: '',
+      breedId: '',
+      age: null,
+      size: '',
+      birth: {
+        year: '',
+        month: '',
+        day: '',
+      },
+      gender: '',
+      isNeuter: null,
+      introduction: '',
+      personality: [],
+    });
   };
 
   return (
@@ -43,7 +55,12 @@ const AddDog: React.FC = () => {
         <div></div>
         <p className="text-center text-lg font-bold">반려견 등록</p>
         <div className="flex justify-end">
-          <IoClose onClick={() => navigate('/mypage')} size={24} />
+          <IoClose
+            onClick={() => {
+              handleBack();
+            }}
+            size={24}
+          />
         </div>
       </div>
       <hr />
@@ -54,7 +71,7 @@ const AddDog: React.FC = () => {
           <div className="w-20 h-20 relative">
             <label htmlFor="fileInput">
               <img
-                src={DogData.profile_image || '/src/assets/mypage/imageAddIcon.png'}
+                src={dogRegisterInfo.profile_image || '/src/assets/mypage/imageAddIcon.png'}
                 alt="반려견이미지"
                 className="cursor-pointer w-full h-full object-cover rounded-full"
               />
@@ -73,13 +90,13 @@ const AddDog: React.FC = () => {
 
       {/* 반려견 정보 input */}
       <div className="mt-7 relative p-4">
-        <DogInputForm formData={DogData} setFormData={setDogData} />
+        <DogInputForm formData={dogRegisterInfo} setFormData={setDogRegisterInfo} />
       </div>
 
       {/* 등록 버튼 */}
       <FooterButton
         onClick={() => {
-          navigate('/mypage');
+          handleRegister();
         }}
         disabled={false}
       >
