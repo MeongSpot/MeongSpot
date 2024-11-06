@@ -54,6 +54,8 @@ const SignupPage = () => {
           gender: null,
         },
       }));
+      // 휴대폰 인증 관련 상태 초기화
+      setIsPhoneVerified(false);
       navigate('/signup/auth');
     } else if (currentPath.includes('auth')) {
       navigate('/login');
@@ -132,11 +134,14 @@ const SignupPage = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* {showHeader && ( */}
-      <div className="flex h-[60px] items-center border-b p-4">
-        <button onClick={handleBack}>{showHeader && <IoChevronBack size={24} />}</button>
-      </div>
-      {/* )} */}
+      {showHeader && (
+        <div className="flex h-[60px] items-center border-b p-4">
+          <button onClick={handleBack}>
+            {' '}
+            <IoChevronBack size={24} />
+          </button>
+        </div>
+      )}
 
       <div className="flex-1 relative overflow-hidden">
         <AnimatePresence initial={false} mode="wait" custom={direction}>

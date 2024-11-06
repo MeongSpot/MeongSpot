@@ -14,7 +14,7 @@ const useChat = (roomId: number, isNewUser: boolean) => {
       try {
         const response = await fetch(`/api/chat/rooms/${roomId}`);
         const data = await response.json();
-        
+
         if (!isNewUser) {
           setChats(roomId, data.chats); // 특정 방 번호에 맞는 채팅 데이터 설정
         }

@@ -2,12 +2,16 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
 import App from '@/App';
 import { Navigate } from 'react-router-dom';
+import useAuthStore from '@/store/useAuthStore';
 
+// Lazy-loaded components
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const Settings = lazy(() => import('@/pages/mypage/Settings'));
 const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
 const SelectBreed = lazy(() => import('@/pages/mypage/SelectBreed'));
+const FriendsList = lazy(() => import('@/pages/mypage/FriendsList'));
+const SearchUser = lazy(() => import('@/pages/mypage/SearchUser'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
@@ -23,6 +27,28 @@ const AlarmPage = lazy(() => import('@/pages/mypage/AlarmPage'));
 const ParticipateDogPage = lazy(() => import('@/pages/meetup/ParticipateDogPage'));
 const CreateRoomPage = lazy(() => import('@/pages/meetup/CreateRoomPage'));
 
+// Auth guard component
+const AuthGuard = ({ children }: { children: React.ReactNode }) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+// Public route guard
+const PublicGuard = ({ children }: { children: React.ReactNode }) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -30,10 +56,13 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: '/', // 메인 경로
-        element: <MapPage />,
+        path: '/',
+        element: (
+          <AuthGuard>
+            <MapPage />
+          </AuthGuard>
+        ),
         children: [
-          // MapPage의 중첩 라우트
           {
             index: true,
             element: <Navigate to="/meeting" replace />,
@@ -49,71 +78,141 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'mypage',
-        element: <MyPage />,
+        path: 'mypage/:userId',
+        element: (
+          <AuthGuard>
+            <MyPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'settings',
-        element: <Settings />,
+        element: (
+          <AuthGuard>
+            <Settings />
+          </AuthGuard>
+        ),
       },
       {
         path: 'registerdog',
-        element: <AddDog />,
+        element: (
+          <AuthGuard>
+            <AddDog />
+          </AuthGuard>
+        ),
       },
       {
         path: 'selectbreed',
-        element: <SelectBreed />,
+        element: (
+          <AuthGuard>
+            <SelectBreed />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'friendslist',
+        element: <FriendsList />,
+      },
+      {
+        path: 'searchuser',
+        element: <SearchUser />,
       },
       {
         path: 'mymeetuproom',
-        element: <MyMeetUpRoomPage />,
+        element: (
+          <AuthGuard>
+            <MyMeetUpRoomPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'allmeetuproom/:id',
-        element: <AllMeetUpRoomPage />,
+        element: (
+          <AuthGuard>
+            <AllMeetUpRoomPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'chat',
-        element: <ChatPage />,
+        element: (
+          <AuthGuard>
+            <ChatPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'chat/single/:id',
-        element: <SingleChatPage />,
+        element: (
+          <AuthGuard>
+            <SingleChatPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'chat/group/:id',
-        element: <GroupChatPage />,
+        element: (
+          <AuthGuard>
+            <GroupChatPage />
+          </AuthGuard>
+        ),
       },
+      // Public routes
       {
         path: 'login',
-        element: <LoginPage />,
+        element: (
+          <PublicGuard>
+            <LoginPage />
+          </PublicGuard>
+        ),
       },
       {
         path: 'signup/*',
-        element: <SignupPage />,
+        element: (
+          <PublicGuard>
+            <SignupPage />
+          </PublicGuard>
+        ),
       },
+      // Protected routes
       {
         path: 'meetupdoglist',
-        element: <MeetUpDogListPage />,
+        element: (
+          <AuthGuard>
+            <MeetUpDogListPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'notification',
-        element: <AlarmPage />,
+        element: (
+          <AuthGuard>
+            <AlarmPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'participatedog/:id',
-        element: <ParticipateDogPage />,
+        element: (
+          <AuthGuard>
+            <ParticipateDogPage />
+          </AuthGuard>
+        ),
       },
       {
         path: 'allmeetuproom/:id/create',
-        element: <CreateRoomPage />,
+        element: (
+          <AuthGuard>
+            <CreateRoomPage />
+          </AuthGuard>
+        ),
       },
     ],
   },
 ]);
 
 const AppRouter = () => (
-  <Suspense>
+  <Suspense fallback={<div>Loading...</div>}>
     <RouterProvider router={router} />
   </Suspense>
 );

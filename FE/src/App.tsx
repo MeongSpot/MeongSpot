@@ -1,9 +1,11 @@
 import { Outlet, useLocation, useParams } from 'react-router-dom';
+import { useState } from 'react';
 import Nav from '@/components/Layout/Nav';
 
 const App = () => {
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
+  const [showNav, setShowNav] = useState(true);
   const hideNav =
     [
       '/login',
@@ -15,6 +17,7 @@ const App = () => {
       '/notification',
       '/registerdog',
       '/selectbreed',
+      '/friendslist',
     ].includes(location.pathname) ||
     (location.pathname.startsWith('/chat/') && id) ||
     (location.pathname.startsWith('/participateDog/') && id);
@@ -22,9 +25,9 @@ const App = () => {
   return (
     <div className="mobile-container">
       <div className="mobile-content">
-        <Outlet />
+        <Outlet context={{ setShowNav }} />
       </div>
-      {!hideNav && <Nav />}
+      {showNav && !hideNav && <Nav />}
     </div>
   );
 };
