@@ -72,7 +72,7 @@ export default defineConfig(({ command, mode }) => {
             },
           ],
         },
-        injectRegister: null,
+        injectRegister: 'auto',
         registerType: 'autoUpdate',
         devOptions: {
           enabled: false,
