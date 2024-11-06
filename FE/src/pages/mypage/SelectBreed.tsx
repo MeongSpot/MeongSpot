@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { IoChevronBack } from 'react-icons/io5';
-import SearchBar from '@/components/common/searchBar';
+import SearchBar from '@/components/common/SearchBar';
 import BreedList from '@/components/mypage/BreedList';
 import useDogInfoStore from '@/store/dogInfoStore';
 
