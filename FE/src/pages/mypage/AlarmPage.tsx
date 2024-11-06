@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import MascotDog from '@/components/common/Logo/Mascot';
-import { IoIosArrowBack } from 'react-icons/io';
 import { IoChevronBack } from 'react-icons/io5';
 import { NotificationInfo } from '@/types/notification';
 import FriendAcceptModal from '@/components/mypage/FriendAcceptModal';
