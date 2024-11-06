@@ -7,6 +7,8 @@ import { ResearchButton } from '@/components/map/ResearchButton';
 import { SpotMarker } from '@/components/map/SpotMarker';
 import presentSpotUrl from '@/assets/PresentSpot.svg?url';
 import spotUrl from '@/assets/Spot.svg?url';
+import type { SpotInfo } from '@/types/meetup';
+import SpotModal from '@/components/map/SpotModal';
 
 type ContextType = {
   currentPosition: LatLng;
@@ -46,6 +48,209 @@ const MOCK_SPOTS = [
   { position: { lat: 35.890579857658125, lng: 128.4789276123047 }, content: '다사 체육 공원' },
 ];
 
+const MOCK_SPOT_INFO: SpotInfo[] = [
+  {
+    id: 1,
+    position: { lat: 36.0970625, lng: 128.4019375 },
+    content: '동락공원',
+    meetups: [
+      {
+        id: 1,
+        title: '아침 산책 함께해요',
+        date: '2024.03.20',
+        time: '07:30',
+        location: '공원 정문 벤치 앞',
+        participants: ['초코', '루루', '콩이'],
+        maxParticipants: 6,
+        currentParticipants: 3,
+        tags: ['활발한_강아지_환영', '1시간정도', '소형견만'],
+      },
+      {
+        id: 2,
+        title: '저녁 산책 메이트 구해요',
+        date: '2024.03.20',
+        time: '19:00',
+        location: '음악분수 근처',
+        participants: ['보리', '해피'],
+        maxParticipants: 4,
+        currentParticipants: 2,
+        tags: ['중형견', '장시간산책'],
+      },
+      {
+        id: 3,
+        title: '퇴근 후 산책할 친구 찾아요',
+        date: '2024.03.20',
+        time: '18:30',
+        location: '큰 나무 아래',
+        participants: ['몽이'],
+        maxParticipants: 3,
+        currentParticipants: 1,
+        tags: ['초보견주', '소형견'],
+      },
+    ],
+  },
+  {
+    id: 2,
+    position: { lat: 36.09481712799744, lng: 128.4088897705078 },
+    content: '구미국가산업단지',
+    meetups: [
+      {
+        id: 4,
+        title: '앞 아침 산책',
+        date: '2024.03.20',
+        time: '06:30',
+        location: '역 광장 시계탑 앞',
+        participants: ['콩이', '감자'],
+        maxParticipants: 4,
+        currentParticipants: 2,
+        tags: ['전연령', '산책초보'],
+      },
+      {
+        id: 5,
+        title: '점심 산책 어때요?',
+        date: '2024.03.20',
+        time: '12:00',
+        location: '역 뒷편 공원',
+        participants: ['밤이', '수리', '별이'],
+        maxParticipants: 5,
+        currentParticipants: 3,
+        tags: ['중대형견', '활발한_강아지_환영'],
+      },
+      {
+        id: 6,
+        title: '저녁 산책 모임',
+        date: '2024.03.20',
+        time: '20:00',
+        location: '역 앞 벤치',
+        participants: ['마루', '해피'],
+        maxParticipants: 4,
+        currentParticipants: 2,
+        tags: ['소형견', '노견환영'],
+      },
+    ],
+  },
+  {
+    id: 3,
+    position: { lat: 36.10716133091688, lng: 128.41798782348633 },
+    content: '메가박스',
+    meetups: [
+      {
+        id: 7,
+        title: '등산하면서 산책해요',
+        date: '2024.03.20',
+        time: '08:00',
+        location: '금오산 입구 매점',
+        participants: ['토리', '달이'],
+        maxParticipants: 4,
+        currentParticipants: 2,
+        tags: ['장시간산책', '활발한_강아지_환영'],
+      },
+      {
+        id: 8,
+        title: '가벼운 산책 친구 구해요',
+        date: '2024.03.20',
+        time: '16:00',
+        location: '주차장 입구',
+        participants: ['보리', '쿠키', '나비'],
+        maxParticipants: 5,
+        currentParticipants: 3,
+        tags: ['초보견주', '1시간정도'],
+      },
+      {
+        id: 9,
+        title: '숲길 산책할 친구 찾아요',
+        date: '2024.03.20',
+        time: '10:00',
+        location: '금오산 둘레길 입구',
+        participants: ['달래'],
+        maxParticipants: 3,
+        currentParticipants: 1,
+        tags: ['중형견', '산책메이트'],
+      },
+    ],
+  },
+  {
+    id: 4,
+    position: { lat: 36.10632919842957, lng: 128.4041690826416 },
+    content: '이마트',
+    meetups: [
+      {
+        id: 10,
+        title: '운동장 한바퀴 돌아요',
+        date: '2024.03.20',
+        time: '17:30',
+        location: '운동장 정문',
+        participants: ['몽실이', '하루'],
+        maxParticipants: 4,
+        currentParticipants: 2,
+        tags: ['중형견', '1시간정도'],
+      },
+      {
+        id: 11,
+        title: '아침 조깅 메이트',
+        date: '2024.03.20',
+        time: '06:00',
+        location: '육상 트랙',
+        participants: ['바람이', '구름이', '하늘이'],
+        maxParticipants: 6,
+        currentParticipants: 3,
+        tags: ['활발한_강아지_환영', '전연령'],
+      },
+      {
+        id: 12,
+        title: '저녁 운동 같이해요',
+        date: '2024.03.20',
+        time: '19:00',
+        location: '체육관 앞',
+        participants: ['별이', '달이'],
+        maxParticipants: 4,
+        currentParticipants: 2,
+        tags: ['대형견', '장시간산책'],
+      },
+    ],
+  },
+  {
+    id: 5,
+    position: { lat: 35.890579857658125, lng: 128.4789276123047 },
+    content: '다사 체육 공원',
+    meetups: [
+      {
+        id: 13,
+        title: '공원 산책 친구 구해요',
+        date: '2024.03.20',
+        time: '15:00',
+        location: '농구장 옆 벤치',
+        participants: ['보리', '콩이'],
+        maxParticipants: 5,
+        currentParticipants: 2,
+        tags: ['소형견', '산책초보'],
+      },
+      {
+        id: 14,
+        title: '저녁 산책 모임',
+        date: '2024.03.20',
+        time: '18:30',
+        location: '공원 놀이터 근처',
+        participants: ['해피', '럭키', '초코'],
+        maxParticipants: 6,
+        currentParticipants: 3,
+        tags: ['전연령', '1시간정도'],
+      },
+      {
+        id: 15,
+        title: '아침 산책 친구 찾아요',
+        date: '2024.03.20',
+        time: '07:00',
+        location: '족구장 앞',
+        participants: ['달이'],
+        maxParticipants: 3,
+        currentParticipants: 1,
+        tags: ['중형견', '활발한_강아지_환영'],
+      },
+    ],
+  },
+];
+
 const MeetingMap = () => {
   const navigate = useNavigate();
   const mapRef = useRef<kakao.maps.Map>(null);
@@ -57,10 +262,13 @@ const MeetingMap = () => {
   const [showToast, setShowToast] = useState(false);
   const [visibleMarkers, setVisibleMarkers] = useState<Marker[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [selectedSpot, setSelectedSpot] = useState<SpotInfo | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const fetchSpotsInBounds = useCallback(async (bounds: { sw: LatLng; ne: LatLng }) => {
     try {
-      return MOCK_SPOTS.filter(
+      return MOCK_SPOT_INFO.filter(
         (spot) =>
           spot.position.lat >= bounds.sw.lat &&
           spot.position.lat <= bounds.ne.lat &&
@@ -143,6 +351,20 @@ const MeetingMap = () => {
     [currentPosition, loadSpotsForBounds],
   );
 
+  const handleSpotClick = (spot: SpotInfo) => {
+    setSelectedSpot(spot);
+    setIsModalVisible(true);
+    setTimeout(() => setIsModalOpen(true), 10);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setTimeout(() => {
+      setSelectedSpot(null);
+      setIsModalVisible(false);
+    }, 500);
+  };
+
   // 검색 결과 처리
   useEffect(() => {
     if (!mapRef.current || !searchResult) return;
@@ -192,16 +414,30 @@ const MeetingMap = () => {
             },
           ]}
         >
-          {visibleMarkers.map((marker) => (
-            <SpotMarker
-              key={`${marker.position.lat}-${marker.position.lng}`}
-              marker={marker}
-              onClick={() => navigate('/allMeetUpRoom/1')}
-              image={SPOT_IMAGES.spot}
-            />
-          ))}
+          {visibleMarkers.map((marker) => {
+            const spotInfo = MOCK_SPOT_INFO.find(
+              (spot) => spot.position.lat === marker.position.lat && spot.position.lng === marker.position.lng,
+            );
+            return (
+              <SpotMarker
+                key={`${marker.position.lat}-${marker.position.lng}`}
+                marker={marker}
+                onClick={() => spotInfo && handleSpotClick(spotInfo)}
+                image={SPOT_IMAGES.spot}
+              />
+            );
+          })}
         </MarkerClusterer>
       </Map>
+
+      {isModalVisible && (
+        <SpotModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          spot={selectedSpot}
+          onNavigateToAll={() => navigate('/allMeetUpRoom/1')}
+        />
+      )}
 
       <Toast message="이 지역에는 스팟이 없습니다." isVisible={showToast} onHide={() => setShowToast(false)} />
       {centerChanged && <ResearchButton onClick={handleResearch} />}
