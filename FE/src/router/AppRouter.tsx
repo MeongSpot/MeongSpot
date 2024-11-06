@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'mypage',
+        path: 'mypage/:userId',
         element: <MyPage />,
       },
       {

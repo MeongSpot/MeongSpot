@@ -47,7 +47,7 @@ const SearchBar = <T extends string | { [key: string]: any }>({
         value={searchTerm}
         onChange={handleSearch}
       />
-      <IoMdSearch className="text-2xl text-zinc-500 cursor-pointer" onClick={() => handleSearch} />
+      <IoMdSearch className="text-2xl text-zinc-500 cursor-pointer" />
     </div>
   );
 };

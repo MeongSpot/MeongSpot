@@ -12,7 +12,7 @@ const AlarmPage = () => {
     <div className="">
       <div className="p-4">
         <div className="grid grid-cols-3 items-center">
-          <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
+          <IoChevronBack onClick={() => navigate('/mypage/1')} size={24} />
           <h1 className="text-center text-lg font-bold">알림</h1>
         </div>
       </div>

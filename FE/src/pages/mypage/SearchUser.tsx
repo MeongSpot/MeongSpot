@@ -13,7 +13,7 @@ const SearchUser: React.FC = () => {
     <div className="space-y-4">
       <div>
         <div className="p-4 grid grid-cols-3 items-center">
-          <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
+          <IoChevronBack onClick={() => navigate('/mypage/1')} size={24} />
           <p className="text-center text-lg font-bold">친구 찾기</p>
         </div>
         <hr />
