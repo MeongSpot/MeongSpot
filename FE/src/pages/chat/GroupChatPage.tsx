@@ -14,7 +14,7 @@ const GroupChatPage = () => {
   const animateBack = location.state?.animateBack ?? true;
 
   const handleBack = () => {
-    navigate('/mymeetuproom', { state: { animateBack: true } }); // 뒤로 갈 때 애니메이션을 위해 상태 전달
+    navigate('/mymeetuproom', { state: { animateBack: true } });
   };
 
   const chats = [

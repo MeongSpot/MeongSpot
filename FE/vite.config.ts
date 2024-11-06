@@ -4,8 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import { loadEnv } from 'vite'
-import { createHtmlPlugin } from 'vite-plugin-html'
+import { loadEnv } from 'vite';
+import { createHtmlPlugin } from 'vite-plugin-html';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,37 +36,37 @@ export default defineConfig(({ command, mode }) => {
           start_url: '/',
           icons: [
             {
-              src: 'icons/favicon/android-icon-192x192.png',
+              src: '/icons/favicon/android-icon-192x192.png',
               sizes: '192x192',
               type: 'image/png',
             },
             {
-              src: 'icons/favicon/android-icon-512x512.png',
+              src: '/icons/favicon/android-icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
             },
             {
-              src: 'icons/favicon/apple-icon-180x180.png',
+              src: '/icons/favicon/apple-icon-180x180.png',
               sizes: '180x180',
               type: 'image/png',
             },
             {
-              src: 'icons/favicon/favicon-32x32.png',
+              src: '/icons/favicon/favicon-32x32.png',
               sizes: '32x32',
               type: 'image/png',
             },
             {
-              src: 'icons/favicon/favicon-96x96.png',
+              src: '/icons/favicon/favicon-96x96.png',
               sizes: '96x96',
               type: 'image/png',
             },
             {
-              src: 'icons/favicon/favicon-16x16.png',
+              src: '/icons/favicon/favicon-16x16.png',
               sizes: '16x16',
               type: 'image/png',
             },
             {
-              src: 'icons/favicon/ms-icon-144x144.png',
+              src: '/icons/favicon/ms-icon-144x144.png',
               sizes: '144x144',
               type: 'image/png',
             },
