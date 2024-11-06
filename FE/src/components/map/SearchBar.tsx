@@ -1,6 +1,6 @@
 import { MdSearch } from 'react-icons/md';
 import { IoLocationOutline } from 'react-icons/io5';
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { debounce } from 'lodash';
 
 interface SearchBarProps {
@@ -20,10 +20,12 @@ export const SearchBar = ({
 }: SearchBarProps) => {
   const textRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [shouldAnimate, setShouldAnimate] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isFocused, setIsFocused] = useState(false);
 
   const formatAddress = (address: string) => {
     if (!address) return '';
@@ -46,18 +48,6 @@ export const SearchBar = ({
     return () => window.removeEventListener('resize', checkTextWidth);
   }, [currentLocation]);
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      if (selectedIndex >= 0) {
-        handleSuggestionClick(suggestions[selectedIndex]);
-      } else {
-        onSearch();
-        setShowSuggestions(false);
-      }
-      setSelectedIndex(-1); // 검색 입력한 흔적 리셋
-    }
-  };
-
   const getSuggestions = debounce((keyword: string) => {
     if (!keyword.trim()) {
       setSuggestions([]);
@@ -71,65 +61,106 @@ export const SearchBar = ({
         const places = data.map((place) => place.place_name);
         setSuggestions(places.slice(0, 3));
         setShowSuggestions(true);
-        setSelectedIndex(-1); // Reset selected index when new suggestions appear
       }
     });
   }, 300);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearchChange(e.target.value);
-    getSuggestions(e.target.value);
-    setSelectedIndex(-1); // 들어가 있는 내용 리셋
-  };
+  const executeSearch = useCallback(
+    (keyword?: string) => {
+      if (keyword) {
+        onSearchChange(keyword);
+      }
+      onSearch();
+      setShowSuggestions(false);
+      setSuggestions([]);
+      setSelectedIndex(-1);
+      inputRef.current?.blur();
+    },
+    [onSearch, onSearchChange],
+  );
 
   const handleSuggestionClick = (suggestion: string) => {
     onSearchChange(suggestion);
-    setShowSuggestions(false);
-    setSelectedIndex(-1); // 선택한거 리셋
-    onSearch();
+    executeSearch(suggestion);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!showSuggestions || suggestions.length === 0) {
-      if (e.key === 'Enter') {
-        onSearch();
-        setShowSuggestions(false);
-        setSelectedIndex(-1);
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedIndex >= 0 && suggestions.length > 0) {
+        handleSuggestionClick(suggestions[selectedIndex]);
+      } else {
+        executeSearch();
       }
       return;
     }
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault();
-        setSelectedIndex((prev) => Math.min(prev + 1, suggestions.length - 1));
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setSelectedIndex((prev) => Math.max(prev - 1, -1));
-        break;
-      case 'Enter':
-        e.preventDefault();
-        if (selectedIndex >= 0) {
-          handleSuggestionClick(suggestions[selectedIndex]);
-        } else {
-          onSearch();
-        }
-        setShowSuggestions(false);
-        setSelectedIndex(-1);
-        break;
+
+    if (showSuggestions && suggestions.length > 0) {
+      switch (e.key) {
+        case 'ArrowDown':
+          e.preventDefault();
+          setSelectedIndex((prev) => Math.min(prev + 1, suggestions.length - 1));
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          setSelectedIndex((prev) => Math.max(prev - 1, -1));
+          break;
+        case 'Escape':
+          setShowSuggestions(false);
+          setSuggestions([]);
+          setSelectedIndex(-1);
+          break;
+      }
     }
   };
 
-  useEffect(() => {
-    setSelectedIndex(-1);
-    if (!searchKeyword.trim()) {
-      setSuggestions([]);
+  const handleSearchClick = () => {
+    executeSearch();
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    onSearchChange(value);
+
+    if (value.trim()) {
+      getSuggestions(value);
+    } else {
       setShowSuggestions(false);
+      setSuggestions([]);
     }
-  }, [searchKeyword]);
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    if (searchKeyword.trim()) {
+      getSuggestions(searchKeyword);
+    }
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setIsFocused(false);
+      setShowSuggestions(false);
+    }, 150);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node) &&
+        !(event.target as Element).closest('.suggestions-container')
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
-    <div className="flex items-center flex-1 px-3 py-3 min-w-0 z-100">
+    <div className="flex items-center flex-1 px-3 py-3 min-w-0">
       {isWalkingMode ? (
         <>
           <IoLocationOutline className="text-2xl font-medium text-deep-coral mr-2 flex-shrink-0" />
@@ -142,27 +173,23 @@ export const SearchBar = ({
         </>
       ) : (
         <>
-          <button
-            onClick={() => {
-              onSearch();
-              setShowSuggestions(false);
-            }}
-            className="ml-2 text-light-orange hover:text-orange-600"
-          >
+          <button onClick={handleSearchClick} className="ml-2 text-light-orange hover:text-orange-600">
             <MdSearch className="text-2xl" />
           </button>
           <div className="relative flex-1">
             <input
+              ref={inputRef}
               type="text"
               placeholder="장소를 입력해주세요"
-              className="w-full outline-none font-medium"
+              className={`w-full outline-none font-medium ${isFocused ? 'caret-light-orange' : ''}`}
               value={searchKeyword}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              onFocus={handleFocus}
+              onBlur={handleBlur}
             />
             {showSuggestions && suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg z-100">
+              <div className="suggestions-container absolute left-0 right-0 mt-1 bg-white rounded-lg shadow-lg z-50">
                 {suggestions.map((suggestion, index) => (
                   <div
                     key={index}
@@ -170,6 +197,7 @@ export const SearchBar = ({
                       index === selectedIndex ? 'bg-gray-100' : 'hover:bg-gray-50'
                     }`}
                     onClick={() => handleSuggestionClick(suggestion)}
+                    onMouseDown={(e) => e.preventDefault()}
                   >
                     {suggestion}
                   </div>
