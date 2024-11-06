@@ -3,7 +3,7 @@ import { Client } from '@stomp/stompjs';
 import useChatStore from '@/store/chatStore.ts';
 import { Chat } from '@/types/singleChat';
 
-const useChat = (roomId: number, isNewUser: boolean) => {
+const useChat = (roomId: number) => {
   const chats = useChatStore((state) => state.chats[roomId] || []);
   const setChats = useChatStore((state) => state.setChats);
   const addChat = useChatStore((state) => state.addChat);
@@ -14,10 +14,7 @@ const useChat = (roomId: number, isNewUser: boolean) => {
       try {
         const response = await fetch(`/api/chat/rooms/${roomId}`);
         const data = await response.json();
-
-        if (!isNewUser) {
           setChats(roomId, data.chats); // 특정 방 번호에 맞는 채팅 데이터 설정
-        }
       } catch (error) {
         console.error('Failed to fetch chats:', error);
       }
