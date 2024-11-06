@@ -32,6 +32,7 @@ const InfoStep = ({
     checkPhone,
     sendPhoneAuthCode,
     verifyPhoneCode,
+    authError,
   } = useAuth();
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState(false);
@@ -293,7 +294,7 @@ const InfoStep = ({
                 {isNicknameChecked ? '확인완료' : isValidating ? '확인중...' : '중복확인'}
               </ValidateButton>
             </div>
-            <div className="mt-2 space-y-1">
+            <div className="mt-1 space-y-1">
               <ValidationMessage message="닉네임은 2~8자 사이여야 합니다" isValid={nicknameLength} />
               <ValidationMessage message="영문, 한글, 숫자만 사용 가능합니다" isValid={nicknameContent} />
               {validationMessage && (
@@ -316,7 +317,7 @@ const InfoStep = ({
                   onChange={handleInputChange}
                   onFocus={handleInputFocus}
                   className="py-4"
-                  disabled={!isPhoneEditable}
+                  // disabled={!isPhoneEditable}
                 />
               </div>
               <ValidateButton
@@ -329,7 +330,7 @@ const InfoStep = ({
 
             {/* 전화번호 검증 메시지 */}
             {phoneValidationMessage && (
-              <div className="mt-2">
+              <div className="mt-1">
                 <ValidationMessage
                   message={phoneValidationMessage}
                   isValid={isPhoneAvailable} // 사용 가능한 번호일 때 true
@@ -350,6 +351,7 @@ const InfoStep = ({
                       className="py-4"
                     />
                     <div className="ml-2 text-sm text-blue-500 mt-1">남은 시간: {formatTime(timer)}</div>
+                    {authError && <ValidationMessage message="인증번호를 확인해주세요" isValid={false} />}
                   </div>
                   <ValidateButton onClick={handleConfirmVerification} disabled={!verificationCode}>
                     확인하기
@@ -359,7 +361,7 @@ const InfoStep = ({
             )}
 
             {isPhoneVerified && (
-              <div className="mt-2">
+              <div className="mt-1">
                 <ValidationMessage message="휴대폰 인증이 완료되었습니다." isValid={true} />
               </div>
             )}
