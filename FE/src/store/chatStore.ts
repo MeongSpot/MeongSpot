@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Chat } from '@/types/singleChat';
+import { Chat } from '@/types/singleChats';
 
 // Zustand의 상태와 액션 타입 정의
 interface ChatState {

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import useChatStore from '@/store/chatStore.ts';
 // import apiClient from '@/services/apiClient'
-import { Chat } from '@/types/singleChat';
+import { Chat } from '@/types/singleChats';
 
 const useChat = (roomId: string) => {
   const chats = useChatStore((state) => state.chats[roomId] || []);
