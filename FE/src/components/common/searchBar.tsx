@@ -1,21 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoMdSearch } from 'react-icons/io';
 
-interface SearchBarProps {
+interface SearchBarProps<T extends string | { [key: string]: any }> {
   placeholder?: string;
-  data: string[]; // 원본 데이터
-  setData: React.Dispatch<React.SetStateAction<string[]>>; // 필터링된 데이터 설정
+  data: T[]; // 원본 데이터
+  setData: React.Dispatch<React.SetStateAction<T[]>>; // 필터링된 데이터 설정
+  filterField?: T extends object ? keyof T : never; // 객체 배열일 때 필터링할 필드
 }
 
-const SearchBar = ({ placeholder, data, setData }: SearchBarProps) => {
+const SearchBar = <T extends string | { [key: string]: any }>({
+  placeholder,
+  data,
+  setData,
+  filterField,
+}: SearchBarProps<T>) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const term = event.target.value;
     setSearchTerm(term);
 
-    // 입력할 때마다 실시간으로 data를 필터링
-    const filteredResults = data.filter((item) => item.toLowerCase().includes(term.toLowerCase()));
+    let filteredResults: T[];
+    if (typeof data[0] === 'string') {
+      // `string[]`인 경우
+      filteredResults = (data as string[]).filter((item) => item.toLowerCase().includes(term.toLowerCase())) as T[];
+    } else if (filterField) {
+      // 객체 배열인 경우 `filterField`를 사용해 필터링
+      filteredResults = (data as T[]).filter((item) =>
+        String(item[filterField as keyof T])
+          .toLowerCase()
+          .includes(term.toLowerCase()),
+      );
+    } else {
+      filteredResults = data;
+    }
+
     setData(filteredResults);
   };
 
@@ -28,7 +47,7 @@ const SearchBar = ({ placeholder, data, setData }: SearchBarProps) => {
         value={searchTerm}
         onChange={handleSearch}
       />
-      <IoMdSearch className="text-2xl text-zinc-500" />
+      <IoMdSearch className="text-2xl text-zinc-500 cursor-pointer" />
     </div>
   );
 };

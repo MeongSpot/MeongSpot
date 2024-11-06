@@ -93,14 +93,21 @@ const dogInfoList: DogInfo[] = [
 
           <hr />
 
-          <div className="flex justify-between items-center">
+          <div
+            onClick={() => {navigate('/friendslist');}}
+            className="flex justify-between items-center">
             <div>
               <p className="text-sm text-zinc-500">나의 친구</p>
               <p className="font-semibold">5</p>
             </div>
             <div>
-              <button className="p-2 px-3 bg-deep-coral rounded-3xl">
-                <p className="text-white text-sm">친구추천</p>
+              <button
+                onClick={(e) => {
+                  navigate('/searchuser');
+                  e.stopPropagation();
+                }}
+                className="p-2 px-3 bg-deep-coral rounded-3xl">
+                <p className="text-white text-sm">친구찾기</p>
               </button>
             </div>
           </div>
