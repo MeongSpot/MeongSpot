@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChatRoom, ChatRoomResponse } from '@/types/chatRoom';
+import { ChatRoom, ChatRoomResponse } from '@/types/singleChat';
 
 const useFetchSingleChatRooms = () => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
@@ -12,7 +12,6 @@ const useFetchSingleChatRooms = () => {
       setError(null);
 
       try {
-        // 간단한 GET 요청으로 API 호출
         const response = await fetch('/chat/rooms/friend', {
           method: 'GET',
           headers: {

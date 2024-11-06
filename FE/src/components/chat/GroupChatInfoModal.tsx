@@ -105,7 +105,7 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({ isOpen, onClose
             <FiSettings size={20} />
             <span>모임 설정</span>
           </button>
-          <div className="w-px h-6 bg-gray-300"></div> {/* Divider */}
+          <div className="w-px h-6 bg-gray-300"></div>
           <button className="flex-1 py-4 flex justify-center items-center space-x-2 text-gray-600 hover:text-gray-800">
             <FiLogOut size={20} />
             <span>나가기</span>

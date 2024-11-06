@@ -122,8 +122,8 @@ export default SingleChatList;
 //     setSelectedChat(null);
 //   };
 
-//   const goToChatPage = (chatId: number) => {
-//     navigate(`/chat/single/${chatId}`);
+//   const goToChatPage = (roomId: number) => {
+//     navigate(`/chat/single/${roomId}`);
 //   };
 
 //   return (
