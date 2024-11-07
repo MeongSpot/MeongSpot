@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatMessageDto {
+    private Long senderId;
     private String message;
     private String nickname;
     private String profileImage;

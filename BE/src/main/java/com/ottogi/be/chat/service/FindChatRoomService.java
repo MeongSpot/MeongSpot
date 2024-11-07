@@ -5,6 +5,7 @@ import com.ottogi.be.chat.domain.ChatMessage;
 import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
+import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
 import com.ottogi.be.chat.dto.response.FriendChatRoomResponse;
 import com.ottogi.be.chat.exception.ChatRoomNotFoundException;
 import com.ottogi.be.chat.repository.ChatMemberRepository;
@@ -67,7 +68,7 @@ public class FindChatRoomService {
     }
 
     @Transactional(readOnly = true)
-    public Slice<ChatMessageDto> findChatRoom(FindChatRoomDto dto, Pageable pageable) {
+    public FindChatRoomResponse findChatRoom(FindChatRoomDto dto, Pageable pageable) {
         ChatRoom chatRoom = chatRoomRepository.findById(dto.getChatRoomId())
                 .orElseThrow(ChatRoomNotFoundException::new);
 
@@ -97,6 +98,7 @@ public class FindChatRoomService {
                     Member sender = membersMap.get(chatMessage.getSenderId());
 
                     return ChatMessageDto.builder()
+                            .senderId(chatMessage.getSenderId())
                             .message(chatMessage.getMessage())
                             .nickname(sender.getNickname())
                             .profileImage(sender.getProfileImage())
@@ -107,7 +109,7 @@ public class FindChatRoomService {
                 .toList();
 
         boolean hasNext = chatMessageDtoList.size() == pageable.getPageSize();
-        return new SliceImpl<>(chatMessageDtoList, pageable, hasNext);
 
+        return new FindChatRoomResponse(member.getId(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
     }
 }

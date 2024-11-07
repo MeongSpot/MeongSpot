@@ -5,6 +5,7 @@ import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
 import com.ottogi.be.chat.dto.LeaveFriendChatRoomDto;
 import com.ottogi.be.chat.dto.request.CreateFriendChatRoomRequest;
+import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
 import com.ottogi.be.chat.dto.response.FriendChatRoomResponse;
 import com.ottogi.be.chat.service.FindChatRoomService;
 import com.ottogi.be.chat.service.CreateChatRoomService;
@@ -60,7 +61,7 @@ public class ChatController {
                 .loginId(loginMemberInfo.getLoginId())
                 .chatRoomId(chatRoomId)
                 .build();
-        Slice<ChatMessageDto> result = findChatRoomService.findChatRoom(dto, pageable);
+        FindChatRoomResponse result = findChatRoomService.findChatRoom(dto, pageable);
         return ResponseEntity.ok(new ApiResponse<>("CH103", "채팅방 상세 조회 성공", result));
     }
 }
