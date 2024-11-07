@@ -18,17 +18,24 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+
+    if (name === 'name') {
+      const koreanRegex = /^[가-힣]*$/;
+    }
+
     setFormData({
       [name]: name === 'age' ? Number(value) : value,
     });
   };
 
   const handleGenderChange = (gender: '남' | '여') => {
-    setFormData({ gender });
+    setFormData({ gender: gender === '남' ? 'MALE' : 'FEMALE' });
   };
 
   const handleSizeChange = (size: '대형견' | '중형견' | '소형견') => {
-    setFormData({ size });
+    setFormData({
+      size: size === '대형견' ? 'LARGE' : size === '중형견' ? 'MEDIUM' : 'SMALL',
+    });
   };
 
   const handleNeuterChange = (isNeuter: boolean) => {
@@ -72,13 +79,13 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
 
         {/* 크기 선택 버튼 */}
         <div className="flex space-x-3">
-          <GenderButton selected={formData.size === '대형견'} onClick={() => handleSizeChange('대형견')}>
+          <GenderButton selected={formData.size === 'LARGE'} onClick={() => handleSizeChange('대형견')}>
             대형견
           </GenderButton>
-          <GenderButton selected={formData.size === '중형견'} onClick={() => handleSizeChange('중형견')}>
+          <GenderButton selected={formData.size === 'MEDIUM'} onClick={() => handleSizeChange('중형견')}>
             중형견
           </GenderButton>
-          <GenderButton selected={formData.size === '소형견'} onClick={() => handleSizeChange('소형견')}>
+          <GenderButton selected={formData.size === 'SMALL'} onClick={() => handleSizeChange('소형견')}>
             소형견
           </GenderButton>
         </div>
@@ -99,10 +106,10 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
         <div className="space-y-2">
           <p className="text-sm font-medium">성별</p>
           <div className="flex space-x-3">
-            <GenderButton selected={formData.gender === '남'} onClick={() => handleGenderChange('남')}>
+            <GenderButton selected={formData.gender === 'MALE'} onClick={() => handleGenderChange('남')}>
               남
             </GenderButton>
-            <GenderButton selected={formData.gender === '여'} onClick={() => handleGenderChange('여')}>
+            <GenderButton selected={formData.gender === 'FEMALE'} onClick={() => handleGenderChange('여')}>
               여
             </GenderButton>
           </div>

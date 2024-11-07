@@ -1,5 +1,6 @@
 export interface DogInfo {
   profile_image: string;
+  profile_file?: File | null;
   name: string;
   breedId: string;
   age: number | null;
@@ -14,3 +15,15 @@ export interface DogInfo {
   introduction: string;
   personality: number[];
 };
+
+export interface RegisterDogResponse {
+  code: string;
+  message: string;
+  data: DogInfo[];
+}
+
+export interface DogBreedsResponse {
+  code: string;
+  message: string;
+  data: string[];
+}
