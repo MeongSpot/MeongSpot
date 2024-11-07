@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { Chat } from '@/types/singleChat';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 interface ChatState {
   chats: { [roomId: number]: Chat[] }; // 각 채팅방의 메시지 리스트
@@ -8,30 +9,32 @@ interface ChatState {
   removeChatRoom: (roomId: number) => void;
 }
 
-const useChatStore = create<ChatState>((set) => ({
-  chats: {},
+const useChatStore = create<ChatState>()(
+  subscribeWithSelector((set) => ({
+    chats: {},
 
-  setChats: (roomId, newChats) =>
-    set((state) => ({
-      chats: {
-        ...state.chats,
-        [roomId]: newChats, // 특정 채팅방의 메시지 리스트를 설정
-      },
-    })),
+    setChats: (roomId, newChats) =>
+      set((state) => ({
+        chats: {
+          ...state.chats,
+          [roomId]: newChats,
+        },
+      })),
 
-  addChat: (roomId, chat) =>
-    set((state) => ({
-      chats: {
-        ...state.chats,
-        [roomId]: [...(state.chats[roomId] || []), chat], // 특정 채팅방에 새로운 메시지 추가
-      },
-    })),
+    addChat: (roomId, chat) =>
+      set((state) => ({
+        chats: {
+          ...state.chats,
+          [roomId]: [...(state.chats[roomId] || []), chat],
+        },
+      })),
 
-  removeChatRoom: (roomId) =>
-    set((state) => {
-      const { [roomId]: _, ...remainingChats } = state.chats; // 삭제할 채팅방 제외
-      return { chats: remainingChats }; // 남은 채팅방 상태로 업데이트
-    }),
-}));
+    removeChatRoom: (roomId) =>
+      set((state) => {
+        const { [roomId]: _, ...remainingChats } = state.chats;
+        return { chats: remainingChats };
+      }),
+  }))
+);
 
 export default useChatStore;
