@@ -43,21 +43,18 @@ const axiosInstance: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-// 토큰 재발급 함수도 axiosInstance 사용하도록 수정
+// 토큰 재발급 함수
 const refreshAccessToken = async (): Promise<string> => {
   try {
-    // axios.create로 새로운 인스턴스 생성
     const refreshAxios = axios.create({
-      baseURL: import.meta.env.DEV ? '/api' : '/',
+      baseURL: import.meta.env.DEV ? '/api' : 'https://meongspot.kro.kr',
       withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    const refreshResponse = await refreshAxios.post<ApiResponse>(
-      '/api/auth/refresh',
-    );
+    const refreshResponse = await refreshAxios.post<ApiResponse>('/api/auth/refresh');
 
     if (refreshResponse.data.code === 'AU103') {
       const newToken = refreshResponse.headers['authorization'];
@@ -80,7 +77,7 @@ const refreshAccessToken = async (): Promise<string> => {
 // 요청 인터셉터
 axiosInstance.interceptors.request.use(
   (config: CustomAxiosRequestConfig): CustomAxiosRequestConfig => {
-    const token = useAuthStore.getState().getAccessToken(); // 변경
+    const token = useAuthStore.getState().getAccessToken();
     if (token && config.url !== '/api/auth/refresh') {
       config.headers['Authorization'] = token;
     }
@@ -91,10 +88,10 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-/// 응답 인터셉터 수정
+// 응답 인터셉터
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 로그인 성공 처리는 그대로 유지
+    // 로그인 성공 시 토큰 저장
     if (response.config.url?.endsWith('/api/auth/login') && response.data.code === 'AU100') {
       const authToken = response.headers['authorization'];
       if (authToken && response.config.data) {
@@ -104,7 +101,7 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // 여기서 액세스 토큰 만료 체크 추가
+    // AU003: 액세스 토큰 만료 - 재발급 필요
     if (response.data.code === 'AU003') {
       const originalRequest = response.config as CustomAxiosRequestConfig;
       if (!originalRequest._retry) {
@@ -125,8 +122,10 @@ axiosInstance.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // 액세스 토큰 만료도 여기서 한번 더 체크
-    if (error.response?.data.code === 'AU003' && !originalRequest._retry) {
+    const errorCode = error.response?.data.code;
+
+    // AU003: 액세스 토큰 만료 시 재발급 요청
+    if (errorCode === 'AU003' && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const newToken = await refreshAccessToken();
@@ -137,8 +136,8 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // 액세스 토큰 인증 실패나 리프레시 토큰 만료
-    if (error.response?.data.code === 'AU004' || error.response?.data.code === 'AU005') {
+    // AU004 또는 AU005: 인증 실패나 리프레시 토큰 만료
+    if (errorCode === 'AU004' || errorCode === 'AU005') {
       useAuthStore.setState({
         token: null,
         loginId: null,

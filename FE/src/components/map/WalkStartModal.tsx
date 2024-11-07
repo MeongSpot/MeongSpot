@@ -21,10 +21,16 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
     { id: 7, name: '다이아', age: 1 },
   ];
 
-  const selectedDogNames = dogList
-    .filter((dog) => selectedDogs.includes(dog.id))
-    .map((dog) => dog.name)
-    .join(', ');
+  const getSelectedDogsText = () => {
+    const selectedDogsList = dogList.filter((dog) => selectedDogs.includes(dog.id));
+    if (selectedDogsList.length === 0) return '';
+    if (selectedDogsList.length <= 2) {
+      return `${selectedDogsList.map((dog) => dog.name).join(', ')}(이)`;
+    }
+    return `${selectedDogsList[0].name} 외 ${selectedDogsList.length - 1}마리`;
+  };
+
+  const selectedDogsText = getSelectedDogsText();
 
   return (
     <div
@@ -40,10 +46,10 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
 
         <h2 className="text-lg font-bold mb-2">
-          {selectedDogNames ? (
-            <>
-              <span className="text-deep-coral font-bold">{selectedDogNames}</span>(이)와 같이 산책할까요?
-            </>
+          {selectedDogsText ? (
+            <p>
+              <span className="text-deep-coral font-bold">{selectedDogsText}</span>와 산책할까요?
+            </p>
           ) : (
             '함께 산책할 반려견을 선택해주세요'
           )}
@@ -51,16 +57,34 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
 
         <hr className="border-t-2 border-gray-100 mb-4" />
 
-        {/* 여기 부분이 변경됨 */}
         <div className="relative h-[200px]">
           <div className="relative z-20 top-2">
-            {' '}
-            {/* z-index 추가 */}
             <DogSelectionAccordion dogs={dogList} selectedDogs={selectedDogs} onDogSelect={onDogSelect} />
           </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-white z-10">
-            {' '}
-            {/* z-index 낮춤 */}
+
+          {/* 선택된 강아지 목록을 가로 스크롤로 표시 */}
+          <div className="my-6 px-4 overflow-x-auto whitespace-nowrap flex gap-2">
+            {dogList
+              .filter((dog) => selectedDogs.includes(dog.id))
+              .map((dog) => (
+                <span
+                  key={dog.id}
+                  className="bg-deep-coral text-white px-4 py-1 rounded-full text-sm flex items-center gap-3"
+                >
+                  {dog.name}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDogSelect(dog.id);
+                    }}
+                    className="text-white hover:text-gray-500"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 bg-white z-10 top-32">
             <StartWalkButton isDisabled={selectedDogs.length === 0} onClick={onStartWalk} />
           </div>
         </div>
