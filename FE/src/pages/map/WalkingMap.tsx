@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { useOutletContext } from 'react-router-dom';
-import LoadingOverlay from '@/components/common/LoadingOverlay'; // LoadingOverlay 컴포넌트 불러오기
+import LoadingOverlay from '@/components/common/LoadingOverlay';
+import WalkStartModal from '@/components/map/WalkStartModal';
 import type { LatLng } from '../../types/map';
 
 type ContextType = {
@@ -22,6 +23,8 @@ const WalkingMap = () => {
   const { currentPosition, getCurrentLocation } = useOutletContext<ContextType>();
   const [center, setCenter] = useState<LatLng>(currentPosition);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(true);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -46,13 +49,29 @@ const WalkingMap = () => {
     setCenter(currentPosition);
   }, [currentPosition]);
 
+  const handleDogSelect = (dogId: number) => {
+    setSelectedDogs((prev) => (prev.includes(dogId) ? prev.filter((id) => id !== dogId) : [...prev, dogId]));
+  };
+
+  const handleStartWalk = () => {
+    setIsModalOpen(false);
+    // 산책 시작 로직 추가
+  };
+
   return (
     <div className="relative w-full h-full">
       <Map center={center} style={{ width: '100%', height: '100%' }} level={3} zoomable={true}>
         <MapMarker position={center} image={PRESENT_SPOT_IMAGE} />
       </Map>
 
-      {/* 로딩 중일 때만 LoadingOverlay 표시 */}
+      <WalkStartModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        selectedDogs={selectedDogs}
+        onDogSelect={handleDogSelect}
+        onStartWalk={handleStartWalk}
+      />
+
       {isLoading && <LoadingOverlay message="위치를 불러오는 중..." />}
     </div>
   );

@@ -52,15 +52,13 @@ const refreshAccessToken = async (): Promise<string> => {
       {},
       {
         withCredentials: true,
-      }
+      },
     );
     if (refreshResponse.data.code === 'AU103') {
       const newToken = refreshResponse.headers['authorization'];
       if (newToken) {
-        const formattedToken = newToken.startsWith('Bearer ')
-          ? newToken
-          : `Bearer ${newToken}`;
-        useAuthStore.getState().login(useAuthStore.getState().loginId!, formattedToken);
+        const formattedToken = newToken.startsWith('Bearer ') ? newToken : `Bearer ${newToken}`;
+        useAuthStore.getState().setAccessToken(formattedToken); // 변경
         return formattedToken;
       }
     }
@@ -77,8 +75,8 @@ const refreshAccessToken = async (): Promise<string> => {
 // 요청 인터셉터
 axiosInstance.interceptors.request.use(
   (config: CustomAxiosRequestConfig): CustomAxiosRequestConfig => {
-    const token = useAuthStore.getState().token;
-    if (token) {
+    const token = useAuthStore.getState().getAccessToken(); // 변경
+    if (token && config.url !== '/api/auth/refresh') {
       config.headers['Authorization'] = token;
     }
     return config;
@@ -88,29 +86,41 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-// 응답 인터셉터
+/// 응답 인터셉터 수정
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
+    // 로그인 성공 처리는 그대로 유지
     if (response.config.url?.endsWith('/api/auth/login') && response.data.code === 'AU100') {
       const authToken = response.headers['authorization'];
       if (authToken && response.config.data) {
         const { loginId } = JSON.parse(response.config.data);
-        const formattedToken = authToken.startsWith('Bearer ')
-          ? authToken
-          : `Bearer ${authToken}`;
+        const formattedToken = authToken.startsWith('Bearer ') ? authToken : `Bearer ${authToken}`;
         useAuthStore.getState().login(loginId, formattedToken);
       }
     }
+
+    // 여기서 액세스 토큰 만료 체크 추가
+    if (response.data.code === 'AU003') {
+      const originalRequest = response.config as CustomAxiosRequestConfig;
+      if (!originalRequest._retry) {
+        originalRequest._retry = true;
+        return refreshAccessToken().then((newToken) => {
+          originalRequest.headers['Authorization'] = newToken;
+          return axiosInstance(originalRequest);
+        });
+      }
+    }
+
     return response;
   },
   async (error: AxiosError<ApiResponse>) => {
     const originalRequest = error.config as CustomAxiosRequestConfig;
-    
+
     if (!originalRequest) {
       return Promise.reject(error);
     }
 
-    // 액세스 토큰 만료
+    // 액세스 토큰 만료도 여기서 한번 더 체크
     if (error.response?.data.code === 'AU003' && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
@@ -122,9 +132,14 @@ axiosInstance.interceptors.response.use(
       }
     }
 
-    // 액세스 토큰 인증 실패
-    if (error.response?.data.code === 'AU004') {
-      useAuthStore.getState().logout();
+    // 액세스 토큰 인증 실패나 리프레시 토큰 만료
+    if (error.response?.data.code === 'AU004' || error.response?.data.code === 'AU005') {
+      useAuthStore.setState({
+        token: null,
+        loginId: null,
+        isAuthenticated: false,
+      });
+      localStorage.removeItem('auth-store');
       window.location.href = '/login';
       return Promise.reject(error);
     }
