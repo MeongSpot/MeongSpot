@@ -33,32 +33,37 @@ const getBaseUrl = () => {
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: getBaseUrl(),
   headers: {
-    'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   },
   validateStatus: function (status) {
-    return status >= 200 && status < 500;
+    return status >= 200 && status < 300;
   },
   withCredentials: true,
 });
 
-// 토큰 재발급 함수
+// 토큰 재발급 함수도 axiosInstance 사용하도록 수정
 const refreshAccessToken = async (): Promise<string> => {
   try {
-    const refreshResponse = await axios.post<ApiResponse>(
-      `${getBaseUrl()}/api/auth/refresh`,
-      {},
-      {
-        withCredentials: true,
+    // axios.create로 새로운 인스턴스 생성
+    const refreshAxios = axios.create({
+      baseURL: import.meta.env.DEV ? '/api' : '/',
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json',
       },
+    });
+
+    const refreshResponse = await refreshAxios.post<ApiResponse>(
+      '/api/auth/refresh',
     );
+
     if (refreshResponse.data.code === 'AU103') {
       const newToken = refreshResponse.headers['authorization'];
       if (newToken) {
         const formattedToken = newToken.startsWith('Bearer ') ? newToken : `Bearer ${newToken}`;
-        useAuthStore.getState().setAccessToken(formattedToken); // 변경
+        useAuthStore.getState().setAccessToken(formattedToken);
         return formattedToken;
       }
     }

@@ -17,6 +17,8 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
     { id: 3, name: '몽이', age: 2 },
     { id: 4, name: '초코', age: 4 },
     { id: 5, name: '루비', age: 1 },
+    { id: 6, name: '우유', age: 4 },
+    { id: 7, name: '다이아', age: 1 },
   ];
 
   const selectedDogNames = dogList
@@ -31,7 +33,7 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
       }`}
     >
       <div
-        className={`bg-white rounded-t-lg w-full px-6 pt-6 max-w-md transform transition-all duration-300 relative ${
+        className={`bg-white rounded-t-lg w-full px-6 pt-6 max-w-md transform transition-all duration-300 ${
           isOpen ? 'translate-y-0' : 'translate-y-full'
         }`}
       >
@@ -49,12 +51,16 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
 
         <hr className="border-t-2 border-gray-100 mb-4" />
 
-        {/* 아코디언이 버튼 위로 덮이도록 설정 */}
-        <div className="relative h-40 w-full mb-4">
-          <div className="absolute bottom-24 left-0 w-full">
+        {/* 여기 부분이 변경됨 */}
+        <div className="relative h-[200px]">
+          <div className="relative z-20 top-2">
+            {' '}
+            {/* z-index 추가 */}
             <DogSelectionAccordion dogs={dogList} selectedDogs={selectedDogs} onDogSelect={onDogSelect} />
           </div>
-          <div className="absolute bottom-0 left-0 w-full">
+          <div className="absolute bottom-0 left-0 right-0 bg-white z-10">
+            {' '}
+            {/* z-index 낮춤 */}
             <StartWalkButton isDisabled={selectedDogs.length === 0} onClick={onStartWalk} />
           </div>
         </div>
