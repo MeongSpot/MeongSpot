@@ -27,7 +27,7 @@ const Settings: React.FC = () => {
       {isLoading && <LoadingOverlay message="로그아웃 중..." />}
       <div className="p-4">
         <div className="grid grid-cols-3 items-center">
-          <IoChevronBack onClick={() => navigate('/mypage/1')} size={24} />
+          <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
           <p className="text-center text-lg font-bold">설정</p>
           <div></div>
         </div>

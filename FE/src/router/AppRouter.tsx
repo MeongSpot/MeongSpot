@@ -7,6 +7,7 @@ import useAuthStore from '@/store/useAuthStore';
 // Lazy-loaded components
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
+const UserProfile = lazy(() => import('@/pages/profile/UserProfile'));
 const Settings = lazy(() => import('@/pages/mypage/Settings'));
 const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
 const SelectBreed = lazy(() => import('@/pages/mypage/SelectBreed'));
@@ -78,10 +79,18 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: 'mypage/:userId',
+        path: 'mypage',
         element: (
           <AuthGuard>
             <MyPage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'profile/:id',
+        element: (
+          <AuthGuard>
+            <UserProfile />
           </AuthGuard>
         ),
       },
