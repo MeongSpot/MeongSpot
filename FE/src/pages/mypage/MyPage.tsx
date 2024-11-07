@@ -13,9 +13,11 @@ import 'swiper/css/pagination';
 import '../../css/swiper.css';
 import { Pagination } from 'swiper/modules';
 import { DogInfo } from '@/types/dogInfo';
-import { is } from 'date-fns/locale';
+import { useFriend } from '@/hooks/friend/useFriend';
+import LoadingOverlay from '@/components/common/LoadingOverlay';
 
 const MyPage: React.FC = () => {
+  const { getFriends, friendsCount, isLoading } = useFriend();
   const navigate = useNavigate();
   const { userId } = useParams<{ userId: string }>();
   const userInfo = ['이름', '성별', '나이'];
@@ -64,8 +66,17 @@ const MyPage: React.FC = () => {
     return () => setShowNav(true); // 컴포넌트 언마운트 시 Nav를 다시 보이게 함
   }, [userId, myId, setShowNav]);
 
+  useEffect(() => {
+    // 친구 수 조회
+    if (isOwnProfile) {
+      getFriends();
+    }
+  }, [isOwnProfile]);
+
   return (
     <div className="pb-16">
+      {isLoading && <LoadingOverlay message="로딩 중..." />}
+
       {isOwnProfile ? (
         <div className="w-full p-4 grid grid-cols-3 items-center">
           <div></div>
@@ -133,7 +144,7 @@ const MyPage: React.FC = () => {
               <div onClick={() => navigate('/friendslist')} className="flex justify-between items-center">
                 <div>
                   <p className="text-sm text-zinc-500">나의 친구</p>
-                  <p className="font-semibold">5</p>
+                  <p className="font-semibold">{friendsCount}</p>
                 </div>
                 <button
                   onClick={(e) => {
