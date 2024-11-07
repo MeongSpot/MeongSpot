@@ -89,7 +89,7 @@ const RoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
         ))}
       </div>
       {isModalVisible && (
-        <ChatOptionModal isOpen={isModalOpen} onClose={closeModal} chatName={selectedChatName} />
+        <ChatOptionModal isOpen={isModalOpen} onClose={closeModal} chatName={selectedChatName} chatRoomId={event.id} />
       )}
     </div>
   );
