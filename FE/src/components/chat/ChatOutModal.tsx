@@ -39,7 +39,7 @@ const ChatOutModal: React.FC<ChatOutModalProps> = ({ isOpen, onClose, onConfirm,
           <div className="w-px bg-gray-300"></div>
           <button
             onClick={() => {
-              // onConfirm(); // onConfirm할때 chatName 사라지는 중
+              onConfirm(); // onConfirm할때 chatName 사라지는 중
               onClose();
             }}
             className="w-1/2 py-3 text-red-500 hover:bg-gray-100 focus:outline-none"

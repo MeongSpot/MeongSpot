@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axiosInstance from '@/services/axiosInstance';
 import useChatStore from '@/store/chatStore';
 
 const useDeleteChatRoom = () => {
@@ -11,13 +12,8 @@ const useDeleteChatRoom = () => {
     setError(null);
 
     try {
-      const response = await fetch(`/api/chat/rooms/friend/${chatRoomId}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('채팅방 삭제에 실패했습니다.');
-      }
+      const response = await axiosInstance.delete(`/api/chat/rooms/friend/${chatRoomId}`);
+      const data = response.data
 
       console.log('채팅방 삭제 성공:', chatRoomId);
 

@@ -1,25 +1,22 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import Chat from '@/components/chat/Chat';
+import useChatDetail from '@/hooks/chat/useChatDetail';
 
 const SingleChatPage = () => {
-  const [message, setMessage] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const roomId = location.state?.roomId;
-  const animateBack = location.state?.animateBack ?? true;
+  const [page, setPage] = useState(0);
+  const [message, setMessage] = useState('');
 
-  if (!roomId) {
-    navigate('/chat');
-    return null;
-  }
-  
+  const { messages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
+
   const handleSendMessage = () => {
     if (message.trim()) {
-      console.log(`Send message: ${message}`);
+      console.log('Send message:', message);
       setMessage('');
     }
   };
@@ -28,16 +25,11 @@ const SingleChatPage = () => {
     navigate('/chat', { state: { animateBack: true } });
   };
 
-  const userClick = (userId: number) => {
-    // 나중에 상대방 유저페이지로 경로 변경
-    navigate(`/mypage/`);
-  };
-
   return (
     <motion.div
-      initial={{ x: animateBack ? 300 : 0, opacity: 0 }}
+      initial={{ x: 300, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      exit={{ x: animateBack ? -300 : 0, opacity: 0 }}
+      exit={{ x: -300, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="flex flex-col h-screen"
     >
@@ -45,21 +37,59 @@ const SingleChatPage = () => {
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
-        <h1 className="text-lg font-bold">채팅방</h1>
+        <h1 className="text-lg font-bold flex-1">채팅방</h1>
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto bg-white">
-        <Chat roomId={roomId} userClick={userClick} />
+        {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {messages.map((msg, index) => {
+          const isSender = msg.senderId === myId;
+
+          return (
+            <div
+              key={`${msg.sentAt}-${index}`}
+              className={`flex mb-4 ${isSender ? 'justify-end' : 'justify-start'}`}
+            >
+              {!isSender && (
+                <div
+                  className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-2 cursor-pointer"
+                  onClick={() => navigate(`/mypage/${msg.senderId}`)}
+                >
+                </div>
+              )}
+              <div className="flex flex-col max-w-xs">
+                {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
+                <div className={`flex items-end ${isSender ? 'flex-row-reverse' : ''}`}>
+                  <div
+                    className={`${
+                      isSender ? 'bg-cream-bg' : 'bg-gray-200'
+                    } text-gray-800 rounded-lg px-4 py-2`}
+                  >
+                    {msg.message}
+                  </div>
+                  <span
+                    className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
+                    style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
+                  >
+                    {new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      <div className="flex items-center p-3 border-t">
+      <div className="flex items-center p-3 border-t bg-white">
         <div className="relative flex-1">
           <input
             type="text"
+            placeholder="메시지 입력"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="메세지 입력"
-            className="w-full flex-1 bg-gray-100 rounded-full px-4 py-2 pr-10 outline-none"
+            className="w-full bg-gray-100 rounded-full px-4 py-2 outline-none"
           />
           {message && (
             <button
