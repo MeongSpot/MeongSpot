@@ -5,8 +5,8 @@ import type { LatLng, Marker } from '../../types/map';
 import Toast from '@/components/common/Message/Toast';
 import { ResearchButton } from '@/components/map/ResearchButton';
 import { SpotMarker } from '@/components/map/SpotMarker';
-import presentSpotUrl from '@/assets/PresentSpot.svg?url';
-import spotUrl from '@/assets/Spot.svg?url';
+import presentSpotUrl from '/icons/PresentSpot.svg?url';
+import spotUrl from '/icons/Spot.svg?url';
 import type { SpotInfo } from '@/types/meetup';
 import SpotModal from '@/components/map/SpotModal';
 

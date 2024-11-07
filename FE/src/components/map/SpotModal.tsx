@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import DogIcon from '@/assets/map/DogIcon.svg';
+import DogIcon from '/icons/DogIcon.svg';
 import { FaUserFriends, FaAngleRight } from 'react-icons/fa';
 import { Pagination } from 'swiper/modules';
 import type { SpotModalProps } from '@/types/meetup';
