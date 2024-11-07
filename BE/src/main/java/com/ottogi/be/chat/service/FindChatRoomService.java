@@ -16,7 +16,6 @@ import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,7 +48,18 @@ public class FindChatRoomService {
             ChatMember chatMember = myFriendInfos.get(i);
             Long chatRoomId = chatMember.getChatRoom().getId();
             ChatMessage lastMessage = chatMessageRepository.findFirstByChatRoomIdOrderBySentAtDesc(chatRoomId);
+
             LocalDateTime leftAt = myFriendChatList.get(i).getLeftAt();
+            LocalDateTime readAt = myFriendChatList.get(i).getReadAt();
+
+            long unreadMessageCnt = 0;
+
+            if (readAt != null) {
+                unreadMessageCnt = chatMessageRepository.countByChatRoomIdAndSentAtAfter(chatRoomId, readAt);
+            } else {
+                unreadMessageCnt = chatMessageRepository.countByChatRoomId(chatRoomId);
+            }
+
 
             if (lastMessage != null && (leftAt == null || lastMessage.getSentAt().isAfter(leftAt))) {
                 FriendChatRoomResponse response = FriendChatRoomResponse.builder()
@@ -58,6 +68,7 @@ public class FindChatRoomService {
                         .friendProfileImage(chatMember.getMember().getProfileImage())
                         .lastMessage(lastMessage.getMessage())
                         .lastMessageSentAt(lastMessage.getSentAt())
+                        .unreadMessageCnt(unreadMessageCnt)
                         .build();
                 result.add(response);
             }
@@ -77,6 +88,8 @@ public class FindChatRoomService {
 
         ChatMember chatMember = chatMemberRepository.findByChatRoomIdAndMyId(chatRoom.getId(), member.getId())
                 .orElseThrow(ChatRoomNotFoundException::new);
+
+        chatMember.updateReadAt();
 
         LocalDateTime leftAt = chatMember.getLeftAt();
 

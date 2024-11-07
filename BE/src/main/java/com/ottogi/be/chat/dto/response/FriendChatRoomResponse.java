@@ -17,4 +17,5 @@ public class FriendChatRoomResponse {
     private String friendProfileImage;
     private String lastMessage;
     private LocalDateTime lastMessageSentAt;
+    private Long unreadMessageCnt;
 }

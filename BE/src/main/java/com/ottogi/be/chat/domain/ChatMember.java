@@ -27,6 +27,8 @@ public class ChatMember {
 
     private LocalDateTime leftAt;
 
+    private LocalDateTime readAt;
+
     @Builder
     public ChatMember(ChatRoom chatRoom, Member member) {
         this.chatRoom = chatRoom;
@@ -35,5 +37,9 @@ public class ChatMember {
 
     public void updateLeftAt() {
         this.leftAt = LocalDateTime.now();
+    }
+
+    public void updateReadAt() {
+        this.readAt = LocalDateTime.now();
     }
 }
