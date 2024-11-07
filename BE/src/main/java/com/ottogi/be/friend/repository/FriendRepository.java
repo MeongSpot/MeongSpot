@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     @Query("""
@@ -14,4 +16,43 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
         OR (f.sender.id = :friendId AND f.receiver.id = :myId)
     """)
     Boolean isFriend(@Param("myId") Long myId, @Param("friendId") Long friendId);
+
+    @Query(value = """
+            (SELECT f.sender_id
+            FROM friend f
+            WHERE f.receiver_id = :memberId)
+            UNION
+            (SELECT f.receiver_id
+            FROM friend f
+            WHERE f.sender_id = :memberId)
+            """, nativeQuery = true)
+    List<Long> findFriendByMemberId(@Param("memberId") Long memberId);
+
+    @Query(value = """
+        (SELECT m.id
+        FROM friend f
+        JOIN member m ON f.sender_id = m.id
+        WHERE f.receiver_id = :memberId
+          AND m.nickname LIKE %:keyword%
+        ORDER BY CASE
+        WHEN m.nickname LIKE :keyword THEN 0
+        WHEN m.nickname LIKE :keyword% THEN 1
+        WHEN m.nickname LIKE %:keyword THEN 2
+        WHEN m.nickname LIKE %:keyword% THEN 3
+        END)
+        UNION
+        (SELECT m.id
+        FROM friend f
+        JOIN member m ON f.receiver_id = m.id
+        WHERE f.sender_id = :memberId
+          AND m.nickname LIKE %:keyword%
+        ORDER BY CASE
+        WHEN m.nickname LIKE :keyword THEN 0
+        WHEN m.nickname LIKE :keyword% THEN 1
+        WHEN m.nickname LIKE %:keyword THEN 2
+        WHEN m.nickname LIKE %:keyword% THEN 3
+        END)
+        """, nativeQuery = true)
+    List<Long> findFriendsByNickname(@Param("memberId") Long memberId, @Param("keyword") String keyword);
+
 }

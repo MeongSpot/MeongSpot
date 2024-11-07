@@ -6,7 +6,8 @@ import com.ottogi.be.dog.domain.DogPersonality;
 import com.ottogi.be.dog.domain.Personality;
 import com.ottogi.be.dog.dto.DogAddDto;
 import com.ottogi.be.dog.dto.DogModifyDto;
-import com.ottogi.be.dog.dto.response.DogListResponse;
+import com.ottogi.be.dog.dto.response.FindFriendDogResponse;
+import com.ottogi.be.dog.dto.response.FindMyDogResponse;
 import com.ottogi.be.dog.exception.DogImageUploadException;
 import com.ottogi.be.dog.exception.DogNotFoundException;
 import com.ottogi.be.dog.exception.DogOwnerMismatchException;
@@ -67,14 +68,14 @@ public class DogService {
     }
 
     @Transactional(readOnly = true)
-    public List<DogListResponse> findDogList(String loginId) {
+    public List<FindMyDogResponse> findMyDogList(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
         List<Dog> dogs = dogRepository.findByMember(member);
-        List<DogListResponse> result = new ArrayList<>();
+        List<FindMyDogResponse> result = new ArrayList<>();
         for (Dog dog : dogs) {
             List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
-            DogListResponse dogListResponse = DogListResponse.builder()
+            FindMyDogResponse myDogList = FindMyDogResponse.builder()
                     .id(dog.getId())
                     .name(dog.getName())
                     .birth(dog.getBirth())
@@ -86,7 +87,32 @@ public class DogService {
                     .breed(dog.getBreed())
                     .personality(personality)
                     .build();
-            result.add(dogListResponse);
+            result.add(myDogList);
+        }
+        return result;
+    }
+
+    @Transactional(readOnly = true)
+    public List<FindFriendDogResponse> findFriendDogList(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+        List<Dog> dogs = dogRepository.findByMember(member);
+        List<FindFriendDogResponse> result = new ArrayList<>();
+        for (Dog dog : dogs) {
+            List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
+            FindFriendDogResponse FriendDogList = FindFriendDogResponse.builder()
+                    .id(dog.getId())
+                    .name(dog.getName())
+                    .birth(dog.getBirth())
+                    .introduction(dog.getIntroduction())
+                    .gender(dog.getGender())
+                    .isNeuter(dog.getIsNeuter())
+                    .profileImage(dog.getProfileImage())
+                    .age(dog.getAge())
+                    .breed(dog.getBreed())
+                    .personality(personality)
+                    .build();
+            result.add(FriendDogList);
         }
         return result;
     }
