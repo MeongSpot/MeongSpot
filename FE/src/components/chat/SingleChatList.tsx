@@ -3,6 +3,7 @@ import { BiDotsVerticalRounded } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import ChatOptionsModal from './ChatOptionModal';
 import useFetchSingleChatRooms from '@/hooks/chat/useFetchSingleChatRooms';
+import { format, isToday, isYesterday } from 'date-fns';
 
 const SingleChatList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +26,17 @@ const SingleChatList = () => {
     navigate(`/chat/single/${roomId}`, { state: { roomId } });
   };
 
+  const formatLastMessageTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    if (isToday(date)) {
+      return format(date, "a h:mm"); // 오늘은 오전/오후 시간:분
+    } else if (isYesterday(date)) {
+      return '어제'; // 어제는 '어제'로 표시
+    } else {
+      return format(date, "yyyy.MM.dd"); // 그 외 날짜는 yyyy.MM.dd 형식으로 표시
+    }
+  };
+
   return (
     <div>
       {chatRooms.map((chat) => {
@@ -41,7 +53,10 @@ const SingleChatList = () => {
               <div className="font-bold text-lg">{chat.friend}</div>
               <div className="text-gray-600">{lastMessage ? lastMessage.message : 'No messages yet'}</div>
             </div>
-            <div className="text-gray-400 text-sm whitespace-nowrap mr-2">{lastMessage ? lastMessage.time : ''}</div>
+            <div className="text-gray-400 text-sm whitespace-nowrap mr-2">
+              {lastMessage ? formatLastMessageTime(lastMessage.time) : ''}
+            </div>
+
             <button
               className="text-gray-500 z-10"
               onClick={(e) => {
