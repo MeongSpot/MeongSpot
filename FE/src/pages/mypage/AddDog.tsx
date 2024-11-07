@@ -21,12 +21,12 @@ const AddDog: React.FC = () => {
   };
 
   const handleRegister = () => {
-    navigate('/mypage/1');
+    navigate('/mypage');
     resetDogInfo();
   };
 
   const handleBack = () => {
-    navigate('/mypage/1');
+    navigate('/mypage');
     resetDogInfo();
   };
 
