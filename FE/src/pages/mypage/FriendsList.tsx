@@ -12,19 +12,19 @@ const FriendsList: React.FC = () => {
     {
       id: 1,
       name: '뽀삐언니',
-      profile_image: null,
+      profileImage: null,
       dogs: ['뽀삐', '쿠키', '카트시'],
     },
     {
       id: 2,
       name: '로나',
-      profile_image: null,
+      profileImage: null,
       dogs: ['깜자'],
     },
     {
       id: 3,
       name: 'MochaMilk',
-      profile_image: null,
+      profileImage: null,
       dogs: ['모카', '우유'],
     },
   ]);

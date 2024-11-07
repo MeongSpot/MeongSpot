@@ -15,50 +15,20 @@ import { Pagination } from 'swiper/modules';
 import { DogInfo } from '@/types/dogInfo';
 import { useFriend } from '@/hooks/friend/useFriend';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import { useDog } from '@/hooks/dog/useDog';
 
 const MyPage: React.FC = () => {
   const { getFriends, friendsCount, isLoading } = useFriend();
+  const { myDogs, getMyDogs } = useDog();
   const navigate = useNavigate();
   const userInfo = ['이름', '성별', '나이'];
-
-  const dogInfoList: DogInfo[] = [
-    {
-      profile_image: 'url-to-image1.jpg',
-      name: '뽀삐',
-      breedId: '시바견',
-      age: 3,
-      birth: {
-        year: '2018',
-        month: '01',
-        day: '01',
-      },
-      size: '소형견',
-      gender: '수컷',
-      isNeuter: true,
-      introduction: '안녕하세요',
-      personality: [1, 2, 3], // 가상의 성격 아이디로 설정
-    },
-    {
-      profile_image: 'url-to-image2.jpg',
-      name: '쿠키',
-      breedId: '말티즈',
-      age: 3,
-      birth: {
-        year: '2018',
-        month: '01',
-        day: '01',
-      },
-      size: '소형견',
-      gender: '암컷',
-      isNeuter: false,
-      introduction: '안녕하세요',
-      personality: [1, 2, 3], // 동일하게 가상의 성격 아이디 사용
-    },
-  ];
 
   useEffect(() => {
     // 친구 수 조회
     getFriends();
+
+    // 반려견 정보 조회
+    getMyDogs();
   }, []);
 
   return (
@@ -149,7 +119,7 @@ const MyPage: React.FC = () => {
             modules={[Pagination]}
             className="dogSwiper rounded-lg"
           >
-            {dogInfoList.map((dog, idx) => (
+            {myDogs.map((dog, idx) => (
               <SwiperSlide key={idx}>
                 <MyDogInfoCard dog={dog} isOwnProfile={true} />
               </SwiperSlide>
