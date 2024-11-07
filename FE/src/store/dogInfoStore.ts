@@ -10,7 +10,7 @@ interface DogInfoState {
 const useDogInfoStore = create<DogInfoState>((set) => ({
   // 초기 상태 설정
   dogRegisterInfo: {
-    profile_image: '',
+    profileImage: '',
     profile_file: null,
     name: '',
     breedId: '',

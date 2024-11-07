@@ -1,51 +1,52 @@
 import React from 'react';
-import { DogInfo } from '@/types/dogInfo';
+import { DogList } from '@/types/dogInfo';
 import { PiNotePencil } from 'react-icons/pi';
 
 interface MyDogInfoCardProps {
-  dog: DogInfo;
+  dog: DogList;
   isOwnProfile: boolean;
 }
 
 const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
   const dogInfo = [
-    { label: '성별', value: dog.gender },
-    { label: '중성화', value: dog.isNeuter ? '예' : '아니오' },
-    { label: '생일', value: dog.birth.year + '년 ' + dog.birth.month + '월 ' + dog.birth.day + '일' },
-    { label: '소개', value: dog.introduction },
-    {
-      label: '성격',
-      value: (
-        <div className="flex flex-wrap gap-x-3 gap-y-2">
-          {dog.personality?.map((trait, index) => (
-            <span key={index} className="text-sm">
-              #{trait}
-            </span>
-          ))}
-        </div>
-      ),
-    },
+    { label: '성별', value: dog.gender === 'MALE' ? '남' : '여' },
+    { label: '중성화', value: dog.isNeuter ? '했음' : '안했음' },
+    { label: '생일', value: dog.birth },
+    // { label: '소개', value: dog.introduction },
   ];
 
   return (
-    <div className="p-4 bg-white rounded-md space-y-5">
+    <div className="h-[16.7rem] px-3 py-4 bg-white rounded-xl space-y-5">
       <div className="px-2 flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <img className="w-12 h-12 border rounded-full" src="" alt="반려견 프로필 이미지" />
-          <p className="font-semibold">
-            {dog.name} ({dog.breedId}, {dog.age}세)
-          </p>
+          <img className="w-14 h-14 border rounded-full" src={dog.profileImage} alt="반려견 프로필 이미지" />
+          <div>
+            <p className="font-semibold">{dog.name}</p>
+            <p className="text-xs font-medium text-zinc-500">{dog.breed}</p>
+          </div>
         </div>
         {isOwnProfile && <PiNotePencil className="text-2xl" />}
       </div>
 
-      <div className="px-5 flex flex-col space-y-1">
-        {dogInfo.map((info, idx) => (
-          <div key={idx} className="w-full flex space-x-6">
-            <p className="w-10 text-sm font-semibold">{info.label}</p>
-            <div className="text-sm text-zinc-600 flex-1">{info.value || '정보 없음'}</div>
-          </div>
-        ))}
+      <div className="px-4 flex flex-col space-y-4">
+        <div className="space-y-[0.3rem]">
+          {dogInfo.map((info, idx) => (
+            <div key={idx} className="w-full flex items-start space-x-6">
+              <p className="w-10 text-sm font-semibold">{info.label}</p>
+              <div className="text-sm text-zinc-600 flex-1">{info.value || '정보 없음'}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="border-b border-zinc-200"></div>
+
+        <div className="flex flex-wrap gap-x-3 gap-y-2">
+          {dog.personality?.map((trait, index) => (
+            <button key={index} className="text-xs px-3 py-1 bg-zinc-100 rounded-full">
+              # {trait}
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
