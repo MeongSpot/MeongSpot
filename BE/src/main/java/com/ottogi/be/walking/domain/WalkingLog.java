@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -41,6 +42,20 @@ public class WalkingLog {
 
     @Column(columnDefinition = "LONGTEXT",nullable = false)
     private String trail;
+
+    @Column
+    private Integer time;
+
+    @PrePersist
+    @PreUpdate
+    public void calculateWalkingTime() {
+        if (createdAt != null && finishedAt != null) {
+            Duration duration = Duration.between(createdAt, finishedAt);
+            this.time = (int) duration.toMinutes();
+        }
+    }
+
+
 
     @Builder
     public WalkingLog(Member member, Dog dog, LocalDateTime createdAt, LocalDateTime finishedAt, double distance, String trail) {

@@ -13,3 +13,6 @@ spring:
         dialect: org.hibernate.spatial.dialect.mysql.MySQLSpatialDialect
         show_sql: true
         format_sql: true
+
+server:
+  port: 8082

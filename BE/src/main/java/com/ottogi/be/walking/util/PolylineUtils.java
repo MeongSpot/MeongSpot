@@ -4,7 +4,7 @@ import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.LatLng;
 import com.ottogi.be.walking.dto.PointDto;
 
-import java.awt.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

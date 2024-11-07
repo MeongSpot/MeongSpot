@@ -39,9 +39,7 @@ public class WalkingSessionHandler extends TextWebSocketHandler {
         logger.info("Received new WebSocket message: {}", message.getPayload());
 
         try {
-//            JSONParser jsonParser = new JSONParser();
-//            Object obj = jsonParser.parse(message.getPayload());
-//            JSONObject jsonObject = (JSONObject) obj;
+
             JSONObject jsonObject = new JSONObject(message.getPayload());
 
             Long userId = jsonObject.getLong("userId");
