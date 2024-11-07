@@ -27,7 +27,7 @@ const UserProfile: React.FC = () => {
 
   const dogInfoList: DogInfo[] = [
     {
-      profile_image: 'url-to-image1.jpg',
+      profileImage: 'url-to-image1.jpg',
       name: '뽀삐',
       breedId: '시바견',
       age: 3,
@@ -43,7 +43,7 @@ const UserProfile: React.FC = () => {
       personality: [1, 2, 3], // 가상의 성격 아이디로 설정
     },
     {
-      profile_image: 'url-to-image2.jpg',
+      profileImage: 'url-to-image2.jpg',
       name: '쿠키',
       breedId: '말티즈',
       age: 3,

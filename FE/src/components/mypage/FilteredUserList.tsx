@@ -15,7 +15,7 @@ const FilteredUserList = ({ data }: FilteredUserListProps) => {
           <div className="py-4 flex items-center justify-between space-x-2 border-b">
             <div className="flex space-x-3">
               <div className="w-14 h-14 border rounded-full">
-                <img src={user.profile_image} alt="profile" />
+                <img src={user.profileImage} alt="profile" />
               </div>
               <div className="flex flex-col justify-center">
                 <p className="font-semibold">{user.name}</p>

@@ -1,5 +1,5 @@
 import axiosInstance from '@/services/axiosInstance';
-import { RegisterDogResponse, DogBreedsResponse } from '@/types/dogInfo';
+import { DogListResponse, RegisterDogResponse, DogBreedsResponse } from '@/types/dogInfo';
 
 
 export const dogService = {
@@ -21,6 +21,17 @@ export const dogService = {
       return response.data;
     } catch (error) {
       console.error('Failed to register dog:', error);
+      throw error;
+    }
+  },
+
+  // 나의 반려견 리스트 조회
+  getMyDogs: async (): Promise<DogListResponse> => {
+    try {
+      const response = await axiosInstance.get('/api/dogs');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get my dogs:', error);
       throw error;
     }
   },

@@ -21,7 +21,7 @@ const AddDog: React.FC = () => {
       const imageUrl = URL.createObjectURL(file);
       setDogRegisterInfo({
         ...dogRegisterInfo,
-        profile_image: imageUrl,
+        profileImage: imageUrl,
         profile_file: file, // 파일 객체 저장
       });
     }
@@ -71,7 +71,7 @@ const AddDog: React.FC = () => {
 
   const resetDogInfo = () => {
     setDogRegisterInfo({
-      profile_image: '',
+      profileImage: '',
       name: '',
       breedId: '',
       age: null,
@@ -99,15 +99,16 @@ const AddDog: React.FC = () => {
         dogRegisterInfo.age,
         dogRegisterInfo.gender,
         dogRegisterInfo.isNeuter,
-        dogRegisterInfo.personality.length > 0,
       ];
       setIsValid(
         requiredFields.every(
           (field) =>
-            field !== null && field !== '' && field !== undefined && koreanNameRegex.test(dogRegisterInfo.name),
+            field !== null && field !== '' && field !== undefined && koreanNameRegex.test(dogRegisterInfo.name) && dogRegisterInfo.personality.length > 0,
         ),
       );
     };
+
+    console.log(dogRegisterInfo.personality);
 
     checkValidity();
   }, [dogRegisterInfo]);
@@ -136,7 +137,7 @@ const AddDog: React.FC = () => {
           <div className="w-20 h-20 relative">
             <label htmlFor="fileInput">
               <img
-                src={dogRegisterInfo.profile_image || '/icons/imageAddIcon.png'}
+                src={dogRegisterInfo.profileImage || '/icons/imageAddIcon.png'}
                 alt="반려견이미지"
                 className="cursor-pointer w-full h-full object-cover rounded-full"
               />
