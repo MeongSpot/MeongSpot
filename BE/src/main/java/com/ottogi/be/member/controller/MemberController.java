@@ -1,8 +1,11 @@
 package com.ottogi.be.member.controller;
 
+import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
 import com.ottogi.be.member.dto.request.SignupRequest;
+import com.ottogi.be.member.dto.response.ProfileInfoResponse;
 import com.ottogi.be.member.service.CheckInfoService;
+import com.ottogi.be.member.service.ProfileService;
 import com.ottogi.be.member.service.SignupService;
 import com.ottogi.be.member.validation.annotation.LoginId;
 import com.ottogi.be.member.validation.annotation.Nickname;
@@ -11,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,6 +24,7 @@ public class MemberController {
 
     private final SignupService signupService;
     private final CheckInfoService checkInfoService;
+    private final ProfileService profileService;
 
     @PostMapping
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
@@ -43,6 +48,12 @@ public class MemberController {
     public ResponseEntity<?> phoneCheck(@Phone @RequestParam("phone") String phone) {
         checkInfoService.checkPhone(phone);
         return ResponseEntity.ok(new ApiResponse<>("ME103", "전화번호 중복 검사 성공", null));
+    }
+
+    @GetMapping("/profile-info")
+    public ResponseEntity<?> profileInfoGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        ProfileInfoResponse result = profileService.getProfileInfo(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("ME104", "프로필 정보 조회 성공", result));
     }
 
 }
