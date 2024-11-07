@@ -54,7 +54,6 @@ const refreshAccessToken = async (): Promise<string> => {
         withCredentials: true,
       }
     );
-
     if (refreshResponse.data.code === 'AU103') {
       const newToken = refreshResponse.headers['authorization'];
       if (newToken) {
