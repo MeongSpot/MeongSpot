@@ -11,6 +11,7 @@ const useDogInfoStore = create<DogInfoState>((set) => ({
   // 초기 상태 설정
   dogRegisterInfo: {
     profile_image: '',
+    profile_file: null,
     name: '',
     breedId: '',
     age: null,
