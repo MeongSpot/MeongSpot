@@ -1,12 +1,9 @@
 package com.ottogi.be.friend.service;
 
 import com.ottogi.be.dog.repository.DogRepository;
-import com.ottogi.be.friend.dto.FriendDetailsDto;
 import com.ottogi.be.friend.dto.FriendDto;
 import com.ottogi.be.friend.dto.SearchFriendDto;
-import com.ottogi.be.friend.dto.response.FriendDetailsResponse;
 import com.ottogi.be.friend.dto.response.FriendResponse;
-import com.ottogi.be.friend.exception.FriendRelationShipNotFoundException;
 import com.ottogi.be.friend.repository.FriendRepository;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
@@ -15,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -57,18 +53,6 @@ public class FindFriendService {
             friendResponse.add(friend);
         }
         return friendResponse;
-    }
-
-    @Transactional(readOnly = true)
-    public FriendDetailsResponse findFriendDetails(FriendDetailsDto friendDetailsDto) {
-        Member member = memberRepository.findByLoginId(friendDetailsDto.getLoginId())
-                .orElseThrow(MemberNotFoundException::new);
-        if (!friendRepository.isFriend(member.getId(), friendDetailsDto.getId())) throw new FriendRelationShipNotFoundException();
-        Member friend = memberRepository.findById(friendDetailsDto.getId())
-                .orElseThrow(MemberNotFoundException::new);
-        LocalDate currentDate = LocalDate.now();
-        int age = currentDate.getYear() - friend.getBirth().getYear();
-        return new FriendDetailsResponse(friend.getProfileImage(), friend.getNickname(), friend.getGender(), age);
     }
 
     @Transactional(readOnly = true)

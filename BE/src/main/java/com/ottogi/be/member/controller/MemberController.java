@@ -2,10 +2,12 @@ package com.ottogi.be.member.controller;
 
 import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
+import com.ottogi.be.member.dto.MemberDetailsDto;
 import com.ottogi.be.member.dto.request.SignupRequest;
+import com.ottogi.be.member.dto.response.MemberDetailsResponse;
 import com.ottogi.be.member.dto.response.ProfileInfoResponse;
 import com.ottogi.be.member.service.CheckInfoService;
-import com.ottogi.be.member.service.ProfileService;
+import com.ottogi.be.member.service.FindMemberInfoService;
 import com.ottogi.be.member.service.SignupService;
 import com.ottogi.be.member.validation.annotation.LoginId;
 import com.ottogi.be.member.validation.annotation.Nickname;
@@ -24,7 +26,7 @@ public class MemberController {
 
     private final SignupService signupService;
     private final CheckInfoService checkInfoService;
-    private final ProfileService profileService;
+    private final FindMemberInfoService findMemberInfoService;
 
     @PostMapping
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
@@ -52,8 +54,15 @@ public class MemberController {
 
     @GetMapping("/profile-info")
     public ResponseEntity<?> profileInfoGet(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        ProfileInfoResponse result = profileService.getProfileInfo(loginMemberInfo.getLoginId());
+        ProfileInfoResponse result = findMemberInfoService.getProfileInfo(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("ME104", "프로필 정보 조회 성공", result));
+    }
+
+    @GetMapping("/{memberId}")
+    public ResponseEntity<?> memberDetails(@PathVariable Long memberId,
+                                           @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        MemberDetailsResponse result = findMemberInfoService.findMemberDetails(new MemberDetailsDto(memberId, loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("ME105", "사용자 정보 상세 조회 성공", result));
     }
 
 }

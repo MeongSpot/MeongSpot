@@ -4,7 +4,7 @@ import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
 import com.ottogi.be.dog.dto.request.DogAddRequest;
 import com.ottogi.be.dog.dto.request.DogModifyRequest;
-import com.ottogi.be.dog.dto.response.FindFriendDogResponse;
+import com.ottogi.be.dog.dto.response.FindMemberDogResponse;
 import com.ottogi.be.dog.dto.response.FindMyDogResponse;
 import com.ottogi.be.dog.dto.response.PersonalityResponse;
 import com.ottogi.be.dog.service.BreedService;
@@ -63,9 +63,9 @@ public class DogController {
     }
 
     @GetMapping("/{memberId}")
-    public ResponseEntity<?> friendDogList(@PathVariable Long memberId) {
-        List<FindFriendDogResponse> result = dogService.findFriendDogList(memberId);
-        return ResponseEntity.ok(new ApiResponse<>("DO106", "친구 반려견 목록 조회 성공", result));
+    public ResponseEntity<?> memberDogList(@PathVariable Long memberId) {
+        List<FindMemberDogResponse> result = dogService.findMemberDogList(memberId);
+        return ResponseEntity.ok(new ApiResponse<>("DO106", "사용자 반려견 목록 조회 성공", result));
     }
 
     @PutMapping("/{dogId}")

@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FindFriendDogResponse {
+public class FindMemberDogResponse {
     private Long id;
     private String name;
     private LocalDate birth;

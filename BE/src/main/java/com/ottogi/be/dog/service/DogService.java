@@ -6,7 +6,7 @@ import com.ottogi.be.dog.domain.DogPersonality;
 import com.ottogi.be.dog.domain.Personality;
 import com.ottogi.be.dog.dto.DogAddDto;
 import com.ottogi.be.dog.dto.DogModifyDto;
-import com.ottogi.be.dog.dto.response.FindFriendDogResponse;
+import com.ottogi.be.dog.dto.response.FindMemberDogResponse;
 import com.ottogi.be.dog.dto.response.FindMyDogResponse;
 import com.ottogi.be.dog.exception.DogImageUploadException;
 import com.ottogi.be.dog.exception.DogNotFoundException;
@@ -93,14 +93,14 @@ public class DogService {
     }
 
     @Transactional(readOnly = true)
-    public List<FindFriendDogResponse> findFriendDogList(Long memberId) {
+    public List<FindMemberDogResponse> findMemberDogList(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(MemberNotFoundException::new);
         List<Dog> dogs = dogRepository.findByMember(member);
-        List<FindFriendDogResponse> result = new ArrayList<>();
+        List<FindMemberDogResponse> result = new ArrayList<>();
         for (Dog dog : dogs) {
             List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
-            FindFriendDogResponse FriendDogList = FindFriendDogResponse.builder()
+            FindMemberDogResponse memberDogList = FindMemberDogResponse.builder()
                     .id(dog.getId())
                     .name(dog.getName())
                     .birth(dog.getBirth())
@@ -112,7 +112,7 @@ public class DogService {
                     .breed(dog.getBreed())
                     .personality(personality)
                     .build();
-            result.add(FriendDogList);
+            result.add(memberDogList);
         }
         return result;
     }
