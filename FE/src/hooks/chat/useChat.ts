@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
 import axiosInstance from '@/services/axiosInstance';
 import useChatStore from '@/store/chatStore';
@@ -8,6 +8,7 @@ const useChat = (roomId: number) => {
   const chats = useChatStore((state) => state.chats[roomId] || []);
   const setChats = useChatStore((state) => state.setChats);
   const addChat = useChatStore((state) => state.addChat);
+  const clientRef = useRef<Client | null>(null);
 
   // 채팅 데이터 API 호출
   useEffect(() => {
@@ -28,7 +29,7 @@ const useChat = (roomId: number) => {
   // WebSocket 연결 설정
   useEffect(() => {
     const client = new Client({
-      brokerURL: `ws://your-websocket-url/ws`, // WebSocket 연결 주소
+      brokerURL: `ws://localhost:8080/ws`, // WebSocket 연결 주소
       onConnect: () => {
         console.log(`WebSocket 연결 성공: 방 번호 ${roomId}`);
         client.subscribe(`/topic/chat/${roomId}`, (message) => {
@@ -50,6 +51,7 @@ const useChat = (roomId: number) => {
       },
     });
 
+    clientRef.current = client;
     client.activate();
 
     return () => {
@@ -57,7 +59,27 @@ const useChat = (roomId: number) => {
     };
   }, [roomId, addChat]);
 
-  return { chats };
+  const sendMessage = (message: string, myId: number) => {
+    if (clientRef.current?.connected) {
+      const chatMessage = {
+        roomId,
+        senderId: myId,
+        message,
+        timestamp: new Date().toISOString(),
+      };
+
+      clientRef.current.publish({
+        destination: `/app/chat/send/${roomId}`, // 서버에서 지정한 전송 경로로 수정
+        body: JSON.stringify(chatMessage),
+      });
+
+      console.log(`메시지 전송 성공: ${message}`, chatMessage);
+    } else {
+      console.error('WebSocket이 연결되지 않았습니다. 메시지를 보낼 수 없습니다.');
+    }
+  };
+
+  return { chats, sendMessage };
 };
 
 export default useChat;
