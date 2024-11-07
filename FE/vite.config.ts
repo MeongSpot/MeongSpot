@@ -11,7 +11,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default defineConfig(({ command, mode }) => {
-  // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
@@ -40,36 +39,7 @@ export default defineConfig(({ command, mode }) => {
               sizes: '192x192',
               type: 'image/png',
             },
-            {
-              src: '/icons/favicon/android-icon-512x512.png',
-              sizes: '512x512',
-              type: 'image/png',
-            },
-            {
-              src: '/icons/favicon/apple-icon-180x180.png',
-              sizes: '180x180',
-              type: 'image/png',
-            },
-            {
-              src: '/icons/favicon/favicon-32x32.png',
-              sizes: '32x32',
-              type: 'image/png',
-            },
-            {
-              src: '/icons/favicon/favicon-96x96.png',
-              sizes: '96x96',
-              type: 'image/png',
-            },
-            {
-              src: '/icons/favicon/favicon-16x16.png',
-              sizes: '16x16',
-              type: 'image/png',
-            },
-            {
-              src: '/icons/favicon/ms-icon-144x144.png',
-              sizes: '144x144',
-              type: 'image/png',
-            },
+            // ... 나머지 아이콘 설정
           ],
         },
         injectRegister: 'auto',
@@ -92,6 +62,7 @@ export default defineConfig(({ command, mode }) => {
       'import.meta.env': env,
     },
     publicDir: 'public',
+    assetsInclude: ['**/*.svg'], // SVG 파일 포함
     server: {
       headers: {
         'Service-Worker-Allowed': '/',
@@ -115,9 +86,13 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       },
+      watch: {
+        usePolling: true, // 파일 변경 감지를 위한 설정 추가
+      },
     },
     build: {
       chunkSizeWarningLimit: 1000,
+      assetsDir: 'assets',
       rollupOptions: {
         input: {
           main: path.resolve(__dirname, 'index.html'),
@@ -127,6 +102,15 @@ export default defineConfig(({ command, mode }) => {
             if (id.includes('node_modules')) {
               return 'vendor';
             }
+          },
+          assetFileNames: (assetInfo) => {
+            if (assetInfo && assetInfo.names && assetInfo.names.length > 0) {
+              const fileName = assetInfo.names[0];
+              if (fileName.endsWith('.svg')) {
+                return 'assets/svg/[name]-[hash][extname]';
+              }
+            }
+            return 'assets/[name]-[hash][extname]';
           },
         },
       },

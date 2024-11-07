@@ -11,7 +11,7 @@ type ContextType = {
 };
 
 const PRESENT_SPOT_IMAGE = {
-  src: '/src/assets/PresentSpot.svg',
+  src: '/icons/PresentSpot.svg',
   size: {
     width: 70,
     height: 70,

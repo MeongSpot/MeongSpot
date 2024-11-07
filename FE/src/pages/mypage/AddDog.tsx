@@ -71,7 +71,7 @@ const AddDog: React.FC = () => {
           <div className="w-20 h-20 relative">
             <label htmlFor="fileInput">
               <img
-                src={dogRegisterInfo.profile_image || '/src/assets/mypage/imageAddIcon.png'}
+                src={dogRegisterInfo.profile_image || '/icons/imageAddIcon.png'}
                 alt="반려견이미지"
                 className="cursor-pointer w-full h-full object-cover rounded-full"
               />
