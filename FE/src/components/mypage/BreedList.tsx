@@ -34,32 +34,33 @@ const BreedList = ({ data, setData }: BreedListProps) => {
 
   return (
     <div>
-      {data.map((breed, index) => (
-        <div key={index} className="py-4 px-1 mx-2 border-b border-zinc-300">
-          {breed === '직접 입력' && isCustomInput ? (
-            <div className="grid grid-cols-[80%_20%]">
-              <input
-                type="text"
-                value={customBreed}
-                onChange={handleCustomInputChange}
-                placeholder="견종을 입력하세요"
-                className="rounded-md outline-none"
-                autoFocus
-              />
-              <button
-                onClick={handleCustomInputSubmit}
-                className="bg-deep-coral py-1 px-2 rounded-md text-white font-semibold cursor-pointer"
-              >
-                확인
-              </button>
-            </div>
-          ) : (
-            <p onClick={() => handleClick(breed)} className="font-semibold text-zinc-600 cursor-pointer">
-              {breed}
-            </p>
-          )}
-        </div>
-      ))}
+      {data &&
+        data.map((breed, index) => (
+          <div key={index} className="py-4 px-1 mx-2 border-b border-zinc-300">
+            {breed === '직접 입력' && isCustomInput ? (
+              <div className="grid grid-cols-[80%_20%]">
+                <input
+                  type="text"
+                  value={customBreed}
+                  onChange={handleCustomInputChange}
+                  placeholder="견종을 입력하세요"
+                  className="rounded-md outline-none"
+                  autoFocus
+                />
+                <button
+                  onClick={handleCustomInputSubmit}
+                  className="bg-deep-coral py-1 px-2 rounded-md text-white font-semibold cursor-pointer"
+                >
+                  확인
+                </button>
+              </div>
+            ) : (
+              <p onClick={() => handleClick(breed)} className="font-semibold text-zinc-600 cursor-pointer">
+                {breed}
+              </p>
+            )}
+          </div>
+        ))}
     </div>
   );
 };

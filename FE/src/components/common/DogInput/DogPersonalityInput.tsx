@@ -10,12 +10,13 @@ const DogPersonalityInput: React.FC<DogPersonalityInputProps> = ({ value, onChan
     { id: 1, name: '낯가려요' },
     { id: 2, name: '새로운 친구 만나는 걸 좋아해요' },
     { id: 3, name: '호기심이 많아요' },
-    { id: 4, name: '많이 활발해요' },
-    { id: 5, name: '조금 활발해요' },
-    { id: 6, name: '소극적이에요' },
-    { id: 7, name: '겁이 많아요' },
-    { id: 8, name: '겁이 없어요' },
-    { id: 9, name: '좋아하는 산책 코스가 있어요' },
+    { id: 4, name: '소극적이에요' },
+    { id: 5, name: '적극적이에요' },
+    { id: 6, name: '조금 활발해요' },
+    { id: 7, name: '많이 활발해요' },
+    { id: 8, name: '겁이 많아요' },
+    { id: 9, name: '겁이 없어요' },
+    { id: 10, name: '좋아하는 산책 코스가 있어요' },
   ];
 
   const handleButtonClick = (id: number) => {

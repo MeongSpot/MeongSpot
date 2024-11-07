@@ -33,13 +33,12 @@ const getBaseUrl = () => {
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: getBaseUrl(),
   headers: {
-    'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   },
   validateStatus: function (status) {
-    return status >= 200 && status < 500;
+    return status >= 200 && status < 300;
   },
   withCredentials: true,
 });
