@@ -4,12 +4,16 @@ interface ToggleButtonProps {
 }
 
 export const ToggleButton = ({ isWalkingMode, onChange }: ToggleButtonProps) => {
+  const handleToggle = () => {
+    onChange(!isWalkingMode);
+  };
+
   return (
     <div
       className={`relative h-10 w-28 rounded-full flex items-center cursor-pointer transition-colors duration-300 ${
         isWalkingMode ? 'bg-deep-coral' : 'bg-light-orange'
       }`}
-      onClick={() => onChange(!isWalkingMode)}
+      onClick={handleToggle}
     >
       {/* 흰색 하이라이트 배경 */}
       <div
@@ -19,11 +23,11 @@ export const ToggleButton = ({ isWalkingMode, onChange }: ToggleButtonProps) => 
       />
 
       {/* 텍스트 컨테이너 */}
-      <div className="relative w-full flex justify-between px-2 ">
+      <div className="relative w-full flex justify-between px-2">
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onChange(false);
+            handleToggle(); // 항상 토글하도록 변경
           }}
           className={`flex-1 text-sm font-semibold whitespace-nowrap z-10 transition-colors duration-300 ${
             !isWalkingMode ? 'text-light-orange' : 'text-white'
@@ -34,7 +38,7 @@ export const ToggleButton = ({ isWalkingMode, onChange }: ToggleButtonProps) => 
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onChange(true);
+            handleToggle(); // 항상 토글하도록 변경
           }}
           className={`flex-1 text-sm font-semibold whitespace-nowrap z-10 transition-colors duration-300 ${
             isWalkingMode ? 'text-deep-coral' : 'text-white'
