@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { FiLogOut, FiBellOff } from 'react-icons/fi';
 import { FaBell } from 'react-icons/fa';
 import ChatOutModal from './ChatOutModal';
+import useDeleteChatRoom from '@/hooks/chat/useDeleteChatRoom';
 
 interface ChatOptionsModalProps {
   isOpen: boolean;
   onClose: () => void;
   chatName: string;
+  chatRoomId: number;
 }
 
-const ChatOptionsModal: React.FC<ChatOptionsModalProps> = ({ isOpen, onClose, chatName }) => {
+const ChatOptionsModal: React.FC<ChatOptionsModalProps> = ({ isOpen, onClose, chatName, chatRoomId }) => {
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
+  const { deleteChatRoom } = useDeleteChatRoom();
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
@@ -26,10 +29,11 @@ const ChatOptionsModal: React.FC<ChatOptionsModalProps> = ({ isOpen, onClose, ch
     setIsChatOutModalOpen(false);
   };
 
-  const handleConfirmChatOut = () => {
+  const handleConfirmChatOut = async () => {
+    await deleteChatRoom(chatRoomId); // 채팅방 삭제 요청
     console.log(`${chatName} 채팅방에서 나갔습니다.`);
-    setIsChatOutModalOpen(false);
-    onClose();
+    setIsChatOutModalOpen(false); // ChatOutModal 닫기
+    onClose(); // ChatOptionsModal 닫기
   };
 
   const toggleNotification = () => {

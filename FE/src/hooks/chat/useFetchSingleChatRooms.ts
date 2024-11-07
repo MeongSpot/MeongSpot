@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ChatRoom, ChatRoomResponse } from '@/types/singleChat';
+import axiosInstance from '@/services/axiosInstance';
 
 const useFetchSingleChatRooms = () => {
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
@@ -12,24 +13,13 @@ const useFetchSingleChatRooms = () => {
       setError(null);
 
       try {
-        const response = await fetch('/chat/rooms/friend', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await axiosInstance.get<ChatRoomResponse>('/api/chat/rooms/friend');
 
-        if (!response.ok) {
-          throw new Error('네트워크 오류가 발생했습니다.');
-        }
-
-        const data: ChatRoomResponse = await response.json();
-        console.log('API 요청 성공:', data);
-
-        if (data.code === 'CH100') {
-          setChatRooms(data.data);
+        if (response.data.code === 'CH100') {
+          setChatRooms(response.data.data);
+          console.log(response.data);
         } else {
-          setError(data.message || '채팅 목록을 불러오는 데 실패했습니다.');
+          setError(response.data.message || '채팅 목록을 불러오는 데 실패했습니다.');
         }
       } catch (err) {
         setError('네트워크 오류가 발생했습니다.');

@@ -27,14 +27,15 @@ export interface UseSingleChatCreateReturn {
 
 // 채팅방 상세 조회 
 export interface Chat {
+  senderId: number;
   message: string;
   nickname: string;
-  profileImage: string;
+  profileImage: string | null;
   sentAt: string;
-  messageType: string; 
+  messageType: string;
 }
 
-export interface ChatPage { 
+export interface ChatPage {
   content: Chat[];
   pageable: {
     pageNumber: number;
@@ -45,8 +46,8 @@ export interface ChatPage {
       sorted: boolean;
     };
     offset: number;
-    unpaged: boolean;
     paged: boolean;
+    unpaged: boolean;
   };
   first: boolean;
   last: boolean;
@@ -59,4 +60,13 @@ export interface ChatPage {
   };
   numberOfElements: number;
   empty: boolean;
+}
+
+export interface ChatPageResponse {
+  code: string;
+  message: string;
+  data: {
+    myId: number;
+    chatMessageDtos: ChatPage;
+  };
 }
