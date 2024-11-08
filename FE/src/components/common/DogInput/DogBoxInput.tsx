@@ -23,15 +23,25 @@ const BoxInput = ({
   disabled = false,
 }: BoxInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지 상태
   const maxNameLength = 8;
   const maxIntroductionLength = 128;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { value } = e.target;
 
-    // 이름 필드일 경우 최대 길이 제한
-    if (label === '이름' && typeof value === 'string' && value.length > maxNameLength) {
-      return;
+    // 이름 필드 유효성 검사: 한글만 허용
+    if (label === '이름') {
+      const koreanNameRegex = /^[가-힣ㄱ-ㅎㅏ-ㅣ]*$/;
+      if (!koreanNameRegex.test(value)) {
+        setErrorMessage('이름은 한글만 입력 가능합니다.');
+      } else {
+        setErrorMessage(''); // 유효한 경우 오류 메시지 제거
+      }
+
+      if (value.length > maxNameLength) {
+        return;
+      }
     }
 
     // 반려견 소개 필드일 경우 최대 길이 제한
@@ -46,7 +56,6 @@ const BoxInput = ({
     <div className="relative mb-4 space-y-2">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium">{label}</p>
-        {/* 이름과 반려견 소개의 길이 표시 */}
         {label === '이름' && typeof value === 'string' && (
           <p className="text-xs font-semibold text-gray-800">
             {value.length}
@@ -72,11 +81,11 @@ const BoxInput = ({
             {label === '반려견 소개' ? (
               <textarea
                 name={name}
-                value={value ?? ''} // null일 경우 빈 문자열로 처리
+                value={value ?? ''}
                 onChange={handleChange}
                 onFocus={(e) => {
                   setIsFocused(true);
-                  onFocus?.(e); // 기존 onFocus와 새로운 onFocus 모두 호출
+                  onFocus?.(e);
                 }}
                 onBlur={() => setIsFocused(false)}
                 className={`w-full bg-transparent outline-none placeholder:text-gray-400 resize-none ${
@@ -91,11 +100,11 @@ const BoxInput = ({
               <input
                 name={name}
                 type={type}
-                value={value ?? ''} // null일 경우 빈 문자열로 처리
+                value={value ?? ''}
                 onChange={handleChange}
                 onFocus={(e) => {
                   setIsFocused(true);
-                  onFocus?.(e); // 기존 onFocus와 새로운 onFocus 모두 호출
+                  onFocus?.(e);
                 }}
                 onBlur={() => setIsFocused(false)}
                 className={`w-full bg-transparent outline-none placeholder:text-gray-400 ${
@@ -108,6 +117,7 @@ const BoxInput = ({
           </div>
         </div>
       </div>
+      {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>} {/* 오류 메시지 표시 */}
     </div>
   );
 };
