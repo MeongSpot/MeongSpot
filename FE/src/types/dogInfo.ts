@@ -1,4 +1,5 @@
 export interface DogInfo {
+  id: number;
   profileImage: string;
   profile_file?: File | null;
   name: string;
@@ -38,7 +39,7 @@ export interface DogList {
   gender: string;
   isNeuter: boolean | null;
   introduction: string;
-  personality: number[];
+  personality: string[];
 };
 
 export interface DogListResponse {

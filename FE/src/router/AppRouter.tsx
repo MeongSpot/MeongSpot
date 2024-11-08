@@ -9,6 +9,7 @@ const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const UserProfile = lazy(() => import('@/pages/profile/UserProfile'));
 const Settings = lazy(() => import('@/pages/mypage/Settings'));
+const DogDetail = lazy(() => import('@/pages/mypage/DogDetail'));
 const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
 const SelectBreed = lazy(() => import('@/pages/mypage/SelectBreed'));
 const FriendsList = lazy(() => import('@/pages/mypage/FriendsList'));
@@ -99,6 +100,14 @@ const router = createBrowserRouter([
         element: (
           <AuthGuard>
             <Settings />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'dog/:id',
+        element: (
+          <AuthGuard>
+            <DogDetail />
           </AuthGuard>
         ),
       },
