@@ -8,6 +8,8 @@ const useChatDetail = (chatRoomId: number, page: number) => {
   const [error, setError] = useState<string | null>(null);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [myId, setMyId] = useState<number | null>(null);
+  const [nickname, setNickname] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -23,10 +25,12 @@ const useChatDetail = (chatRoomId: number, page: number) => {
         );
 
         if (response.data.code === 'CH103') {
-          const { myId, chatMessageDtos } = response.data.data;
+          const { myId, nickname, profileImage, chatMessageDtos } = response.data.data;
           const { content, last } =  chatMessageDtos;
 
           setMyId(myId);
+          setNickname(nickname);
+          setProfileImage(profileImage);
           setMessages((prevMessages) => [...prevMessages, ...content]);
           setIsLastPage(last);
           console.log(`채팅 메시지 불러오기 성공: 방 번호 ${chatRoomId}, 페이지 ${page}`, content);
@@ -44,7 +48,7 @@ const useChatDetail = (chatRoomId: number, page: number) => {
     fetchMessages();
   }, [chatRoomId, page]);
 
-  return { messages, loading, error, isLastPage, myId };
+  return { messages, loading, error, isLastPage, myId, nickname, profileImage };
 };
 
 export default useChatDetail;

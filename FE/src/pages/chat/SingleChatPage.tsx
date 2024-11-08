@@ -16,7 +16,7 @@ const SingleChatPage = () => {
   const [targetNickname, setTargetNickname] = useState(initialFriendName || '');
 
   const { messages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
-  const { chats, sendMessage } = useChat(roomId);
+  const { sendMessage } = useChat(roomId);
 
   useEffect(() => {
     const firstNonSenderMessage = messages.find((msg) => msg.senderId !== myId);

@@ -67,6 +67,8 @@ export interface ChatPageResponse {
   message: string;
   data: {
     myId: number;
+    nickname: string;
+    profileImage: string | null;
     chatMessageDtos: ChatPage;
   };
 }
