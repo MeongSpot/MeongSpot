@@ -375,5 +375,4 @@ gradle-app.setting
 
 # Custom
 src/main/resources/application-secret.yml
-
-/src/main/resources/songpicker-2a701-firebase-adminsdk-60qv1-e12263f6d4.json
+/src/main/resources/meongspot-firebase-adminsdk-qrwnh-17f0e434a8.json
