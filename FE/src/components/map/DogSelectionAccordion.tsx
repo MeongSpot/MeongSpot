@@ -35,8 +35,8 @@ const DogSelectionAccordion: React.FC<DogSelectionAccordionProps> = ({ dogs, sel
 
       {/* 아코디언 내용 */}
       <div
-        className={`absolute left-0 right-0 bg-white border border-gray-300 mt-1 rounded-lg ${
-          showDetails ? 'max-h-[110px] opacity-100 visible' : 'max-h-0 opacity-0 invisible'
+        className={` bg-white border border-gray-300 mt-1 rounded-lg ${
+          showDetails ? 'max-h-[170px] opacity-100 visible' : 'max-h-0 opacity-0 invisible'
         } transition-all duration-300`}
         style={{ overflow: 'auto' }}
       >

@@ -15,7 +15,7 @@ export const Toast = ({ message, isVisible, onHide }: ToastProps) => {
       const timer = setTimeout(() => {
         setAnimation('animate-slideUp');
         setTimeout(onHide, 100); // 애니메이션 완료 후 숨김 처리
-      }, 1500);
+      }, 800);
       return () => clearTimeout(timer);
     }
   }, [isVisible, onHide]);

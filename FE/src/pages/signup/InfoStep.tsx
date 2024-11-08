@@ -296,7 +296,7 @@ const InfoStep = ({
             </div>
             <div className="mt-1 space-y-1">
               <ValidationMessage message="닉네임은 2~8자 사이여야 합니다" isValid={nicknameLength} />
-              <ValidationMessage message="영문, 한글, 숫자만 사용 가능합니다" isValid={nicknameContent} />
+              <ValidationMessage message="공백없이 영문, 한글, 숫자만 사용 가능합니다" isValid={nicknameContent} />
               {validationMessage && (
                 <ValidationMessage
                   message={validationMessage}
@@ -324,7 +324,7 @@ const InfoStep = ({
                 onClick={isPhoneVerified ? handleResetVerification : handleVerifyPhone}
                 disabled={!isPhoneValid || !isPhoneAvailable || isValidating || isPhoneVerified}
               >
-                {isPhoneVerified ? '다시받기' : isValidating ? '확인중...' : '인증하기'}
+                {isPhoneVerified ? '다시받기' : isValidating ? '전송중...' : '인증하기'}
               </ValidateButton>
             </div>
 

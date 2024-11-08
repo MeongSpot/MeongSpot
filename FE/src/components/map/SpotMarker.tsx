@@ -1,23 +1,17 @@
 import { MapMarker } from 'react-kakao-maps-sdk';
-import type { Marker } from '@/types/map';
+import type { MapMarkerImageType, Marker } from '@/types/map';
 
 interface SpotMarkerProps {
   marker: Marker;
   onClick: () => void;
-  image: {
-    src: string;
-    size: {
-      width: number;
-      height: number;
-    };
-  };
+  image: MapMarkerImageType;
 }
 
-export const SpotMarker = ({ marker, onClick, image }: SpotMarkerProps) => (
-  <MapMarker
-    key={`${marker.position.lat}-${marker.position.lng}`}
-    position={marker.position}
-    onClick={onClick}
-    image={image}
-  />
-);
+export const SpotMarker = ({ marker, onClick, image }: SpotMarkerProps) => {
+  const position = {
+    lat: marker.position.lat,
+    lng: marker.position.lng,
+  };
+
+  return <MapMarker position={position} onClick={onClick} image={image} />;
+};

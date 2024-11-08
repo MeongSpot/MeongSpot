@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import DogIcon from '/icons/DogIcon.svg';
-import { FaUserFriends, FaAngleRight } from 'react-icons/fa';
+import { FaUserFriends, FaAngleRight, FaEllipsisH } from 'react-icons/fa';
 import { Pagination } from 'swiper/modules';
 import type { SpotModalProps } from '@/types/meetup';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import MeetupCard from '@/components/map/MeetupCard'
 
 const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigateToAll }) => {
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -31,7 +32,7 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
 
         <h2 className="text-lg font-bold mb-2">
-          <span className="text-deep-coral font-bold">{spot.content}</span>에서 같이 산책할래요?
+          <span className="text-deep-coral font-bold truncate">{spot.content}</span>에서 같이 산책할래요?
         </h2>
 
         <hr className="border-t-2 border-gray-100 mb-4" />
@@ -66,34 +67,7 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
           >
             {spot.meetups.map((meetup) => (
               <SwiperSlide key={meetup.id}>
-                <div className="bg-[#F6F6F6] p-4 rounded-lg border border-gray-100 shadow-sm">
-                  <h3 className="text-base font-semibold">{meetup.title}</h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {meetup.date} {meetup.time} | {meetup.location}
-                  </p>
-                  <div className="flex items-center text-sm text-gray-700 mt-2">
-                    <FaUserFriends className="mr-1" />
-                    <span>
-                      {meetup.currentParticipants}/{meetup.maxParticipants}
-                    </span>
-                  </div>
-                  <p className="text-sm text-gray-700 mt-2">
-                    {meetup.participants.map((name, index) => (
-                      <span key={index}>
-                        {name}
-                        {index < meetup.participants.length - 1 && ', '}
-                      </span>
-                    ))}
-                    (이)와 함께
-                  </p>
-                  <div className="flex flex-wrap mt-2 gap-2">
-                    {meetup.tags.map((tag, index) => (
-                      <span key={index} className="text-xs text-deep-coral bg-white border px-2 py-1 rounded-full">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                <MeetupCard meetup={meetup} />
               </SwiperSlide>
             ))}
           </Swiper>
