@@ -16,7 +16,7 @@ const CountdownOverlay: React.FC<CountdownOverlayProps> = ({ onComplete }) => {
 
     const timer = setTimeout(() => {
       setCount((prev) => prev - 1);
-    }, 1000);
+    }, 800);
 
     return () => clearTimeout(timer);
   }, [count, onComplete]);

@@ -4,8 +4,10 @@ import { useOutletContext } from 'react-router-dom';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import WalkStartModal from '@/components/map/WalkStartModal';
 import WalkingStatusModal from '@/components/map/WalkingStatusModal';
-import type { LatLng } from '../../types/map';
+import type { LatLng } from '@/types/map';
 import CountdownOverlay from '@/components/map/CountdownOverlay';
+import WalkEndModal from '@/components/map/WalkEndModal';
+import WalkCompleteModal from '@/components/map/WalkCompleteModal';
 
 type ContextType = {
   currentPosition: LatLng;
@@ -29,6 +31,10 @@ const WalkingMap = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [showCountdown, setShowCountdown] = useState(false);
   const [showWalkingStatus, setShowWalkingStatus] = useState(false);
+  const [isEndModalOpen, setIsEndModalOpen] = useState(false);
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [walkSeconds, setWalkSeconds] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   // 선택된 강아지 목록 (임시 데이터)
   const dogList = [
@@ -75,15 +81,29 @@ const WalkingMap = () => {
 
   const handleCountdownComplete = () => {
     setShowCountdown(false);
-    setShowWalkingStatus(true); // 카운트다운 완료 후 산책 현황 모달 표시
+    setShowWalkingStatus(true);
   };
 
   const handleStopWalk = () => {
-    setShowWalkingStatus(false);
-    // 여기에 산책 종료 시 필요한 로직 추가
+    setIsEndModalOpen(true);
+    setIsPaused(true);
   };
 
-  // 선택된 강아지 이름 목록 생성
+  const handleEndModalClose = () => {
+    setIsEndModalOpen(false);
+    setIsPaused(false);
+  };
+
+  const handleWalkEnd = () => {
+    setIsEndModalOpen(false);
+    setShowWalkingStatus(false);
+    setIsCompleteModalOpen(true);
+  };
+
+  const handleCompleteModalClose = () => {
+    setIsCompleteModalOpen(false);
+  };
+
   const selectedDogNames = selectedDogs
     .map((id) => {
       const dog = dogList.find((d) => d.id === id);
@@ -112,7 +132,14 @@ const WalkingMap = () => {
         onClose={() => setShowWalkingStatus(false)}
         dogNames={selectedDogNames}
         onStopWalk={handleStopWalk}
+        walkSeconds={walkSeconds}
+        setWalkSeconds={setWalkSeconds}
+        isPaused={isPaused}
       />
+
+      <WalkEndModal isOpen={isEndModalOpen} onClose={handleEndModalClose} onConfirm={handleWalkEnd} />
+
+      <WalkCompleteModal isOpen={isCompleteModalOpen} onClose={handleCompleteModalClose} />
 
       {isLoading && <LoadingOverlay message="위치를 불러오는 중..." />}
     </div>
