@@ -45,11 +45,6 @@ const useChat = (roomId: number) => {
       },
       onWebSocketError: (error) => {
         console.error(`WebSocket 연결 오류: 방 번호 ${roomId}`, error);
-        console.log("WebSocket 연결 오류의 세부 사항:", {
-          url: client.brokerURL,
-          readyState: client.connected ? "Connected" : "Not connected",
-          errorDetails: error,
-        });
       },
       onDisconnect: () => {
         console.log(`WebSocket 연결 해제: 방 번호 ${roomId}`);
@@ -74,7 +69,7 @@ const useChat = (roomId: number) => {
       };
 
       clientRef.current.publish({
-        destination: `/socket/chat/sub/chat.exchange/room.${roomId}`,
+        destination: `/pub/send.message.${roomId}`,
       });
 
       console.log(`메시지 전송 성공: ${message}`, chatMessage);
