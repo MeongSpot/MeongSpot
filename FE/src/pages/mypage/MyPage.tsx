@@ -87,7 +87,10 @@ const MyPage: React.FC = () => {
 
           <div className="grid grid-cols-3">
             {userInfo.map((info, idx) => (
-              <div key={idx} className="flex justify-around items-center">
+              <div
+                key={idx}
+                className={`flex justify-around items-center ${idx !== userInfo.length - 1 ? 'border-r border-zinc-300' : ''}`}
+              >
                 <p className="text-sm font-semibold">{info}</p>
                 <p className="text-sm text-zinc-700">
                   {info === '이름' && userData?.name}

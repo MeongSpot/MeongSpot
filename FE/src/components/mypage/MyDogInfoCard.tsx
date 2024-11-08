@@ -12,8 +12,11 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
     { label: '성별', value: dog.gender === 'MALE' ? '남' : '여' },
     { label: '중성화', value: dog.isNeuter ? '했음' : '안했음' },
     { label: '생일', value: dog.birth },
-    // { label: '소개', value: dog.introduction },
   ];
+
+  const maxTraitsToShow = 5; // 표시할 최대 성격 개수
+  const traitsToShow = dog.personality?.slice(0, dog.personality?.length === 5 ? maxTraitsToShow : maxTraitsToShow - 1) || [];
+  const remainingTraitsCount = dog.personality?.length - traitsToShow.length || 0;
 
   return (
     <div className="h-[16.7rem] px-3 py-4 bg-white rounded-xl space-y-5">
@@ -41,11 +44,14 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
         <div className="border-b border-zinc-200"></div>
 
         <div className="flex flex-wrap gap-x-3 gap-y-2">
-          {dog.personality?.map((trait, index) => (
+          {traitsToShow.map((trait, index) => (
             <button key={index} className="text-xs px-3 py-1 bg-zinc-100 rounded-full">
               # {trait}
             </button>
           ))}
+          {remainingTraitsCount > 0 && (
+            <span className="text-xs px-3 py-1 bg-zinc-100 rounded-full">+{remainingTraitsCount}</span>
+          )}
         </div>
       </div>
     </div>
