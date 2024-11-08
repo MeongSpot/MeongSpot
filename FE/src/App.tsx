@@ -18,9 +18,11 @@ const App = () => {
       '/registerdog',
       '/selectbreed',
       '/friendslist',
+      '/dog',
     ].includes(location.pathname) ||
     (location.pathname.startsWith('/chat/') && id) ||
-    (location.pathname.startsWith('/participateDog/') && id);
+    (location.pathname.startsWith('/participateDog/') && id) ||
+    (location.pathname.startsWith('/dog/') && id);
 
   return (
     <div className="mobile-container">
