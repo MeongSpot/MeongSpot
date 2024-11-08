@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableStompBrokerRelay("/sub")
+        config.enableStompBrokerRelay("/exchange")
                 .setClientLogin(rabbitUser)
                 .setClientPasscode(rabbitPassword)
                 .setSystemLogin(rabbitUser)
