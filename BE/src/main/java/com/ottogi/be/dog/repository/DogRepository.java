@@ -25,4 +25,11 @@ public interface DogRepository extends JpaRepository<Dog, Long> {
             ORDER BY m.id ASC
             """)
     List<FriendDto> findAllByMemberId(@Param("memberIds") List<Long> memberIds);
+
+    @Query("""
+            SELECT COUNT(d) = 0
+            FROM Dog d
+            WHERE d.id IN :dogIds AND d.member != :member
+            """)
+    Boolean isOwner(@Param("member") Member member, @Param("dogIds") List<Long> dogIds);
 }
