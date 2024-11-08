@@ -78,7 +78,7 @@ public class FindChatRoomService {
        return result;
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public FindChatRoomResponse findChatRoom(FindChatRoomDto dto, Pageable pageable) {
         ChatRoom chatRoom = chatRoomRepository.findById(dto.getChatRoomId())
                 .orElseThrow(ChatRoomNotFoundException::new);
@@ -123,6 +123,6 @@ public class FindChatRoomService {
 
         boolean hasNext = chatMessageDtoList.size() == pageable.getPageSize();
 
-        return new FindChatRoomResponse(member.getId(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
+        return new FindChatRoomResponse(member.getId(), member.getNickname(), member.getProfileImage(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
     }
 }

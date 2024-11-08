@@ -1,7 +1,6 @@
 package com.ottogi.be.chat.controller;
 
 import com.ottogi.be.auth.dto.LoginMemberInfo;
-import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
 import com.ottogi.be.chat.dto.LeaveFriendChatRoomDto;
 import com.ottogi.be.chat.dto.request.CreateFriendChatRoomRequest;
@@ -13,7 +12,6 @@ import com.ottogi.be.chat.service.LeaveChatRoomService;
 import com.ottogi.be.common.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

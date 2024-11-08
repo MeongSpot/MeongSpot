@@ -11,5 +11,7 @@ import org.springframework.data.domain.Slice;
 @AllArgsConstructor
 public class FindChatRoomResponse {
     private Long myId;
+    private String nickname;
+    private String profileImage;
     private Slice<ChatMessageDto> chatMessageDtos;
 }
