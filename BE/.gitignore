@@ -376,3 +376,6 @@ gradle-app.setting
 # Custom
 src/main/resources/application-secret.yml
 /src/main/resources/meongspot-firebase-adminsdk-qrwnh-17f0e434a8.json
+src/main/resources/meongspot-firebase-adminsdk-qrwnh-17f0e434a8.json
+resources/meongspot-firebase-adminsdk-qrwnh-17f0e434a8.json
+BE/src/main/resources/meongspot-firebase-adminsdk-qrwnh-17f0e434a8.json
