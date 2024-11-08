@@ -3,7 +3,7 @@ import { FaPaperPlane } from 'react-icons/fa';
 import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-// import useChat from '@/hooks/chat/useChat';
+import useChat from '@/hooks/chat/useChat';
 import useChatDetail from '@/hooks/chat/useChatDetail';
 
 const SingleChatPage = () => {
@@ -12,10 +12,11 @@ const SingleChatPage = () => {
   const roomId = location.state?.roomId;
   const [page, setPage] = useState(0);
   const [message, setMessage] = useState('');
-  const [targetNickname, setTargetNickname] = useState('');
+  const initialFriendName = location.state?.friendName;
+  const [targetNickname, setTargetNickname] = useState(initialFriendName || '');
 
   const { messages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
-  // const { chats, sendMessage } = useChat(roomId);
+  const { chats, sendMessage } = useChat(roomId);
 
   useEffect(() => {
     const firstNonSenderMessage = messages.find((msg) => msg.senderId !== myId);
@@ -26,7 +27,7 @@ const SingleChatPage = () => {
 
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
-      // sendMessage(message, myId);
+      sendMessage(message, myId);
       setMessage(''); // 메시지 전송 후 입력 필드를 초기화
     }
   };
