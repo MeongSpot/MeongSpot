@@ -11,6 +11,7 @@ const SingleChatList = () => {
   const navigate = useNavigate();
 
   const { chatRooms, loading, error } = useFetchSingleChatRooms();
+  
 
   const openModal = (chat: { name: string; profileImage: string, chatRoomId: number }) => {
     setSelectedChat(chat);
@@ -22,8 +23,8 @@ const SingleChatList = () => {
     setSelectedChat(null);
   };
 
-  const goToChatPage = (roomId: number) => {
-    navigate(`/chat/single/${roomId}`, { state: { roomId } });
+  const goToChatPage = (roomId: number, friendName: string) => {
+    navigate(`/chat/single/${roomId}`, { state: { roomId, friendName } });
   };
 
   const formatLastMessageTime = (timestamp: string) => {
@@ -37,6 +38,23 @@ const SingleChatList = () => {
     }
   };
 
+  if (chatRooms.length === 0) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center mt-[-10vh] text-center">
+        <div className="flex flex-col justify-center items-center h-64 text-gray-500">
+          <h1 className="mb-4">현재 활성화된 채팅방이 없습니다.</h1>
+          <p className="text-sm text-gray-400 mb-6">친구와 새 채팅을 시작하려면 친구 목록으로 이동해보세요.</p>
+          <button
+            onClick={() => navigate('/friendslist')}
+            className="bg-deep-coral text-white px-6 py-2 rounded-full"
+          >
+            친구 목록으로 이동
+          </button>
+        </div>
+      </div>
+    );
+  }  
+
   return (
     <div>
       {chatRooms.map((chat) => {
@@ -46,7 +64,7 @@ const SingleChatList = () => {
           <div
             key={chat.chatRoomId}
             className="flex items-center py-4 px-4 border-b border-gray-300 cursor-pointer"
-            onClick={() => goToChatPage(chat.chatRoomId)}
+            onClick={() => goToChatPage(chat.chatRoomId, chat.friend)}
           >
             <img src={chat.friendDogImage} alt={chat.friend} className="w-12 h-12 rounded-full mr-4" />
             <div className="flex-1">

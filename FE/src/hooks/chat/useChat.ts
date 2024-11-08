@@ -29,10 +29,10 @@ const useChat = (roomId: number) => {
   // WebSocket 연결 설정
   useEffect(() => {
     const client = new Client({
-      brokerURL: `ws://localhost:8080/ws`, // WebSocket 연결 주소
+      brokerURL: `/ws://meongspot.kro.kr/ws`, 
       onConnect: () => {
         console.log(`WebSocket 연결 성공: 방 번호 ${roomId}`);
-        client.subscribe(`/topic/chat/${roomId}`, (message) => {
+        client.subscribe(`/socket/chat/exchange/chat.exchange/room.${roomId}`, (message) => {
           if (message.body) {
             const newMessage: Chat = JSON.parse(message.body);
             addChat(roomId, newMessage); // 특정 방 번호에 새로운 메시지 추가
@@ -69,8 +69,7 @@ const useChat = (roomId: number) => {
       };
 
       clientRef.current.publish({
-        destination: `/app/chat/send/${roomId}`, // 서버에서 지정한 전송 경로로 수정
-        body: JSON.stringify(chatMessage),
+        destination: `/socket/chat/sub/chat.exchange/room.${roomId}`,
       });
 
       console.log(`메시지 전송 성공: ${message}`, chatMessage);
