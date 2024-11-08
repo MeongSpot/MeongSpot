@@ -25,40 +25,40 @@ const UserProfile: React.FC = () => {
   const isOwnProfile = Number(userId) === myId;
   const { setShowNav } = useOutletContext<{ setShowNav: React.Dispatch<React.SetStateAction<boolean>> }>();
 
-  const dogInfoList: DogInfo[] = [
-    {
-      profile_image: 'url-to-image1.jpg',
-      name: '뽀삐',
-      breedId: '시바견',
-      age: 3,
-      birth: {
-        year: '2018',
-        month: '01',
-        day: '01',
-      },
-      size: '소형견',
-      gender: '수컷',
-      isNeuter: true,
-      introduction: '안녕하세요',
-      personality: [1, 2, 3], // 가상의 성격 아이디로 설정
-    },
-    {
-      profile_image: 'url-to-image2.jpg',
-      name: '쿠키',
-      breedId: '말티즈',
-      age: 3,
-      birth: {
-        year: '2018',
-        month: '01',
-        day: '01',
-      },
-      size: '소형견',
-      gender: '암컷',
-      isNeuter: false,
-      introduction: '안녕하세요',
-      personality: [1, 2, 3], // 동일하게 가상의 성격 아이디 사용
-    },
-  ];
+  // const dogInfoList: DogInfo[] = [
+  //   {
+  //     profileImage: 'url-to-image1.jpg',
+  //     name: '뽀삐',
+  //     breedId: '시바견',
+  //     age: 3,
+  //     birth: {
+  //       year: '2018',
+  //       month: '01',
+  //       day: '01',
+  //     },
+  //     size: '소형견',
+  //     gender: '수컷',
+  //     isNeuter: true,
+  //     introduction: '안녕하세요',
+  //     personality: [1, 2, 3], // 가상의 성격 아이디로 설정
+  //   },
+  //   {
+  //     profileImage: 'url-to-image2.jpg',
+  //     name: '쿠키',
+  //     breedId: '말티즈',
+  //     age: 3,
+  //     birth: {
+  //       year: '2018',
+  //       month: '01',
+  //       day: '01',
+  //     },
+  //     size: '소형견',
+  //     gender: '암컷',
+  //     isNeuter: false,
+  //     introduction: '안녕하세요',
+  //     personality: [1, 2, 3], // 동일하게 가상의 성격 아이디 사용
+  //   },
+  // ];
 
   return (
     <div className="pb-16">
@@ -116,11 +116,11 @@ const UserProfile: React.FC = () => {
             modules={[Pagination]}
             className="dogSwiper rounded-lg"
           >
-            {dogInfoList.map((dog, idx) => (
+            {/* {dogInfoList.map((dog, idx) => (
               <SwiperSlide key={idx}>
                 <MyDogInfoCard dog={dog} isOwnProfile={isOwnProfile} />
               </SwiperSlide>
-            ))}
+            ))} */}
           </Swiper>
         </div>
       </div>

@@ -12,13 +12,13 @@ const UserSearchBar = ({ setData }: UserSearchBarProps) => {
       {
         id: 1,
         name: '로나로나',
-        profile_image: 'url-to-image1.jpg',
+        profileImage: 'url-to-image1.jpg',
         dogs: ['뽀삐', '쿠키', '카트시'],
       },
       {
         id: 2,
         name: '로나',
-        profile_image: 'url-to-image2.jpg',
+        profileImage: 'url-to-image2.jpg',
         dogs: ['깜자'],
       },
     ]);

@@ -64,30 +64,21 @@ export default defineConfig(({ command, mode }) => {
     publicDir: 'public',
     assetsInclude: ['**/*.svg'], // SVG 파일 포함
     server: {
-      headers: {
-        'Service-Worker-Allowed': '/',
-      },
       proxy: {
         '/api': {
           target: 'https://meongspot.kro.kr',
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
           secure: false,
+          rewrite: (path) => path.replace(/^\/api/, ''),
           configure: (proxy, _options) => {
-            proxy.on('error', (err, _req, _res) => {
-              console.log('proxy error', err);
-            });
-            proxy.on('proxyReq', (_proxyReq, req, _res) => {
-              console.log('Sending Request:', req.method, req.url);
-            });
-            proxy.on('proxyRes', (proxyRes, req, _res) => {
-              console.log('Received Response:', proxyRes.statusCode, req.url);
+            proxy.on('proxyReq', (proxyReq, _req, _res) => {
+              // 필수 헤더만 설정하고 로그는 제거
+              proxyReq.setHeader('Origin', 'https://meongspot.kro.kr');
+              proxyReq.setHeader('Access-Control-Allow-Credentials', 'true');
+              proxyReq.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
             });
           },
         },
-      },
-      watch: {
-        usePolling: true, // 파일 변경 감지를 위한 설정 추가
       },
     },
     build: {

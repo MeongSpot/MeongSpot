@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import MyDogInfoCard from '@/components/mypage/MyDogInfoCard';
 import { IoNotificationsOutline } from 'react-icons/io5';
@@ -14,51 +14,31 @@ import '../../css/swiper.css';
 import { Pagination } from 'swiper/modules';
 import { DogInfo } from '@/types/dogInfo';
 import { useFriend } from '@/hooks/friend/useFriend';
+import { useMyPage } from '@/hooks/mypage/useMyPage';
+import { useDog } from '@/hooks/dog/useDog';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 
 const MyPage: React.FC = () => {
-  const { getFriends, friendsCount, isLoading } = useFriend();
+  const { getFriends, friendsCount } = useFriend();
+  const { myDogs, getMyDogs } = useDog();
+  const { userData, getMyPageUser } = useMyPage();
   const navigate = useNavigate();
   const userInfo = ['이름', '성별', '나이'];
-
-  const dogInfoList: DogInfo[] = [
-    {
-      profile_image: 'url-to-image1.jpg',
-      name: '뽀삐',
-      breedId: '시바견',
-      age: 3,
-      birth: {
-        year: '2018',
-        month: '01',
-        day: '01',
-      },
-      size: '소형견',
-      gender: '수컷',
-      isNeuter: true,
-      introduction: '안녕하세요',
-      personality: [1, 2, 3], // 가상의 성격 아이디로 설정
-    },
-    {
-      profile_image: 'url-to-image2.jpg',
-      name: '쿠키',
-      breedId: '말티즈',
-      age: 3,
-      birth: {
-        year: '2018',
-        month: '01',
-        day: '01',
-      },
-      size: '소형견',
-      gender: '암컷',
-      isNeuter: false,
-      introduction: '안녕하세요',
-      personality: [1, 2, 3], // 동일하게 가상의 성격 아이디 사용
-    },
-  ];
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // 친구 수 조회
-    getFriends();
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        await Promise.all([getFriends(), getMyDogs(), getMyPageUser()]);
+      } catch (error) {
+        console.error('데이터를 불러오는 중 오류가 발생했습니다:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -91,18 +71,29 @@ const MyPage: React.FC = () => {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <div className="w-20 h-20 rounded-full border flex justify-center items-center">
-                <img className="w-[80%] h-[80%]" src="/icons/favicon/favicon-96x96.png" alt="" />
+                {userData?.profileImage ? (
+                  <img className="w-full h-full rounded-full" src={userData.profileImage} alt="" />
+                ) : (
+                  <img className="w-[80%] h-[80%]" src="/icons/favicon/favicon-96x96.png" alt="" />
+                )}
               </div>
-              <p className="font-bold text-lg">뽀삐 주인</p>
+              <p className="font-bold text-lg">{userData?.nickname}</p>
             </div>
-            <PiNotePencil className="text-2xl" />
+            <button className="px-2 py-[0.3rem] border rounded-3xl flex items-center space-x-1 text-xs">
+              <PiNotePencil className="text-lg" />
+              <p>수정</p>
+            </button>
           </div>
 
           <div className="grid grid-cols-3">
             {userInfo.map((info, idx) => (
               <div key={idx} className="flex justify-around items-center">
                 <p className="text-sm font-semibold">{info}</p>
-                <p className="">정보</p>
+                <p className="text-sm text-zinc-700">
+                  {info === '이름' && userData?.name}
+                  {info === '성별' && (userData?.gender === 'MALE' ? '남자' : '여자')}
+                  {info === '나이' && userData?.age}
+                </p>
               </div>
             ))}
           </div>
@@ -149,7 +140,7 @@ const MyPage: React.FC = () => {
             modules={[Pagination]}
             className="dogSwiper rounded-lg"
           >
-            {dogInfoList.map((dog, idx) => (
+            {myDogs.map((dog, idx) => (
               <SwiperSlide key={idx}>
                 <MyDogInfoCard dog={dog} isOwnProfile={true} />
               </SwiperSlide>

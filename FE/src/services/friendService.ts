@@ -1,5 +1,4 @@
 import axiosInstance from '@/services/axiosInstance';
-import type { ValidationResponse, AuthResponse, SignupRequest } from '@/types/auth';
 import { GetFriendsResponse } from '@/types/friend';
 
 

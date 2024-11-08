@@ -3,7 +3,7 @@ import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 interface Friend {
   id: number;
   name: string;
-  profile_image: string | null;
+  profileImage: string | null;
   dogs: string[];
 }
 
@@ -19,10 +19,10 @@ const FriendsListCard = ({ data }: FriendsListCardProps) => {
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
               <div className="w-11 h-11 border rounded-full flex justify-center items-center">
-                {friend.profile_image ? (
+                {friend.profileImage ? (
                   <img
                     className="w-9 h-9 rounded-full"
-                    src={friend.profile_image}
+                    src={friend.profileImage}
                     alt={`${friend.name}의 프로필 사진`}
                   />
                 ) : (
