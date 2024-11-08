@@ -22,7 +22,7 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
   ];
 
   const getSelectedDogsText = () => {
-    const selectedDogsList = dogList.filter((dog) => selectedDogs.includes(dog.id));
+    const selectedDogsList = selectedDogs.map((id) => dogList.find((dog) => dog.id === id)!);
     if (selectedDogsList.length === 0) return '';
     if (selectedDogsList.length <= 2) {
       return `${selectedDogsList.map((dog) => dog.name).join(', ')}(이)`;
@@ -57,19 +57,17 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
 
         <hr className="border-t-2 border-gray-100 mb-4" />
 
-        <div className="relative h-[200px]">
-          <div className="relative z-20 top-2">
-            <DogSelectionAccordion dogs={dogList} selectedDogs={selectedDogs} onDogSelect={onDogSelect} />
-          </div>
+        <div className="flex flex-col">
+          <DogSelectionAccordion dogs={dogList} selectedDogs={selectedDogs} onDogSelect={onDogSelect} />
 
-          {/* 선택된 강아지 목록을 가로 스크롤로 표시 */}
-          <div className="my-6 px-4 overflow-x-auto whitespace-nowrap flex gap-2">
-            {dogList
-              .filter((dog) => selectedDogs.includes(dog.id))
-              .map((dog) => (
+          {/* 선택된 강아지 목록을 선택 순서대로 표시 */}
+          <div className="mb-3 px-4 overflow-x-auto whitespace-nowrap flex gap-2">
+            {selectedDogs.map((dogId) => {
+              const dog = dogList.find((d) => d.id === dogId)!;
+              return (
                 <span
                   key={dog.id}
-                  className="bg-deep-coral text-white px-4 py-1 rounded-full text-sm flex items-center gap-3"
+                  className="bg-deep-coral mt-3 text-white px-4 py-1 rounded-full text-sm flex items-center gap-3"
                 >
                   {dog.name}
                   <button
@@ -82,9 +80,11 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
                     ×
                   </button>
                 </span>
-              ))}
+              );
+            })}
           </div>
-          <div className="absolute bottom-0 left-0 right-0 bg-white z-10 top-32">
+
+          <div className="bg-white z-10 mb-4">
             <StartWalkButton isDisabled={selectedDogs.length === 0} onClick={onStartWalk} />
           </div>
         </div>
