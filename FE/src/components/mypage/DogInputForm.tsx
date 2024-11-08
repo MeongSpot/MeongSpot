@@ -91,7 +91,7 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
         </div>
 
         {/* 나이 입력 Input */}
-        <div>
+        {/* <div>
           <DogBoxInput
             label="나이"
             name="age"
@@ -100,6 +100,10 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
             className="py-3"
             type={'number'}
           />
+        </div> */}
+        {/* 생년월일 입력 */}
+        <div className="w-full">
+          <DogBirthdayInput formData={formData} setFormData={setFormData} />
         </div>
 
         {/* 성별 선택 버튼 */}
@@ -126,11 +130,6 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
               했음
             </GenderButton>
           </div>
-        </div>
-
-        {/* 생년월일 입력 */}
-        <div className="w-full">
-          <DogBirthdayInput formData={formData} setFormData={setFormData} />
         </div>
 
         {/* 반려견 소개 */}
