@@ -25,7 +25,7 @@ public class ChatController {
 
     }
 
-    @MessageMapping("chat.message.{chatRoomId}")
+    @MessageMapping("send.message.{chatRoomId}")
     public void messageSend(@Payload SendMessageRequest request, @DestinationVariable Long chatRoomId) {
         ChatMessageDto message = sendMessageService.sendMessage(request, chatRoomId);
         rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId, message);
