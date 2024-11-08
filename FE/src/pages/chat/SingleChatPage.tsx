@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -12,10 +12,17 @@ const SingleChatPage = () => {
   const roomId = location.state?.roomId;
   const [page, setPage] = useState(0);
   const [message, setMessage] = useState('');
+  const [targetNickname, setTargetNickname] = useState('');
 
-  // 현재 채팅방의 메시지 목록과 사용자 ID를 가져오는 커스텀 훅
   const { messages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
   // const { chats, sendMessage } = useChat(roomId);
+
+  useEffect(() => {
+    const firstNonSenderMessage = messages.find((msg) => msg.senderId !== myId);
+    if (firstNonSenderMessage) {
+      setTargetNickname(firstNonSenderMessage.nickname);
+    }
+  }, [messages, myId]);
 
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
@@ -40,7 +47,7 @@ const SingleChatPage = () => {
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
-        <h1 className="text-lg font-bold flex-1">채팅방</h1>
+        <h1 className="text-lg font-bold flex-1">{targetNickname}</h1>
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto bg-white flex flex-col">
