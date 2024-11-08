@@ -29,7 +29,7 @@ const useChat = (roomId: number) => {
   // WebSocket 연결 설정
   useEffect(() => {
     const client = new Client({
-      brokerURL: `/ws://meongspot.kro.kr/ws`, 
+      brokerURL: `wss://meongspot.kro.kr/ws`, 
       onConnect: () => {
         console.log(`WebSocket 연결 성공: 방 번호 ${roomId}`);
         client.subscribe(`/socket/chat/exchange/chat.exchange/room.${roomId}`, (message) => {
