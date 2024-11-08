@@ -29,7 +29,7 @@ const useChat = (roomId: number) => {
   // WebSocket 연결 설정
   useEffect(() => {
     const client = new Client({
-      brokerURL: `wss://meongspot.kro.kr/socket/chat`, 
+      brokerURL: `wss://meongspot.kro.kr/socket/chat/ws`, 
       onConnect: () => {
         console.log(`WebSocket 연결 성공: 방 번호 ${roomId}`);
         client.subscribe(`/socket/chat/exchange/chat.exchange/room.${roomId}`, (message) => {
@@ -45,6 +45,11 @@ const useChat = (roomId: number) => {
       },
       onWebSocketError: (error) => {
         console.error(`WebSocket 연결 오류: 방 번호 ${roomId}`, error);
+        console.log("WebSocket 연결 오류의 세부 사항:", {
+          url: client.brokerURL,
+          readyState: client.connected ? "Connected" : "Not connected",
+          errorDetails: error,
+        });
       },
       onDisconnect: () => {
         console.log(`WebSocket 연결 해제: 방 번호 ${roomId}`);
