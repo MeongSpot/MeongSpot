@@ -2,13 +2,12 @@ package com.ottogi.be.friend.domain;
 
 import com.ottogi.be.member.domain.Member;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Friend {
 
     @Id
@@ -22,4 +21,10 @@ public class Friend {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id")
     private Member sender;
+
+    @Builder
+    public Friend(Member receiver, Member sender) {
+        this.receiver = receiver;
+        this.sender = sender;
+    }
 }

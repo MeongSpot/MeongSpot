@@ -7,14 +7,15 @@ import com.ottogi.be.notification.dto.NotificationDto;
 import com.ottogi.be.notification.dto.response.NotificationResponse;
 import com.ottogi.be.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.notification.exception.NotificationNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -67,5 +68,4 @@ public class NotificationService {
         Member member = memberRepository.findByLoginId(loginId).orElseThrow(MemberNotFoundException::new);
         return notificationRepository.existsByReceiverAndIsReadFalse(member);
     }
-
 }

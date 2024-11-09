@@ -1,6 +1,7 @@
 package com.ottogi.be.friend.repository;
 
 import com.ottogi.be.friend.domain.Friend;
+import com.ottogi.be.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -55,4 +56,5 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
         """, nativeQuery = true)
     List<Long> findFriendsByNickname(@Param("memberId") Long memberId, @Param("keyword") String keyword);
 
+    boolean existsBySenderAndReceiver(Member sender, Member receiver);
 }

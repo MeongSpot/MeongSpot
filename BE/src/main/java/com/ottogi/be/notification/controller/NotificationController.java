@@ -4,10 +4,12 @@ import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
 import com.ottogi.be.notification.dto.NotificationDto;
 import com.ottogi.be.notification.dto.request.FCMTokenRequest;
+import com.ottogi.be.notification.dto.request.FriendInviteNotificationRequest;
 import com.ottogi.be.notification.dto.request.NotificationReadRequest;
 import com.ottogi.be.notification.dto.response.NotificationResponse;
 import com.ottogi.be.notification.service.FCMTokenService;
 import com.ottogi.be.notification.service.NotificationService;
+import com.ottogi.be.notification.service.RespondFriendInvitationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +23,7 @@ import java.util.List;
 public class NotificationController {
     private final FCMTokenService fcmTokenService;
     private final NotificationService notificationService;
+    private final RespondFriendInvitationService respondFriendInvitationService;
 
     @PostMapping("/fcm")
     public ResponseEntity<?> fcmTokenSave(@RequestBody FCMTokenRequest fcmTokenRequest,
@@ -54,6 +57,12 @@ public class NotificationController {
     public ResponseEntity<?> unReadNotificationCheck(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
         Boolean result = notificationService.checkUnreadNotification(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("NO103", "읽지 않은 알림 조회 성공", result));
+    }
+    @PostMapping("/invitation/response")
+    public ResponseEntity<?> friendInvitationRespond(@RequestBody FriendInviteNotificationRequest request,
+                                                   @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        respondFriendInvitationService.respondFriendInvitation(request.toDto(loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("NO100","그룹 초대 응답 성공",null));
     }
 
 
