@@ -63,7 +63,7 @@ const MapPage = () => {
 
   const handleSearch = useCallback(() => {
     if (!searchKeyword.trim()) return;
-
+  
     const ps = new window.kakao.maps.services.Places();
     ps.keywordSearch(searchKeyword, (data, status) => {
       if (status === window.kakao.maps.services.Status.OK && data[0]) {
@@ -71,6 +71,11 @@ const MapPage = () => {
           lat: parseFloat(data[0].y),
           lng: parseFloat(data[0].x),
         });
+        
+        // 검색 결과를 설정한 후 일정 시간 후에 초기화
+        setTimeout(() => {
+          setSearchResult(null);
+        }, 10); // 지도 이동이 완료되고 나서 초기화
       }
     });
   }, [searchKeyword]);
