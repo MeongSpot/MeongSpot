@@ -11,7 +11,7 @@ export default {
         'light-orange': '#F7B267',
         'deep-coral': '#F4845F',
         'peach-orange': '#F79D65',
-        'warm-orange': '#F79D65',
+        'warm-orange': '#F25C54',
       },
       fontWeight: {
         // ... 기존 설정 유지

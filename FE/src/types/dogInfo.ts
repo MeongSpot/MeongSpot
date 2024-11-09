@@ -1,5 +1,5 @@
 export interface DogInfo {
-  id: number;
+  id?: number;
   profileImage: string;
   profile_file?: File | null;
   name: string;
