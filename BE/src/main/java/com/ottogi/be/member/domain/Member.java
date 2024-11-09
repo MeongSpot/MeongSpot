@@ -65,6 +65,14 @@ public class Member {
 
     private LocalDateTime withdrawnAt;
 
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     @Builder
     public Member(String loginId, String password, String name, String nickname, String phone, LocalDate birth, Gender gender) {
         this.loginId = loginId;

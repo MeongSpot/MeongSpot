@@ -3,12 +3,12 @@ package com.ottogi.be.member.controller;
 import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
 import com.ottogi.be.member.dto.MemberDetailsDto;
+import com.ottogi.be.member.dto.request.ModifyNicknameRequest;
+import com.ottogi.be.member.dto.request.ModifyProfileImageRequest;
 import com.ottogi.be.member.dto.request.SignupRequest;
 import com.ottogi.be.member.dto.response.MemberDetailsResponse;
 import com.ottogi.be.member.dto.response.ProfileInfoResponse;
-import com.ottogi.be.member.service.CheckInfoService;
-import com.ottogi.be.member.service.FindMemberInfoService;
-import com.ottogi.be.member.service.SignupService;
+import com.ottogi.be.member.service.*;
 import com.ottogi.be.member.validation.annotation.LoginId;
 import com.ottogi.be.member.validation.annotation.Nickname;
 import com.ottogi.be.member.validation.annotation.Phone;
@@ -19,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/members")
@@ -27,6 +30,8 @@ public class MemberController {
     private final SignupService signupService;
     private final CheckInfoService checkInfoService;
     private final FindMemberInfoService findMemberInfoService;
+    private final ModifyProfileImageService modifyProfileImageService;
+    private final ModifyNicknameService modifyNicknameService;
 
     @PostMapping
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
@@ -64,5 +69,21 @@ public class MemberController {
         MemberDetailsResponse result = findMemberInfoService.findMemberDetails(new MemberDetailsDto(memberId, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("ME105", "사용자 정보 상세 조회 성공", result));
     }
+
+    @PatchMapping("/profile-image")
+    ResponseEntity<?> profileImageModify(@ModelAttribute ModifyProfileImageRequest request,
+                                         @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws URISyntaxException, IOException {
+        modifyProfileImageService.modifyProfileImage(request.toDto(loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("ME106", "프로필 이미지 변경 성공", null));
+    }
+
+    @PatchMapping("/nickname")
+    ResponseEntity<?> nicknameModify(@Valid @RequestBody ModifyNicknameRequest request,
+                                     @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+
+        modifyNicknameService.modifyNickname(request.toDto(loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("ME107", "닉네임 변경 성공", null));
+    }
+
 
 }
