@@ -13,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateMeetingRequest {
+    @NotNull
+    private Long spotId;
     @NotBlank
     private String title;
     @NotNull

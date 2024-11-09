@@ -58,7 +58,7 @@ public class CreateMeetingService {
         if (meetingDate.isAfter(currentTime.toLocalDate().plusWeeks(2))) throw new InvalidMeetingTimeException();
 
         List<Long> dogIds = dto.getDogIds();
-        if (!dogRepository.isOwner(member, dogIds)) throw new DogOwnerMismatchException();
+        if (!dogRepository.isOwner(member, dogIds, dogIds.size())) throw new DogOwnerMismatchException();
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .chatRoomType(ChatRoomType.MEETING)

@@ -29,9 +29,9 @@ public class CreateMeetingDto {
     private int maxParticipants;
     private List<Long> dogIds;
 
-    public static CreateMeetingDto toDto(Long spotId, CreateMeetingRequest request, String loginId) {
+    public static CreateMeetingDto toDto(CreateMeetingRequest request, String loginId) {
         return CreateMeetingDto.builder()
-                .spotId(spotId)
+                .spotId(request.getSpotId())
                 .loginId(loginId)
                 .title(request.getTitle())
                 .date(request.getDate())

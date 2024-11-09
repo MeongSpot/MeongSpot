@@ -4,11 +4,13 @@ import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
 import com.ottogi.be.dog.dto.request.DogAddRequest;
 import com.ottogi.be.dog.dto.request.DogModifyRequest;
+import com.ottogi.be.dog.dto.response.FindDogNameResponse;
 import com.ottogi.be.dog.dto.response.FindMemberDogResponse;
 import com.ottogi.be.dog.dto.response.FindMyDogResponse;
 import com.ottogi.be.dog.dto.response.PersonalityResponse;
 import com.ottogi.be.dog.service.BreedService;
 import com.ottogi.be.dog.service.DogService;
+import com.ottogi.be.dog.service.FindDogListService;
 import com.ottogi.be.dog.service.PersonalityService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class DogController {
     private final BreedService breedService;
     private final PersonalityService personalityService;
     private final DogService dogService;
+    private final FindDogListService findDogListService;
 
     @GetMapping("/breed")
     public ResponseEntity<?> breedList() {
@@ -74,5 +77,11 @@ public class DogController {
                                        @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws URISyntaxException, IOException {
         dogService.modifyDog(dogModifyRequest.toDto(loginMemberInfo.getLoginId(), dogId));
         return ResponseEntity.ok(new ApiResponse<>("DO105", "반려견 정보 수정 성공", null));
+    }
+
+    @GetMapping("/name")
+    public ResponseEntity<?> myDogNameList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        List<FindDogNameResponse> result = findDogListService.findDogNameList(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("DO107", "모임 참여 반려견 목록 조회 성공", result));
     }
 }

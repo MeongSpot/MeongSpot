@@ -13,6 +13,10 @@ public class HashtagValidator implements ConstraintValidator<Hashtag, List<Strin
             return true;
         }
 
+        if (value.size() > 5) {
+            return false;
+        }
+
         for (String tag : value) {
             if (tag.length() > 16 || tag.contains(" ")) {
                 return false;
