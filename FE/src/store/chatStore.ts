@@ -7,10 +7,11 @@ interface ChatState {
   setChats: (roomId: number, newChats: Chat[]) => void; // 특정 채팅방의 메시지를 설정하는 함수
   addChat: (roomId: number, chat: Chat) => void; // 특정 채팅방에 새로운 채팅 메시지를 추가하는 함수
   removeChatRoom: (roomId: number) => void;
+  getChatsByRoomId: (roomId: number) => Chat[] | undefined;
 }
 
 const useChatStore = create<ChatState>()(
-  subscribeWithSelector((set) => ({
+  subscribeWithSelector((set, get) => ({
     chats: {},
 
     setChats: (roomId, newChats) =>
@@ -34,6 +35,7 @@ const useChatStore = create<ChatState>()(
         const { [roomId]: _, ...remainingChats } = state.chats;
         return { chats: remainingChats };
       }),
+    getChatsByRoomId: (roomId) => get().chats[roomId],
   }))
 );
 

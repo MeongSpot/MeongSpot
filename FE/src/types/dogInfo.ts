@@ -30,7 +30,7 @@ export interface DogBreedsResponse {
 }
 
 export interface DogList {
-  id: number;
+  id?: number;
   profileImage: string;
   name: string;
   breed: string;
