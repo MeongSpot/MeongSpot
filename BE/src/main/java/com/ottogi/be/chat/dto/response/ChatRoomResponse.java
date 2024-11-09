@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FriendChatRoomResponse {
+public class ChatRoomResponse {
     private Long chatRoomId;
-    private String friend;
-    private String friendProfileImage;
+    private String interlocutorNickname;
+    private String interlocutorProfileImage;
     private String lastMessage;
     private LocalDateTime lastMessageSentAt;
     private Long unreadMessageCnt;

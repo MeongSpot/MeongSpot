@@ -2,10 +2,10 @@ package com.ottogi.be.chat.controller;
 
 import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
-import com.ottogi.be.chat.dto.LeaveFriendChatRoomDto;
-import com.ottogi.be.chat.dto.request.CreateFriendChatRoomRequest;
+import com.ottogi.be.chat.dto.LeavePersonalChatRoomDto;
+import com.ottogi.be.chat.dto.request.CreatePersonalChatRoomRequest;
 import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
-import com.ottogi.be.chat.dto.response.FriendChatRoomResponse;
+import com.ottogi.be.chat.dto.response.ChatRoomResponse;
 import com.ottogi.be.chat.service.FindChatRoomService;
 import com.ottogi.be.chat.service.CreateChatRoomService;
 import com.ottogi.be.chat.service.LeaveChatRoomService;
@@ -28,27 +28,27 @@ public class ChatController {
     private final CreateChatRoomService createChatRoomService;
     private final LeaveChatRoomService leaveChatRoomService;
 
-    @GetMapping("/rooms/friend")
-    public ResponseEntity<?> friendChatRoomList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        List<FriendChatRoomResponse> result = findChatRoomService.findFriendChatRoomList(loginMemberInfo.getLoginId());
+    @GetMapping("/rooms")
+    public ResponseEntity<?> personalChatRoomList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        List<ChatRoomResponse> result = findChatRoomService.findChatRoomList(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("CH100", "채팅 목록 조회 성공", result));
     }
 
-    @PostMapping("/rooms/friend")
-    public ResponseEntity<?> friendChatRoomAdd(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                               @RequestBody CreateFriendChatRoomRequest request) {
-        Long roomId = createChatRoomService.addFriendChatRoom(request.toDto(loginMemberInfo.getLoginId()));
+    @PostMapping("/rooms")
+    public ResponseEntity<?> personalChatRoomAdd(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
+                                               @RequestBody CreatePersonalChatRoomRequest request) {
+        Long roomId = createChatRoomService.addPersonalChatRoom(request.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("CH101", "채팅방 개설 성공", roomId));
     }
 
-    @DeleteMapping("/rooms/friend/{chatRoomId}")
-    public ResponseEntity<?> friendChatRoomLeave(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
+    @DeleteMapping("/rooms/{chatRoomId}")
+    public ResponseEntity<?> personalChatRoomLeave(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
                                                  @PathVariable Long chatRoomId) {
-        LeaveFriendChatRoomDto dto = LeaveFriendChatRoomDto.builder()
+        LeavePersonalChatRoomDto dto = LeavePersonalChatRoomDto.builder()
                 .loginId(loginMemberInfo.getLoginId())
                 .chatRoomId(chatRoomId)
                 .build();
-        leaveChatRoomService.leaveFriendChatRoom(dto);
+        leaveChatRoomService.leavePersonalChatRoom(dto);
         return ResponseEntity.ok(new ApiResponse<>("CH102", "채팅방 나가기 성공", null));
     }
 

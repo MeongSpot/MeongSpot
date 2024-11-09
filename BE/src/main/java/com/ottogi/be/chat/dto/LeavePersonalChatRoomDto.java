@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LeaveFriendChatRoomDto {
+public class LeavePersonalChatRoomDto {
     private String loginId;
     private Long chatRoomId;
 }

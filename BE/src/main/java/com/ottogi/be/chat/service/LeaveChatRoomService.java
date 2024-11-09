@@ -3,7 +3,7 @@ package com.ottogi.be.chat.service;
 import com.ottogi.be.chat.domain.ChatMember;
 import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.chat.domain.enums.ChatRoomType;
-import com.ottogi.be.chat.dto.LeaveFriendChatRoomDto;
+import com.ottogi.be.chat.dto.LeavePersonalChatRoomDto;
 import com.ottogi.be.chat.exception.ChatRoomNotFoundException;
 import com.ottogi.be.chat.repository.ChatMemberRepository;
 import com.ottogi.be.chat.repository.ChatRoomRepository;
@@ -24,14 +24,14 @@ public class LeaveChatRoomService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void leaveFriendChatRoom(LeaveFriendChatRoomDto dto) {
+    public void leavePersonalChatRoom(LeavePersonalChatRoomDto dto) {
         Member member = memberRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(MemberNotFoundException::new);
 
         ChatRoom chatRoom = chatRoomRepository.findById(dto.getChatRoomId())
                 .orElseThrow(ChatRoomNotFoundException::new);
 
-        if (chatRoom.getChatRoomType() != ChatRoomType.FRIEND) {
+        if (chatRoom.getChatRoomType() != ChatRoomType.PERSONAL) {
             throw new ChatRoomNotFoundException();
         }
 

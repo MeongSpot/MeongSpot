@@ -19,29 +19,29 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
             SELECT cm2.chatRoom.id
             FROM ChatMember cm2
             WHERE cm2.member.loginId = :loginId
-            AND cm2.chatRoom.chatRoomType = 'FRIEND'
+            AND cm2.chatRoom.chatRoomType = 'PERSONAL'
         )
         AND cm.member.loginId <> :loginId
         ORDER BY cm.chatRoom.id ASC
     """)
-    List<ChatMember> findAllChatFriendByLoginId(@Param("loginId") String loginId);
+    List<ChatMember> findAllInterlocutorByLoginId(@Param("loginId") String loginId);
 
     @Query("""
         SELECT cm
         FROM ChatMember cm
-        WHERE cm.member.loginId = :loginId AND cm.chatRoom.chatRoomType = 'FRIEND'
+        WHERE cm.member.loginId = :loginId AND cm.chatRoom.chatRoomType = 'PERSONAL'
         ORDER BY cm.chatRoom.id ASC
     """)
-    List<ChatMember> findAllFriendChatByLoginId(@Param("loginId") String loginId);
+    List<ChatMember> findAllPersonalChatByLoginId(@Param("loginId") String loginId);
 
     @Query("""
         SELECT cm1.chatRoom
         FROM ChatMember cm1
         JOIN ChatMember cm2 ON cm1.chatRoom.id = cm2.chatRoom.id
-        WHERE cm1.member.id = :myId AND cm2.member.id = :friendId AND cm1.chatRoom.chatRoomType = 'FRIEND'
+        WHERE cm1.member.id = :myId AND cm2.member.id = :interlocutorId AND cm1.chatRoom.chatRoomType = 'PERSONAL'
         ORDER BY cm1.chatRoom.id ASC
     """)
-    Optional<ChatRoom> findChatRoomByMyIdAndFriendId(@Param("myId") Long myId, @Param("friendId") Long friendId);
+    Optional<ChatRoom> findChatRoomByMyIdAndInterlocutorId(@Param("myId") Long myId, @Param("interlocutorId") Long interlocutorId);
 
     @Query("""
         SELECT cm

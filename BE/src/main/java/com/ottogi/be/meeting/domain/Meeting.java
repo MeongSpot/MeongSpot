@@ -3,6 +3,7 @@ package com.ottogi.be.meeting.domain;
 import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.spot.domain.Spot;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
 public class Meeting {
     @Id
