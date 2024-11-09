@@ -1,4 +1,5 @@
-import { LatLng } from "@/types/map";
+// types/meetup.ts
+import { LatLng } from '@/types/map';
 
 export interface MeetupEvent {
   id: number;

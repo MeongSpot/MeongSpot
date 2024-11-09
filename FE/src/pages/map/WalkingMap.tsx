@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useOutletContext, useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
-import { useOutletContext } from 'react-router-dom';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import WalkStartModal from '@/components/map/WalkStartModal';
 import WalkingStatusModal from '@/components/map/WalkingStatusModal';
@@ -24,7 +24,10 @@ const PRESENT_SPOT_IMAGE = {
 };
 
 const WalkingMap = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { currentPosition, getCurrentLocation } = useOutletContext<ContextType>();
+
   const [center, setCenter] = useState<LatLng>(currentPosition);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
@@ -35,6 +38,9 @@ const WalkingMap = () => {
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [walkSeconds, setWalkSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [nextLocation, setNextLocation] = useState<string | null>(null);
+  const [attemptedPath, setAttemptedPath] = useState<string | null>(null);
+  const prevLocationRef = useRef(location);
 
   // 선택된 강아지 목록 (임시 데이터)
   const dogList = [
@@ -46,6 +52,68 @@ const WalkingMap = () => {
     { id: 6, name: '우유', age: 4 },
     { id: 7, name: '다이아', age: 1 },
   ];
+
+  // 브라우저 뒤로가기/새로고침 방지
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (showWalkingStatus) {
+        e.preventDefault();
+        const message = '산책이 진행 중입니다. 페이지를 떠나시겠습니까?';
+        e.returnValue = message;
+        return message;
+      }
+    };
+
+    if (showWalkingStatus) {
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+  }, [showWalkingStatus]);
+
+// 산책 시작/종료 시 상태 저장
+useEffect(() => {
+  if (showWalkingStatus) {
+    sessionStorage.setItem('walkInProgress', 'true');
+  } else {
+    sessionStorage.removeItem('walkInProgress');
+  }
+}, [showWalkingStatus]);
+
+// 페이지 전환 감지
+useEffect(() => {
+  if (
+    showWalkingStatus &&
+    !isEndModalOpen &&
+    !isCompleteModalOpen &&
+    location.pathname !== prevLocationRef.current.pathname
+  ) {
+    // 이동 시도한 경로 저장
+    setAttemptedPath(location.pathname);
+    // 이동 시도 감지됨
+    setIsEndModalOpen(true);
+    setIsPaused(true);
+    // 이전 경로로 강제 이동
+    navigate(prevLocationRef.current.pathname, { replace: true });
+  } else {
+    prevLocationRef.current = location;
+  }
+}, [location, showWalkingStatus, isEndModalOpen, isCompleteModalOpen, navigate]);
+
+// 뒤로가기 이벤트 추가
+useEffect(() => {
+  const handleNavigation = () => {
+    const isWalking = sessionStorage.getItem('walkInProgress') === 'true';
+    if (isWalking && !isEndModalOpen && !isCompleteModalOpen) {
+      setAttemptedPath(window.location.pathname);
+      setIsEndModalOpen(true);
+      setIsPaused(true);
+      navigate(prevLocationRef.current.pathname, { replace: true });
+    }
+  };
+
+  window.addEventListener('popstate', handleNavigation);
+  return () => window.removeEventListener('popstate', handleNavigation);
+}, [showWalkingStatus, isEndModalOpen, isCompleteModalOpen, navigate]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -92,13 +160,20 @@ const WalkingMap = () => {
   const handleEndModalClose = () => {
     setIsEndModalOpen(false);
     setIsPaused(false);
+    setAttemptedPath(null);
   };
 
-  const handleWalkEnd = () => {
+  const handleWalkEnd = useCallback(() => {
     setIsEndModalOpen(false);
     setShowWalkingStatus(false);
     setIsCompleteModalOpen(true);
-  };
+
+    // 저장된 다음 경로가 있으면 해당 경로로 이동
+    if (attemptedPath) {
+      navigate(attemptedPath);
+      setAttemptedPath(null);
+    }
+  }, [attemptedPath, navigate]);
 
   const handleCompleteModalClose = () => {
     setIsCompleteModalOpen(false);

@@ -4,20 +4,52 @@ export interface LatLng {
   lng: number;
 }
 
+export interface MapBounds {
+  sw: LatLng;
+  ne: LatLng;
+}
+
 export interface Marker {
   position: LatLng;
   content: string;
 }
 
-export interface MapContextType {
-  searchKeyword: string;
-  currentLocation: string;
-  currentPosition: LatLng;
-  isTracking: boolean;
-  handleSearch?: () => void;
+export interface MapMarkerImageType {
+  src: string;
+  size: {
+    width: number;
+    height: number;
+  };
 }
 
-export interface MapMarkerImageType {
+export interface ApiSpotInfo {
+  meetingCnt: number;
+  spotId: number;
+  lat: number;
+  lng: number;
+  name: string;
+}
+
+export interface SpotResponse {
+  code: string;
+  message: string;
+  data: ApiSpotInfo[];
+}
+
+// 지도 관련 유틸리티 타입들 추가
+export interface RadiusResult {
+  shortRadius: number;
+  longRadius: number;
+}
+
+export interface MapContextType {
+  currentPosition: LatLng;
+  isTracking: boolean;
+  onMapMove: () => void;
+  searchResult: LatLng | null;
+}
+
+export interface SpotImageType {
   src: string;
   size: {
     width: number;
