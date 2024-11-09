@@ -1,6 +1,7 @@
 package com.ottogi.chat.controller;
 
 import com.ottogi.chat.dto.ChatMessageDto;
+import com.ottogi.chat.dto.ConnectDto;
 import com.ottogi.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -8,6 +9,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
@@ -26,6 +28,15 @@ public class ChatController {
     @MessageMapping("chat.enter.{chatRoomId}")
     public void enterChatRoom(@DestinationVariable Long chatRoomId) {
 
+    }
+
+    @MessageMapping("chat.info.{chatRoomId}")
+    public void infoSave(@Payload ConnectDto dto, SimpMessageHeaderAccessor headerAccessor) {
+        Long memberId = dto.getMemberId();
+        Long chatRoomId = dto.getChatRoomId();
+
+        headerAccessor.getSessionAttributes().put("memberId", memberId);
+        headerAccessor.getSessionAttributes().put("chatRoomId", chatRoomId);
     }
 
     @MessageMapping("send.message.{chatRoomId}")
