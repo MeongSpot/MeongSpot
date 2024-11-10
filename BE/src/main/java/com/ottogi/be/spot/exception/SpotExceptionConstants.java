@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum SpotExceptionConstants implements ExceptionConstants {
 
-    SPOT_NOT_FOUND("MP000", "산책 위치 조회 실패", HttpStatus.BAD_REQUEST),;
+    SPOT_NOT_FOUND("MP000", "모임 장소 조회 실패", HttpStatus.BAD_REQUEST),;
 
     final String code;
     final String message;
