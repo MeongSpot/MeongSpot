@@ -36,7 +36,7 @@ const useChat = (roomId: number) => {
       
       onConnect: () => {
         console.log(`WebSocket 연결 성공: 방 번호 ${roomId}`);
-        client.subscribe(`/socket/chat/exchange/chat.exchange/room.${roomId}`, (message) => {
+        client.subscribe(`/exchange/chat.exchange/room.${roomId}`, (message) => {
           if (message.body) {
             const newMessage: Chat = JSON.parse(message.body);
             addChat(roomId, newMessage);
