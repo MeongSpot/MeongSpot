@@ -18,3 +18,9 @@ export interface UserMyPageInfoResponse {
   message: string;
   data: UserMyPageInfo;
 };
+
+export interface UserProfileImageUpdateRequest {
+  code: number;
+  message: string;
+  body: null;
+};
