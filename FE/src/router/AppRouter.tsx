@@ -8,6 +8,7 @@ import useAuthStore from '@/store/useAuthStore';
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const UserProfile = lazy(() => import('@/pages/profile/UserProfile'));
+const UpdateUser = lazy(() => import('@/pages/mypage/UpdateUser'));
 const Settings = lazy(() => import('@/pages/mypage/Settings'));
 const DogDetail = lazy(() => import('@/pages/mypage/DogDetail'));
 const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
@@ -92,6 +93,14 @@ const router = createBrowserRouter([
         element: (
           <AuthGuard>
             <UserProfile />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'mypage/update',
+        element: (
+          <AuthGuard>
+            <UpdateUser />
           </AuthGuard>
         ),
       },
