@@ -192,7 +192,7 @@ const MeetingMap = () => {
             {
               width: '40px',
               height: '40px',
-              background: '#F25C54', 
+              background: '#F25C54',
               color: '#ffffff',
               display: 'flex', // Flexbox 사용
               alignItems: 'center', // 세로 중앙 정렬
