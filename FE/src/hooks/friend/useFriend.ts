@@ -6,6 +6,7 @@ import { set } from "lodash";
 export const useFriend = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [friendsList, setFriendsList] = useState<FriendListInfo[]>([]);
+  const [filteredFriendsList, setFilteredFriendsList] = useState<FriendListInfo[]>([]);
   const [friendsCount, setFriendsCount] = useState(0);
 
   // 친구 목록 조회
@@ -14,6 +15,7 @@ export const useFriend = () => {
     try {
       const friends = await friendService.getFriends();
       setFriendsList(friends.data);
+      setFilteredFriendsList(friends.data);
       setFriendsCount(friends.data.length);
     } catch (error) {
       console.error("Failed to get friends:", error);
@@ -22,5 +24,5 @@ export const useFriend = () => {
     }
   };
 
-  return { getFriends, friendsList, friendsCount, isLoading };
+  return { getFriends, friendsList, friendsCount, isLoading, filteredFriendsList, setFilteredFriendsList };
 };
