@@ -128,6 +128,7 @@ public class FindChatRoomService {
                             .messageType(chatMessage.getMessageType())
                             .build();
                 })
+                .sorted(Comparator.comparing(ChatMessageDto::getSentAt))
                 .toList();
 
         boolean hasNext = chatMessageDtoList.size() == pageable.getPageSize();
