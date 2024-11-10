@@ -24,7 +24,7 @@ const SingleChatPage = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null); 
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }); // 애니메이션 없이 즉시 이동
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }); 
   }, []);
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const SingleChatPage = () => {
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
-        {[...messages].reverse().map((msg, index) => {
+        {[...messages].map((msg, index) => {
           const isSender = msg.senderId === myId;
 
           return (
