@@ -64,11 +64,11 @@ const SingleChatList = () => {
           <div
             key={chat.chatRoomId}
             className="flex items-center py-4 px-4 border-b border-gray-300 cursor-pointer"
-            onClick={() => goToChatPage(chat.chatRoomId, chat.friend)}
+            onClick={() => goToChatPage(chat.chatRoomId, chat.interlocutorNickname)}
           >
-            <img src={chat.friendDogImage} alt={chat.friend} className="w-12 h-12 rounded-full mr-4" />
+            <img src={chat.interlocutorProfileImage} alt={chat.interlocutorNickname} className="w-12 h-12 rounded-full mr-4" />
             <div className="flex-1">
-              <div className="font-bold text-lg">{chat.friend}</div>
+              <div className="font-bold text-lg">{chat.interlocutorNickname}</div>
               <div className="text-gray-600">{lastMessage ? lastMessage.message : 'No messages yet'}</div>
             </div>
             <div className="text-gray-400 text-sm whitespace-nowrap mr-2">
@@ -80,8 +80,8 @@ const SingleChatList = () => {
               onClick={(e) => {
                 e.stopPropagation();
                 openModal({
-                  name: chat.friend,
-                  profileImage: chat.friendDogImage,
+                  name: chat.interlocutorNickname,
+                  profileImage: chat.interlocutorProfileImage,
                   chatRoomId: chat.chatRoomId,
                 });
               }}

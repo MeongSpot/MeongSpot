@@ -13,13 +13,13 @@ const useFetchSingleChatRooms = () => {
       setError(null);
 
       try {
-        const response = await axiosInstance.get<ChatRoomResponse>('/api/chat/rooms/friend');
+        const response = await axiosInstance.get<ChatRoomResponse>('/api/chat/rooms');
 
         if (response.data.code === 'CH100') {
           setChatRooms(response.data.data);
           console.log(response.data);
         } else {
-          setError(response.data.message || '채팅 목록을 불러오는 데 실패했습니다.');
+          setError(response.data.message || '채팅 목록을 불러오는 데 실패했습니다.'); //
         }
       } catch (err) {
         setError('네트워크 오류가 발생했습니다.');
