@@ -27,7 +27,12 @@ const DogDetail = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    setIsPageSlideIn(true);
+    // 페이지 로드 후 약간의 딜레이 후 애니메이션 시작
+    const timer = setTimeout(() => {
+      setIsPageSlideIn(true);
+    }, 50); // 50ms 딜레이
+
+    return () => clearTimeout(timer);
   }, []);
 
   const formatBirthDate = (birth: string) => {

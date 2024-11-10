@@ -13,6 +13,7 @@ const App = () => {
       '/signup/info',
       '/signup/complete',
       '/allMeetUpRoom/create',
+      '/mypage/update',
       '/settings',
       '/notification',
       '/registerdog',
