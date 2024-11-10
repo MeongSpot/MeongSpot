@@ -15,6 +15,7 @@ import com.ottogi.be.member.validation.annotation.Phone;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -70,7 +71,7 @@ public class MemberController {
         return ResponseEntity.ok(new ApiResponse<>("ME105", "사용자 정보 상세 조회 성공", result));
     }
 
-    @PatchMapping("/profile-image")
+    @PatchMapping(value = "/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
     ResponseEntity<?> profileImageModify(@ModelAttribute ModifyProfileImageRequest request,
                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws URISyntaxException, IOException {
         modifyProfileImageService.modifyProfileImage(request.toDto(loginMemberInfo.getLoginId()));
