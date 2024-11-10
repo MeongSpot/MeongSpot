@@ -13,7 +13,7 @@ const useFetchSingleChatRooms = () => {
       setError(null);
 
       try {
-        const response = await axiosInstance.get<ChatRoomResponse>('/api/chat/rooms/friend');
+        const response = await axiosInstance.get<ChatRoomResponse>('/api/chat/rooms');
 
         if (response.data.code === 'CH100') {
           setChatRooms(response.data.data);
