@@ -3,6 +3,8 @@ package com.ottogi.be.chat.service;
 import com.ottogi.be.chat.domain.ChatMember;
 import com.ottogi.be.chat.domain.ChatMessage;
 import com.ottogi.be.chat.domain.ChatRoom;
+import com.ottogi.be.chat.domain.enums.ChatRoomType;
+import com.ottogi.be.chat.domain.enums.MessageType;
 import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
 import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
@@ -11,7 +13,7 @@ import com.ottogi.be.chat.exception.ChatRoomNotFoundException;
 import com.ottogi.be.chat.repository.ChatMemberRepository;
 import com.ottogi.be.chat.repository.ChatMessageRepository;
 import com.ottogi.be.chat.repository.ChatRoomRepository;
-import com.ottogi.be.meeting.repository.MeetingMemberRepository;
+import com.ottogi.be.common.constants.AdminConstants;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
@@ -74,6 +76,7 @@ public class FindChatRoomService {
                 result.add(response);
             }
         }
+
         result.sort(Comparator.comparing(ChatRoomResponse::getLastMessageSentAt).reversed());
 
        return result;
@@ -89,6 +92,10 @@ public class FindChatRoomService {
 
         ChatMember chatMember = chatMemberRepository.findByChatRoomIdAndMyId(chatRoom.getId(), member.getId())
                 .orElseThrow(ChatRoomNotFoundException::new);
+
+        if (chatRoom.getChatRoomType() == ChatRoomType.MEETING && chatMember.getReadAt() == null) {
+            enterMeetingChatRoom(chatRoom.getId(), member.getNickname());
+        }
 
         chatMember.updateReadAt();
 
@@ -125,5 +132,17 @@ public class FindChatRoomService {
         boolean hasNext = chatMessageDtoList.size() == pageable.getPageSize();
 
         return new FindChatRoomResponse(member.getId(), member.getNickname(), member.getProfileImage(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
+    }
+
+    public void enterMeetingChatRoom(Long chatRoomId, String nickname) {
+        ChatMessage chatMessage = ChatMessage.builder()
+                .chatRoomId(chatRoomId)
+                .message(nickname + "님이 입장하셨습니다.")
+                .senderId(AdminConstants.ADMIN_ID)
+                .sentAt(LocalDateTime.now())
+                .messageType(MessageType.NOTICE)
+                .build();
+
+        chatMessageRepository.save(chatMessage);
     }
 }

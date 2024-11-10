@@ -36,9 +36,7 @@ public class CreateChatRoomService {
             return chatMemberRepository.findChatRoomByMyIdAndInterlocutorId(member.getId(), interlocutor.getId()).get().getId();
         }
 
-        ChatRoom chatRoom = ChatRoom.builder()
-                .chatRoomType(ChatRoomType.PERSONAL)
-                .build();
+        ChatRoom chatRoom = new ChatRoom(ChatRoomType.PERSONAL);
 
         chatRoomRepository.saveAndFlush(chatRoom);
 
