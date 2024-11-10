@@ -30,6 +30,7 @@ export const useMyPage = () => {
     setIsLoading(true);
     try {
       await myPageService.updateProfileImage(formData);
+      await getMyPageUser();
       navigate("/mypage");
     } catch (error) {
       console.error("Failed to update profile image:", error);
@@ -38,5 +39,19 @@ export const useMyPage = () => {
     }
   };
 
-  return { getMyPageUser, updateProfileImage, userData, isUserLoading, nickname, setNickname, profileImage, setProfileImage };
+  // 마이페이지 유저 닉네임 수정
+  const updateNickname = async (nickname: string) => {
+    setIsLoading(true);
+    try {
+      await myPageService.updateNickname(nickname);
+      await getMyPageUser();
+      navigate("/mypage");
+    } catch (error) {
+      console.error("Failed to update nickname:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { getMyPageUser, updateProfileImage, updateNickname, userData, isUserLoading, nickname, setNickname, profileImage, setProfileImage };
 };

@@ -19,7 +19,7 @@ export interface UserMyPageInfoResponse {
   data: UserMyPageInfo;
 };
 
-export interface UserProfileImageUpdateRequest {
+export interface UserProfileImageUpdateResponse {
   code: number;
   message: string;
   body: null;
