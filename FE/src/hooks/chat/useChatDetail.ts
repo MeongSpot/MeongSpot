@@ -31,7 +31,7 @@ const useChatDetail = (chatRoomId: number, page: number) => {
           setMyId(myId);
           setNickname(nickname);
           setProfileImage(profileImage);
-          setMessages((prevMessages) => [...prevMessages, ...content]);
+          setMessages((prevMessages) => [...prevMessages.reverse(), ...content]);
           setIsLastPage(last);
           console.log(`채팅 메시지 불러오기 성공: 방 번호 ${chatRoomId}, 페이지 ${page}`, content);
         } else {
