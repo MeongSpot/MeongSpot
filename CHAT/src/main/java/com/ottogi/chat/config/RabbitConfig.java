@@ -92,7 +92,7 @@ public class RabbitConfig {
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.registerModule(dateTimeModule());
 
         return new Jackson2JsonMessageConverter(objectMapper);
