@@ -1,56 +1,33 @@
-import React, { useState } from 'react';
+// components/map/SpotModal.tsx
+
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import DogIcon from '/icons/DogIcon.svg';
-import { FaUserFriends, FaAngleRight, FaEllipsisH } from 'react-icons/fa';
+import { FaAngleRight } from 'react-icons/fa';
 import { Pagination } from 'swiper/modules';
 import type { SpotModalProps } from '@/types/meetup';
+import { useMeeting } from '@/hooks/meetup/useMeeting';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import MeetupCard from '@/components/map/MeetupCard';
 import RoomCreateConfirmModal from '@/components/meetUp/RoomCreateConfirmModal';
 
-const DUMMY_MEETUPS = {
-  // 찰밭공원의 모임 데이터
-  14421: [
-    {
-      id: 1,
-      title: '찰밭공원에서 강아지 산책해요',
-      date: '2024.03.15',
-      time: '오후 3:00',
-      location: '찰밭공원 중앙 광장',
-      participants: ['멍멍이맘', '댕댕이파파', '바둑이언니'],
-      maxParticipants: 5,
-      currentParticipants: 3,
-      tags: ['소형견', '중형견', '친목', '산책', '초보환영', '정기모임'],
-    },
-    {
-      id: 2,
-      title: '저녁 산책 함께해요',
-      date: '2024.03.16',
-      time: '오후 7:00',
-      location: '찰밭공원 입구',
-      participants: ['해피도그', '럭키맘'],
-      maxParticipants: 4,
-      currentParticipants: 2,
-      tags: ['대형견', '야간산책', '장기모임'],
-    },
-  ],
-  // 동그라미공원은 모임 없음
-  14420: [],
-};
-
-// SpotModal 컴포넌트 수정
 const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigateToAll }) => {
+  const { meetings, isLoading, error, fetchTopMeetings } = useMeeting();
+  const [showCreateConfirm, setShowCreateConfirm] = useState(false);
+
+  useEffect(() => {
+    if (spot && isOpen) {
+      fetchTopMeetings(spot.id);
+    }
+  }, [spot?.id, isOpen, fetchTopMeetings]);
+
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     onClose();
   };
-  const [showCreateConfirm, setShowCreateConfirm] = useState(false);
 
   if (!spot) return null;
-
-  // spotId에 따른 모임 데이터 가져오기
-  const meetups = DUMMY_MEETUPS[spot.id as keyof typeof DUMMY_MEETUPS] || [];
 
   return (
     <div
@@ -78,7 +55,7 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
             <img src={DogIcon} alt="Dog Icon" className="w-5 h-5" />
             <h3 className="text-base font-bold">참여 가능한 산책 모임</h3>
           </div>
-          {meetups.length > 0 && (
+          {meetings.length > 0 && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -93,7 +70,11 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
         </div>
 
         <div className="px-4 pb-6">
-          {meetups.length > 0 ? (
+          {isLoading ? (
+            <div className="text-center py-4">로딩 중...</div>
+          ) : error ? (
+            <div className="text-center py-4 text-red-500">{error}</div>
+          ) : meetings.length > 0 ? (
             <Swiper
               modules={[Pagination]}
               slidesPerView={1.2}
@@ -104,14 +85,34 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
               }}
               className="meetupSwiper"
             >
-              {meetups.map((meetup) => (
-                <SwiperSlide key={meetup.id}>
-                  <MeetupCard meetup={meetup} />
+              {meetings.map((meeting) => (
+                <SwiperSlide key={meeting.meetingId}>
+                  <MeetupCard
+                    meetup={{
+                      id: meeting.meetingId,
+                      title: meeting.title,
+                      date: new Date(meeting.meetingAt)
+                        .toLocaleDateString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        })
+                        .replace(/\. /g, '.'),
+                      time: new Date(meeting.meetingAt).toLocaleTimeString('ko-KR', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                      }),
+                      location: meeting.detailLocation,
+                      maxParticipants: meeting.maxParticipants,
+                      currentParticipants: meeting.participants,
+                      tags: meeting.hashtag,
+                    }}
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>
           ) : (
-            // 모임이 없을 때 보여줄 카드
             <div className="bg-[#F6F6F6] p-6 rounded-lg border border-gray-100 shadow-sm text-center">
               <p className="text-gray-600 mb-4">아직 등록된 모임이 없어요!</p>
               <button
