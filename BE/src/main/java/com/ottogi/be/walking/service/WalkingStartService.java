@@ -33,8 +33,8 @@ public class WalkingStartService {
 
         Long startTime = Instant.now().getEpochSecond();
 
-        walkingRedisRepository.saveStartTime(member.getId(), startTime);
-        walkingRedisRepository.saveDogIds(member.getId(), dto.getDogIds());
+        walkingRedisRepository.saveStartTime(dto.getLoginId(), startTime);
+        walkingRedisRepository.saveDogIds(dto.getLoginId(), dto.getDogIds());
 
     }
 }

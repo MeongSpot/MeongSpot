@@ -39,12 +39,12 @@ public class WalkingEndService {
         Long userId = member.getId();
 
 
-        List<Object> gpsCoordinates = walkingRedisRepository.getGpsData(userId);
+        List<Object> gpsCoordinates = walkingRedisRepository.getGpsData(loginId);
         List<PointDto> latLngList = parseGpsCoordinates(gpsCoordinates);
-        List<Object> dogIds = walkingRedisRepository.getDogIds(userId);
+        List<Object> dogIds = walkingRedisRepository.getDogIds(loginId);
         List<Long> parsedDogIds = parseDogIds(dogIds);
 
-        Long startTimeEpoch = walkingRedisRepository.getStartTime(userId);
+        Long startTimeEpoch = walkingRedisRepository.getStartTime(loginId);
         LocalDateTime startDateTime = Instant.ofEpochSecond(startTimeEpoch)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
@@ -74,7 +74,7 @@ public class WalkingEndService {
             walkingLogRepository.save(walkingLog);
         }
         
-        walkingRedisRepository.deleteWalkingData(userId);
+        walkingRedisRepository.deleteWalkingData(loginId);
     }
 
     private List<PointDto> parseGpsCoordinates(List<Object> gpsCoordinates){

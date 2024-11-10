@@ -42,14 +42,14 @@ public class WalkingSessionHandler extends TextWebSocketHandler {
 
             JSONObject jsonObject = new JSONObject(message.getPayload());
 
-            Long userId = jsonObject.getLong("userId");
+            String loginId = jsonObject.getString("loginId");
             double latitude = jsonObject.getDouble("lat");
             double longitude = jsonObject.getDouble("lng");
 
-            logger.info("Parsed data - userId: {}, latitude: {}, longitude: {}", userId, latitude, longitude);
+            logger.info("Parsed data - loginId: {}, latitude: {}, longitude: {}", loginId, latitude, longitude);
 
-            walkingRedisRepository.saveGpsData(userId, latitude, longitude);
-            logger.info("GPS data saved in Redis for userId: {}", userId);
+            walkingRedisRepository.saveGpsData(loginId, latitude, longitude);
+            logger.info("GPS data saved in Redis for userId: {}", loginId);
 
         } catch (Exception e) {
             logger.error("Error processing WebSocket message: {}", message.getPayload(), e);

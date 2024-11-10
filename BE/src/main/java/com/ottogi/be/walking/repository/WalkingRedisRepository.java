@@ -13,18 +13,18 @@ public class WalkingRedisRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void saveStartTime(Long userId, Long startTime) {
-        String key = "walking:" + userId + ":startTime";
+    public void saveStartTime(String loginId, Long startTime) {
+        String key = "walking:" + loginId + ":startTime";
         redisTemplate.opsForValue().set(key, startTime);
     }
 
-    public void saveDogIds(Long userId, List<Long> dogIds) {
-        String key = "walking:" + userId + ":dogIds";
+    public void saveDogIds(String loginId, List<Long> dogIds) {
+        String key = "walking:" + loginId + ":dogIds";
         redisTemplate.opsForList().rightPushAll(key, dogIds);
     }
 
-    public Long getStartTime(Long userId) {
-        String key = "walking:" + userId + ":startTime";
+    public Long getStartTime(String loginId) {
+        String key = "walking:" + loginId + ":startTime";
         Object value = redisTemplate.opsForValue().get(key);
         if (value instanceof Integer) {
             return ((Integer) value).longValue();
@@ -32,19 +32,19 @@ public class WalkingRedisRepository {
         return (Long) value;
     }
 
-    public List<Object> getGpsData(Long userId) {
-        String key = "walking:" + userId + ":gps";
+    public List<Object> getGpsData(String loginId) {
+        String key = "walking:" + loginId + ":gps";
         return redisTemplate.opsForList().range(key, 0, -1);
     }
 
-    public List<Object> getDogIds(Long userId) {
-        String key = "walking:" + userId + ":dogIds";
+    public List<Object> getDogIds(String loginId) {
+        String key = "walking:" + loginId + ":dogIds";
         return redisTemplate.opsForList().range(key, 0, -1);
     }
 
-    public void deleteWalkingData(Long userId) {
-        redisTemplate.delete("walking:" + userId + ":startTime");
-        redisTemplate.delete("walking:" + userId + ":dogIds");
-        redisTemplate.delete("walking:" + userId + ":gps");
+    public void deleteWalkingData(String loginId) {
+        redisTemplate.delete("walking:" + loginId + ":startTime");
+        redisTemplate.delete("walking:" + loginId + ":dogIds");
+        redisTemplate.delete("walking:" + loginId + ":gps");
     }
 }

@@ -13,8 +13,8 @@ public class WalkingRedisRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void saveGpsData(Long userId, double lat, double lng) {
-        String key = "walking:" + userId + ":gps";
+    public void saveGpsData(String loginId, double lat, double lng) {
+        String key = "walking:" + loginId + ":gps";
         redisTemplate.opsForList().rightPush(key, lat + "," + lng);
     }
 }
