@@ -38,7 +38,7 @@ const MeetupCard = ({ meetup }: { meetup: any }) => {
   }, [meetup.tags]);
 
   return (
-    <div className="bg-[#F6F6F6] p-4 rounded-lg border border-gray-100 shadow-sm flex flex-col min-h-[180px]">
+    <div className="bg-[#F6F6F6] p-4 rounded-lg border border-gray-100 shadow-sm flex flex-col min-h-[10rem]">
       <div className="flex-1">
         <h3 className="text-base font-semibold truncate" title={meetup.title}>
           {meetup.title}
@@ -52,20 +52,17 @@ const MeetupCard = ({ meetup }: { meetup: any }) => {
             {meetup.currentParticipants}/{meetup.maxParticipants}
           </span>
         </div>
-        <p className="text-sm text-gray-700 mt-2 truncate" title={`${meetup.participants.join(', ')}(이)와 함께`}>
-          {meetup.participants.join(', ')}(이)와 함께
-        </p>
       </div>
 
-      <div className="mt-3" ref={containerRef}>
+      <div className="mb-1" ref={containerRef}>
         <div className="flex items-center gap-1 overflow-hidden whitespace-nowrap">
           {visibleTags.map((tag, index) => (
-            <span key={index} className="inline-flex text-xs text-deep-coral bg-white border px-2 py-0.5 rounded-full">
+            <span key={index} className="inline-flex text-sm text-deep-coral bg-white border px-3 py-1 rounded-full">
               # {tag}
             </span>
           ))}
           {remainingCount > 0 && (
-            <span className="inline-flex text-xs text-gray-500 bg-white border px-2 py-0.5 rounded-full flex-shrink-0">
+            <span className="inline-flex text-sm text-gray-500 bg-white border px-3 py-1 rounded-full flex-shrink-0">
               +{remainingCount}
             </span>
           )}
