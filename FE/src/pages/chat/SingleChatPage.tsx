@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import useChat from '@/hooks/chat/useChat';
 import useChatDetail from '@/hooks/chat/useChatDetail';
+import useChatStore from '@/store/chatStore';
 
 const SingleChatPage = () => {
   const navigate = useNavigate();
@@ -15,8 +16,23 @@ const SingleChatPage = () => {
   const initialFriendName = location.state?.friendName;
   const [targetNickname, setTargetNickname] = useState(initialFriendName || '');
 
-  const { messages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
+  const { setChats, addChat, getChatsByRoomId } = useChatStore();
+  const { messages: fetchedMessages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
   const { sendMessage } = useChat(roomId);
+  const messages = getChatsByRoomId(roomId) || [];
+
+  const messagesEndRef = useRef<HTMLDivElement | null>(null); 
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }); // 애니메이션 없이 즉시 이동
+  }, []);
+
+  useEffect(() => {
+    if (fetchedMessages.length > 0) {
+      setChats(roomId, fetchedMessages);
+      scrollToBottom();
+    }
+  }, [fetchedMessages, roomId, setChats, scrollToBottom]);
 
   useEffect(() => {
     const firstNonSenderMessage = messages.find((msg) => msg.senderId !== myId);
@@ -25,10 +41,25 @@ const SingleChatPage = () => {
     }
   }, [messages, myId]);
 
+  // 메시지가 추가될 때마다 맨 아래로 스크롤
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
+      const newMessage = {
+        senderId: myId,
+        message,
+        sentAt: new Date().toISOString(),
+        nickname: targetNickname,
+        profileImage: 'default_profile_image_url',
+        messageType: 'text',
+      };
+
       sendMessage(message, myId);
-      setMessage(''); // 메시지 전송 후 입력 필드를 초기화
+      addChat(roomId, newMessage);
+      setMessage('');
     }
   };
 
@@ -55,7 +86,7 @@ const SingleChatPage = () => {
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
-        {messages.map((msg, index) => {
+        {[...messages].reverse().map((msg, index) => {
           const isSender = msg.senderId === myId;
 
           return (
@@ -91,6 +122,8 @@ const SingleChatPage = () => {
             </div>
           );
         })}
+        {/* 스크롤을 맨 아래로 이동시키기 위한 참조 요소 */}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="flex items-center p-3 border-t bg-white">

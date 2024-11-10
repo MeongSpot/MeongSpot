@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { UseSingleChatCreateReturn, ChatRoomResponse } from '@/types/singleChat';
-
+import { UseSingleChatCreateReturn, ChatRoomCreateResponse } from '@/types/singleChat';
 
 const useSingleChatCreate = (): UseSingleChatCreateReturn => {
   const [loading, setLoading] = useState(false);
@@ -24,9 +23,9 @@ const useSingleChatCreate = (): UseSingleChatCreateReturn => {
         throw new Error('채팅방 생성에 실패했습니다.');
       }
 
-      const data: ChatRoomResponse = await response.json();
+      const data: ChatRoomCreateResponse = await response.json();
 
-      setChatRoomData(data.chatRoomId); // chatRoomId를 chatRoomData에 저장
+      setChatRoomData(data.chatRoomId);
     } catch (err) {
       setError(err instanceof Error ? err.message : '채팅방 생성에 실패했습니다.');
     } finally {

@@ -1,8 +1,8 @@
 // 채팅 목록 조회
 export interface ChatRoom {
   chatRoomId: number;
-  friend: string;
-  friendDogImage: string;
+  interlocutorNickname: string;
+  interlocutorProfileImage: string;
   lastMessage: string;
   lastMessageSentAt: string;
 }
@@ -14,7 +14,7 @@ export interface ChatRoomResponse {
 }
 
 // 채팅방 생성
-export interface ChatRoomResponse {
+export interface ChatRoomCreateResponse {
   chatRoomId: number; 
 }
 

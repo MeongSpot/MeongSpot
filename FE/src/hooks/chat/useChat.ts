@@ -69,6 +69,8 @@ const useChat = (roomId: number) => {
   const sendMessage = (message: string, myId: number) => {
     if (clientRef.current?.connected) {
       const chatMessage = {
+        memberId: myId,
+        chatRoomId: roomId,
         roomId,
         senderId: myId,
         message,
