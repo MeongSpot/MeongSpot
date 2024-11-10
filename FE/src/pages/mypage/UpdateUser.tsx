@@ -4,6 +4,7 @@ import { IoClose } from 'react-icons/io5';
 import FooterButton from '@/components/common/Button/FooterButton';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import { useMyPage } from '@/hooks/mypage/useMyPage';
+import BoxInput from '@/components/common/DogInput/DogBoxInput';
 
 const UpdateUser: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const UpdateUser: React.FC = () => {
     isUserLoading,
     userData,
     updateProfileImage,
+    updateNickname,
     getMyPageUser,
     nickname,
     setNickname,
@@ -18,7 +20,7 @@ const UpdateUser: React.FC = () => {
     setProfileImage,
   } = useMyPage();
 
-  const [isValid, setIsValid] = useState(true);
+  const [isValid, setIsValid] = useState(false);
   const [profileFile, setProfileFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -35,13 +37,15 @@ const UpdateUser: React.FC = () => {
   };
 
   const handleSaveChanges = () => {
-    const formData = new FormData();
-
     if (profileFile) {
+      const formData = new FormData();
       formData.append('profileImage', profileFile);
+      updateProfileImage(formData);
     }
 
-    updateProfileImage(formData);
+    if (nickname !== userData?.nickname) {
+      updateNickname(nickname);
+    }
   };
 
   const handleBack = () => {
@@ -55,9 +59,9 @@ const UpdateUser: React.FC = () => {
     setNickname('');
   };
 
-  useState(() => {
+  useEffect(() => {
     // 닉네임이 입력되어 있는지 유효성 검사
-    // setIsValid(nickname.trim() !== '');
+    setIsValid(nickname.trim() !== '');
   }),
     [nickname];
 
@@ -96,22 +100,18 @@ const UpdateUser: React.FC = () => {
                     onChange={handleImageUpload}
                   />
                 </div>
-                <p className="text-sm text-zinc-400">프로필 이미지를 변경하세요</p>
+                <p className="text-sm text-zinc-400">프로필 이미지를 변경해주세요</p>
               </div>
             </div>
 
             {/* 닉네임 입력 */}
             <div className="mt-7 p-4">
-              <label className="block">
-                <span className="text-gray-700">닉네임</span>
-                <input
-                  type="text"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                  placeholder="닉네임을 입력하세요"
-                />
-              </label>
+              <BoxInput
+                label="닉네임"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                className={'py-4'}
+              />
             </div>
           </div>
 

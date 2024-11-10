@@ -16,7 +16,7 @@ const UserInfoList = ({ userData }: UserInfoListProps) => {
         <div className="flex items-center space-x-4">
           <div className="w-20 h-20 rounded-full border flex justify-center items-center">
             {userData?.profileImage ? (
-              <img className="w-full h-full rounded-full" src={userData.profileImage} alt="" />
+              <img className="w-full h-full rounded-full object-cover" src={userData.profileImage} alt="" />
             ) : (
               <img className="w-[80%] h-[80%]" src="/icons/favicon/favicon-96x96.png" alt="" />
             )}
@@ -24,8 +24,11 @@ const UserInfoList = ({ userData }: UserInfoListProps) => {
           <p className="font-bold text-lg">{userData?.nickname}</p>
         </div>
         <button
-          onClick={() => {navigate('/mypage/update');}}
-          className="px-2 py-[0.3rem] border rounded-3xl flex items-center space-x-1 text-xs">
+          onClick={() => {
+            navigate('/mypage/update');
+          }}
+          className="px-2 py-[0.3rem] border rounded-3xl flex items-center space-x-1 text-xs"
+        >
           <PiNotePencil className="text-lg" />
           <p>수정</p>
         </button>
