@@ -4,20 +4,20 @@ import com.ottogi.be.chat.domain.ChatMember;
 import com.ottogi.be.chat.domain.ChatMessage;
 import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.chat.domain.enums.ChatRoomType;
-import com.ottogi.be.chat.domain.enums.MessageType;
 import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
 import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
 import com.ottogi.be.chat.dto.response.ChatRoomResponse;
+import com.ottogi.be.chat.event.EnterMeetingChatRoomEvent;
 import com.ottogi.be.chat.exception.ChatRoomNotFoundException;
 import com.ottogi.be.chat.repository.ChatMemberRepository;
 import com.ottogi.be.chat.repository.ChatMessageRepository;
 import com.ottogi.be.chat.repository.ChatRoomRepository;
-import com.ottogi.be.common.constants.AdminConstants;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
@@ -39,6 +39,7 @@ public class FindChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public List<ChatRoomResponse> findChatRoomList(String loginId) {
@@ -94,7 +95,7 @@ public class FindChatRoomService {
                 .orElseThrow(ChatRoomNotFoundException::new);
 
         if (chatRoom.getChatRoomType() == ChatRoomType.MEETING && chatMember.getReadAt() == null) {
-            enterMeetingChatRoom(chatRoom.getId(), member.getNickname());
+            eventPublisher.publishEvent(new EnterMeetingChatRoomEvent(chatRoom.getId(), member.getNickname()));
         }
 
         chatMember.updateReadAt();
@@ -132,17 +133,5 @@ public class FindChatRoomService {
         boolean hasNext = chatMessageDtoList.size() == pageable.getPageSize();
 
         return new FindChatRoomResponse(member.getId(), member.getNickname(), member.getProfileImage(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
-    }
-
-    public void enterMeetingChatRoom(Long chatRoomId, String nickname) {
-        ChatMessage chatMessage = ChatMessage.builder()
-                .chatRoomId(chatRoomId)
-                .message(nickname + "님이 입장하셨습니다.")
-                .senderId(AdminConstants.ADMIN_ID)
-                .sentAt(LocalDateTime.now())
-                .messageType(MessageType.NOTICE)
-                .build();
-
-        chatMessageRepository.save(chatMessage);
     }
 }
