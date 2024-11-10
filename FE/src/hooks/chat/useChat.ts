@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Client } from '@stomp/stompjs';
 import axiosInstance from '@/services/axiosInstance';
 import useChatStore from '@/store/chatStore';
@@ -24,6 +24,7 @@ const useChat = (roomId: number) => {
   }, [roomId, setChats]);
 
   useEffect(() => {
+
     if (clientRef.current) {
       clientRef.current.deactivate();
     }

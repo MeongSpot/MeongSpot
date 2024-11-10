@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import useChat from '@/hooks/chat/useChat';
 import useChatDetail from '@/hooks/chat/useChatDetail';
 import useChatStore from '@/store/chatStore';
+import { differenceInCalendarDays, format } from 'date-fns';
 
 const SingleChatPage = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const SingleChatPage = () => {
   const initialFriendName = location.state?.friendName;
   const [targetNickname, setTargetNickname] = useState(initialFriendName || '');
 
-  const { setChats, addChat, getChatsByRoomId } = useChatStore();
+  const { setChats, getChatsByRoomId } = useChatStore();
   const { messages: fetchedMessages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
   const { sendMessage } = useChat(roomId);
   const messages = getChatsByRoomId(roomId) || [];
@@ -26,6 +27,8 @@ const SingleChatPage = () => {
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }); 
   }, []);
+
+  const dogDefault = "/icons/favicon/android-icon-96x96.png";
 
   useEffect(() => {
     if (fetchedMessages.length > 0) {
@@ -53,12 +56,11 @@ const SingleChatPage = () => {
         message,
         sentAt: new Date().toISOString(),
         nickname: targetNickname,
-        profileImage: 'default_profile_image_url',
+        profileImage: dogDefault,
         messageType: 'text',
       };
-
+      console.log('sentat:', newMessage.sentAt)
       sendMessage(message, myId);
-      addChat(roomId, newMessage);
       setMessage('');
     }
   };
@@ -67,6 +69,24 @@ const SingleChatPage = () => {
     navigate('/chat', { state: { animateBack: true } });
   };
 
+  const formatDateLabel = (dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+
+    const dayDifference = differenceInCalendarDays(today, date);
+
+    if (dayDifference === 0) return "오늘";
+    if (dayDifference === 1) return "어제";
+    return format(date, 'yyyy년 M월 d일');
+  };
+
+  const isDifferentDate = (current: string, previous?: string) => {
+    if (!previous) return true;
+    const currentDate = new Date(current).toDateString();
+    const previousDate = new Date(previous).toDateString();
+    return currentDate !== previousDate;
+  };
+  
   return (
     <motion.div
       initial={{ x: 300, opacity: 0 }}
@@ -88,35 +108,40 @@ const SingleChatPage = () => {
 
         {[...messages].map((msg, index) => {
           const isSender = msg.senderId === myId;
+          const showDateLabel = isDifferentDate(msg.sentAt, messages[index - 1]?.sentAt);
 
           return (
-            <div
-              key={`${msg.sentAt}-${index}`}
-              className={`flex mb-4 ${isSender ? 'justify-end' : 'justify-start'}`}
-            >
+            <div key={`${msg.sentAt}-${index}`} className="flex flex-col mb-4">
+              {showDateLabel && (
+                <div className="flex justify-center my-2">
+                  <span className="text-xs text-gray-500">{formatDateLabel(msg.sentAt)}</span>
+                </div>
+              )}
+              <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
               {!isSender && (
                 <div
                   className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-2 cursor-pointer"
                   onClick={() => navigate(`/mypage/${msg.senderId}`)}
                 >
                 </div>
-              )}
-              <div className="flex flex-col max-w-xs">
-                {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
-                <div className={`flex items-end ${isSender ? 'flex-row-reverse' : ''}`}>
-                  <div
-                    className={`${
-                      isSender ? 'bg-cream-bg' : 'bg-gray-200'
-                    } text-gray-800 rounded-lg px-4 py-2`}
-                  >
-                    {msg.message}
+                )}
+                <div className="flex flex-col max-w-xs">
+                  {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
+                  <div className={`flex items-end ${isSender ? 'flex-row-reverse' : ''}`}>
+                    <div
+                      className={`${
+                        isSender ? 'bg-cream-bg' : 'bg-gray-200'
+                      } text-gray-800 rounded-lg px-4 py-2`}
+                    >
+                      {msg.message}
+                    </div>
+                    <span
+                      className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
+                      style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
+                    >
+                      {msg.sentAt && new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
-                  <span
-                    className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
-                    style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
-                  >
-                    {new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                  </span>
                 </div>
               </div>
             </div>
