@@ -153,7 +153,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'allmeetuproom/:id',
+        path: 'allmeetuproom/:spotId',
         element: (
           <AuthGuard>
             <AllMeetUpRoomPage />

@@ -233,7 +233,7 @@ const MeetingMap = () => {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           spot={selectedSpot}
-          onNavigateToAll={() => navigate('/allMeetUpRoom/1')}
+          onNavigateToAll={() => navigate(`/allMeetUpRoom/${selectedSpot?.id}`)}
         />
       )}
 

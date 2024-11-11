@@ -20,6 +20,7 @@ const ParticipateDogPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? true;
+  const spotId = location.state?.spotId;
 
   const [eventData] = useState<EventData>({
     title: '저녁 산책 같이해요~',
@@ -54,9 +55,13 @@ const ParticipateDogPage = () => {
   };
 
   const handleBack = () => {
-    navigate(`/allmeetuproom/${roomId}`, { state: { animateBack: true } });
+    if (spotId) {
+      navigate(`/allmeetuproom/${spotId}`, { state: { animateBack: true } });
+    } else {
+      // spotId가 없는 경우 기본 처리
+      navigate(-1); // 또는 다른 fallback 처리
+    }
   };
-
   return (
     <motion.div
       initial={{ x: animateBack ? 300 : 0, opacity: 0 }}

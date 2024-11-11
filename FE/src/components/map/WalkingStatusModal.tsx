@@ -3,24 +3,25 @@ import React, { useEffect, useRef } from 'react';
 interface WalkingStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
-  dogNames: string[];
+  selectedDogs: number[];
   onStopWalk: () => void;
   walkSeconds: number;
   setWalkSeconds: React.Dispatch<React.SetStateAction<number>>;
   isPaused: boolean;
+  distance: number;
 }
 
 const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
   isOpen,
   onClose,
-  dogNames,
+  selectedDogs,
   onStopWalk,
   walkSeconds,
   setWalkSeconds,
   isPaused,
+  distance,
 }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const distance = 550;
 
   useEffect(() => {
     if (!isPaused) {
@@ -49,11 +50,11 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
     return `${pad(minutes)}:${pad(seconds)}`;
   };
 
-  const formatDogNames = () => {
-    if (dogNames.length <= 2) {
-      return `${dogNames.join(', ')}(이)`;
+  const formatDistance = (meters: number) => {
+    if (meters < 1000) {
+      return `${Math.round(meters)} m`;
     }
-    return `${dogNames[0]} 외 ${dogNames.length - 1}마리`;
+    return `${(meters / 1000).toFixed(2)} km`;
   };
 
   return (
@@ -70,15 +71,14 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
 
         <h2 className="text-lg font-bold mb-2">
-          <span className="text-deep-coral font-bold truncate">{formatDogNames()}</span>
-          <span>와 산책중</span>
+          <span className="text-deep-coral font-bold truncate">산책중</span>
         </h2>
 
         <hr className="border-t-2 border-gray-100 mb-6" />
 
         <div className="flex justify-between items-center mb-8">
           <div className="flex-1 text-center">
-            <p className="text-2xl font-bold mb-1">{distance} m</p>
+            <p className="text-2xl font-bold mb-1">{formatDistance(distance)}</p>
             <p className="text-sm text-gray-500">거리</p>
           </div>
 
