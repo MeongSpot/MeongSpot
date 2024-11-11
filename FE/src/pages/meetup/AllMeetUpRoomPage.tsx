@@ -18,7 +18,8 @@ const AllMeetUpRoomPage = () => {
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? false;
   const [showLoading, setShowLoading] = useState(false);
-
+  // sortBy 값을 UI용으로 변환
+  const uiSortBy = sortBy === 'recent' ? 'latest' : 'oldest';
   // 로딩 상태 관리
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -36,9 +37,7 @@ const AllMeetUpRoomPage = () => {
   }, [isLoading]);
 
   useEffect(() => {
-    console.log('useEffect triggered:', { spotId, sortBy }); // 디버깅
     if (spotId) {
-      console.log('Calling fetchMeetings with:', Number(spotId), sortBy); // 디버깅
       fetchMeetings(Number(spotId), sortBy);
     }
   }, [spotId, sortBy, fetchMeetings]);
@@ -107,7 +106,7 @@ const AllMeetUpRoomPage = () => {
           <>
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-600">총 {meetings.length}개</span>
-              <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
+              <RoomSortButton sortBy={uiSortBy} onSortChange={handleSortChange} />
             </div>
             <div className="space-y-4">
               {meetings.map((meeting) => (
