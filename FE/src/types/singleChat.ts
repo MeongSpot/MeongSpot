@@ -5,6 +5,7 @@ export interface ChatRoom {
   interlocutorProfileImage: string;
   lastMessage: string;
   lastMessageSentAt: string;
+  unreadMessageCnt: number;
 }
 
 export interface ChatRoomResponse {
