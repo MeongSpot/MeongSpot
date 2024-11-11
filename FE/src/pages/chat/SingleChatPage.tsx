@@ -7,6 +7,7 @@ import useChat from '@/hooks/chat/useChat';
 import useChatDetail from '@/hooks/chat/useChatDetail';
 import useChatStore from '@/store/chatStore';
 import { differenceInCalendarDays, format } from 'date-fns';
+import LoadingOverlay from '@/components/common/LoadingOverlay';
 
 const SingleChatPage = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const SingleChatPage = () => {
   const [message, setMessage] = useState('');
   const initialFriendName = location.state?.friendName;
   const [targetNickname, setTargetNickname] = useState(initialFriendName || '');
+  const [showLoading, setShowLoading] = useState(true);
 
   const { setChats, getChatsByRoomId } = useChatStore();
   const { messages: fetchedMessages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
@@ -43,7 +45,6 @@ const SingleChatPage = () => {
     }
   }, [messages, myId]);
 
-  // 무한 스크롤 - 상단에 도달했을 때 이전 메시지 로드
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -64,6 +65,11 @@ const SingleChatPage = () => {
       }
     };
   }, [loading, isLastPage]);
+
+  useEffect(() => {
+    const loadingTimeout = setTimeout(() => setShowLoading(false), 500);
+    return () => clearTimeout(loadingTimeout);
+  }, []);
 
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
@@ -95,7 +101,7 @@ const SingleChatPage = () => {
     return format(date, 'yyyy년 M월 d일');
   };
 
-  const isDifferentDate = (current: string, previous?: string): boolean => {
+  const isDifferentDate = (current: string, previous: string | null): boolean => {
     if (!previous) return true;
     const currentDate = new Date(current).toDateString();
     const previousDate = new Date(previous).toDateString();
@@ -118,16 +124,17 @@ const SingleChatPage = () => {
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto bg-white flex flex-col-reverse">
-        {loading && <p>Loading...</p>}
+        {(loading || showLoading) && <LoadingOverlay />}
         {error && <p className="text-red-500">{error}</p>}
 
         {/* 무한 스크롤 감지 요소 */}
         <div ref={topOfMessagesRef} />
 
+        {/* 날짜가 처음 등장하는 메시지에만 날짜 표시 */}
         {[...messages].reverse().map((msg, index) => {
           const isSender = msg.senderId === myId;
           const showDateLabel = isDifferentDate(msg.sentAt, messages[index - 1]?.sentAt);
-
+          
           return (
             <div key={`${msg.sentAt}-${index}`} className="flex flex-col mb-4">
               {showDateLabel && (

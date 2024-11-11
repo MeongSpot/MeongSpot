@@ -71,6 +71,13 @@ const SingleChatList = () => {
               <div className="font-bold text-lg">{chat.interlocutorNickname}</div>
               <div className="text-gray-600">{lastMessage ? lastMessage.message : 'No messages yet'}</div>
             </div>
+
+            {chat.unreadMessageCnt > 0 && (
+              <div className="bg-deep-coral text-white text-xs font-semibold rounded-full w-6 h-6 flex items-center justify-center">
+                {chat.unreadMessageCnt}
+              </div>
+            )}
+
             <div className="text-gray-400 text-sm whitespace-nowrap mr-2">
               {lastMessage ? formatLastMessageTime(lastMessage.time) : ''}
             </div>

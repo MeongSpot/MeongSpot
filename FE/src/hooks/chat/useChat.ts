@@ -23,6 +23,7 @@
       fetchChats();
     }, [roomId, setChats]);
 
+    
     useEffect(() => {
 
       if (clientRef.current) {
@@ -50,7 +51,7 @@
         },
         onWebSocketError: (error) => {
           console.error(`WebSocket 연결 오류: 방 번호 ${roomId}`, error);
-          setTimeout(() => client.activate(), 5000); // 오류 발생 시 5초 후 재연결 시도
+          setTimeout(() => client.activate(), 2000); // 오류 발생 시 5초 후 재연결 시도
         },
         onDisconnect: () => {
           console.log(`WebSocket 연결 해제: 방 번호 ${roomId}`);
@@ -66,6 +67,24 @@
         }
       };
     }, [roomId, addChat]);
+
+    const markAsRead = (myId: number) => {
+      if (clientRef.current?.connected) {
+        const readMessage = {
+          memberId: myId,
+          chatRoomId: roomId,
+        };
+  
+        clientRef.current.publish({
+          destination: `/pub/chat.info.${roomId}`,
+          body: JSON.stringify(readMessage),
+        });
+  
+        console.log(`채팅방 읽음 처리 메시지 전송 성공: 방 번호 ${roomId}, 사용자 ID: ${myId}`);
+      } else {
+        console.error('WebSocket이 연결되지 않았습니다. 읽음 상태를 보낼 수 없습니다.');
+      }
+    };
 
     const sendMessage = (message: string, myId: number) => {
       if (clientRef.current?.connected) {
@@ -83,13 +102,14 @@
           body: JSON.stringify(chatMessage),
         });
 
+        markAsRead(myId)
         console.log(`메시지 전송 성공: ${message}`, chatMessage);
       } else {
         console.error('WebSocket이 연결되지 않았습니다. 메시지를 보낼 수 없습니다.');
       }
     };
 
-    return { sendMessage };
+    return { sendMessage, markAsRead };
   };
 
   export default useChat;
