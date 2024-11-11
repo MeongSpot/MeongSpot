@@ -4,6 +4,7 @@ import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.notification.domain.enums.Type;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -40,9 +41,11 @@ public class Notification {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Builder.Default
     @Column(name="is_read", nullable = false)
     private Boolean isRead = false;
 
+    @Builder.Default
     @Column(name="is_deleted", nullable = false)
     private Boolean isDeleted = false;
 

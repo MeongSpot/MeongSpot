@@ -5,7 +5,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,8 +21,12 @@ public class WalkingRedisRepository {
     }
 
     public void saveDogIds(String loginId, List<Long> dogIds) {
+        Set<Long> uniqueDogIds = new HashSet<>(dogIds);
         String key = "walking:" + loginId + ":dogIds";
-        redisTemplate.opsForList().rightPushAll(key, dogIds);
+        redisTemplate.opsForList().rightPushAll(key, uniqueDogIds);
+
+//        String key = "walking:" + loginId + ":dogIds";
+//        redisTemplate.opsForList().rightPushAll(key, dogIds);
     }
 
     public Long getStartTime(String loginId) {
