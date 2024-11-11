@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axiosInstance from '@/services/axiosInstance';
-import { Chat, ChatPageResponse  } from '@/types/singleChat';
+import { Chat, ChatPageResponse } from '@/types/singleChat';
 
 const useChatDetail = (chatRoomId: number, page: number) => {
   const [messages, setMessages] = useState<Chat[]>([]);
@@ -26,12 +26,14 @@ const useChatDetail = (chatRoomId: number, page: number) => {
 
         if (response.data.code === 'CH103') {
           const { myId, nickname, profileImage, chatMessageDtos } = response.data.data;
-          const { content, last } =  chatMessageDtos;
+          const { content, last } = chatMessageDtos;
 
           setMyId(myId);
           setNickname(nickname);
           setProfileImage(profileImage);
-          setMessages((prevMessages) => [...prevMessages, ...content]);
+          
+          // 기존 메시지 목록에 새로 가져온 메시지 추가
+          setMessages((prevMessages) => [...content, ...prevMessages]);
           setIsLastPage(last);
           console.log(`채팅 메시지 불러오기 성공: 방 번호 ${chatRoomId}, 페이지 ${page}`, content);
         } else {

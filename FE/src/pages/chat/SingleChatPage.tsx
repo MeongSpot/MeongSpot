@@ -22,20 +22,19 @@ const SingleChatPage = () => {
   const { sendMessage } = useChat(roomId);
   const messages = getChatsByRoomId(roomId) || [];
 
-  const messagesEndRef = useRef<HTMLDivElement | null>(null); 
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const topOfMessagesRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'auto' }); 
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
-
-  const dogDefault = "/icons/favicon/android-icon-96x96.png";
 
   useEffect(() => {
     if (fetchedMessages.length > 0) {
       setChats(roomId, fetchedMessages);
-      scrollToBottom();
+      if (page === 0) scrollToBottom();  // 첫 페이지일 때만 아래로 스크롤
     }
-  }, [fetchedMessages, roomId, setChats, scrollToBottom]);
+  }, [fetchedMessages, roomId, setChats, scrollToBottom, page]);
 
   useEffect(() => {
     const firstNonSenderMessage = messages.find((msg) => msg.senderId !== myId);
@@ -44,10 +43,27 @@ const SingleChatPage = () => {
     }
   }, [messages, myId]);
 
-  // 메시지가 추가될 때마다 맨 아래로 스크롤
+  // 무한 스크롤 - 상단에 도달했을 때 이전 메시지 로드
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !loading && !isLastPage) {
+          setPage((prevPage) => prevPage + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+
+    if (topOfMessagesRef.current) {
+      observer.observe(topOfMessagesRef.current);
+    }
+
+    return () => {
+      if (topOfMessagesRef.current) {
+        observer.unobserve(topOfMessagesRef.current);
+      }
+    };
+  }, [loading, isLastPage]);
 
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
@@ -56,10 +72,9 @@ const SingleChatPage = () => {
         message,
         sentAt: new Date().toISOString(),
         nickname: targetNickname,
-        profileImage: dogDefault,
+        profileImage: '/icons/favicon/android-icon-96x96.png',
         messageType: 'text',
       };
-      console.log('sentat:', newMessage.sentAt)
       sendMessage(message, myId);
       setMessage('');
     }
@@ -69,24 +84,24 @@ const SingleChatPage = () => {
     navigate('/chat', { state: { animateBack: true } });
   };
 
-  const formatDateLabel = (dateString: string) => {
+  const formatDateLabel = (dateString: string): string => {
     const date = new Date(dateString);
     const today = new Date();
-
+  
     const dayDifference = differenceInCalendarDays(today, date);
-
+  
     if (dayDifference === 0) return "오늘";
     if (dayDifference === 1) return "어제";
     return format(date, 'yyyy년 M월 d일');
   };
 
-  const isDifferentDate = (current: string, previous?: string) => {
+  const isDifferentDate = (current: string, previous?: string): boolean => {
     if (!previous) return true;
     const currentDate = new Date(current).toDateString();
     const previousDate = new Date(previous).toDateString();
     return currentDate !== previousDate;
   };
-  
+
   return (
     <motion.div
       initial={{ x: 300, opacity: 0 }}
@@ -102,11 +117,14 @@ const SingleChatPage = () => {
         <h1 className="text-lg font-bold flex-1">{targetNickname}</h1>
       </div>
 
-      <div className="flex-1 p-4 overflow-y-auto bg-white flex flex-col">
+      <div className="flex-1 p-4 overflow-y-auto bg-white flex flex-col-reverse">
         {loading && <p>Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
-        {[...messages].map((msg, index) => {
+        {/* 무한 스크롤 감지 요소 */}
+        <div ref={topOfMessagesRef} />
+
+        {[...messages].reverse().map((msg, index) => {
           const isSender = msg.senderId === myId;
           const showDateLabel = isDifferentDate(msg.sentAt, messages[index - 1]?.sentAt);
 
@@ -118,12 +136,11 @@ const SingleChatPage = () => {
                 </div>
               )}
               <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
-              {!isSender && (
-                <div
-                  className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-2 cursor-pointer"
-                  onClick={() => navigate(`/mypage/${msg.senderId}`)}
-                >
-                </div>
+                {!isSender && (
+                  <div
+                    className="flex items-center justify-center w-8 h-8 bg-blue-500 text-white text-sm font-bold rounded-full mr-2 cursor-pointer"
+                    onClick={() => navigate(`/profile/${msg.senderId}`)}
+                  />
                 )}
                 <div className="flex flex-col max-w-xs">
                   {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
@@ -147,6 +164,7 @@ const SingleChatPage = () => {
             </div>
           );
         })}
+
         {/* 스크롤을 맨 아래로 이동시키기 위한 참조 요소 */}
         <div ref={messagesEndRef} />
       </div>
