@@ -16,6 +16,7 @@ const WalkCompleteModal: React.FC<WalkCompleteModalProps> = ({ isOpen, onClose }
 
   const handleGoToMyPage = () => {
     navigate('/mypage');
+    onClose();
   };
 
   return (
@@ -36,14 +37,14 @@ const WalkCompleteModal: React.FC<WalkCompleteModalProps> = ({ isOpen, onClose }
 
         <div className="flex border-t border-gray-300">
           <button onClick={onClose} className="w-1/2 py-3 text-blue-600 hover:bg-gray-100 focus:outline-none">
-            취소
+            홈으로
           </button>
           <div className="w-px bg-gray-300"></div>
           <button
             onClick={handleGoToMyPage}
             className="w-1/2 py-3 text-deep-coral hover:bg-gray-100 focus:outline-none"
           >
-            보러가기
+            기록 보기
           </button>
         </div>
       </div>

@@ -10,12 +10,12 @@ export interface DogInfo {
     year: string;
     month: string;
     day: string;
-  }
+  };
   gender: string;
   isNeuter: boolean | null;
   introduction: string;
   personality: number[];
-};
+}
 
 export interface RegisterDogResponse {
   code: string;
@@ -40,10 +40,21 @@ export interface DogList {
   isNeuter: boolean | null;
   introduction: string;
   personality: string[];
-};
+}
 
 export interface DogListResponse {
   code: string;
   message: string;
   data: DogList[];
+}
+
+export interface DogName {
+  id: number;
+  name: string;
+}
+
+export interface DogNameResponse {
+  code: string;
+  message: string;
+  data: DogName[];
 }

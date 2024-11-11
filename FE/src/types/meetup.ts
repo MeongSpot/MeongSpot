@@ -51,6 +51,7 @@ export interface UseMeetingReturn {
   isLoading: boolean;
   error: string | null;
   fetchTopMeetings: (spotId: number) => Promise<void>;
+  fetchMeetings: (spotId: number, order: OrderType) => Promise<void>;
 }
 
 export interface MeetupEvent {
@@ -78,3 +79,11 @@ export interface SpotModalProps {
   spot: SpotInfo | null;
   onNavigateToAll: () => void;
 }
+
+export interface MeetingListResponse {
+  code: string;
+  message: string;
+  data: Meeting[];
+}
+
+export type OrderType = 'recent' | 'remain';
