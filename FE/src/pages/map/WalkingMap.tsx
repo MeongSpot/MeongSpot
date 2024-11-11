@@ -27,13 +27,11 @@ const PRESENT_SPOT_IMAGE = {
 
 const WalkingMap = () => {
   const navigate = useNavigate();
-  const { currentPosition, getCurrentLocation } = useOutletContext<ContextType>();
-  const { startWalking, endWalking, totalDistance, isWalking } = useWalking();
+  const { currentPosition: contextPosition } = useOutletContext<ContextType>();
+  const { startWalking, endWalking, totalDistance, isWalking, currentPosition, walkingPath } = useWalking();
 
-  const [center, setCenter] = useState<LatLng>(currentPosition);
+  const [center, setCenter] = useState<LatLng>(contextPosition);
   const [mapLevel, setMapLevel] = useState(3);
-  const [walkingPath, setWalkingPath] = useState<LatLng[]>([]);
-  const [userPosition, setUserPosition] = useState<LatLng>(currentPosition);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -44,62 +42,18 @@ const WalkingMap = () => {
   const [walkSeconds, setWalkSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  // 지도 중앙 위치 자동 조정
   useEffect(() => {
-    setCenter(currentPosition);
-  }, [currentPosition]);
+    if (isWalking && currentPosition) {
+      setCenter(currentPosition);
+    } else {
+      setCenter(contextPosition);
+    }
+  }, [currentPosition, contextPosition, isWalking]);
 
   const handleDogSelect = (dogId: number) => {
     setSelectedDogs((prev) => (prev.includes(dogId) ? prev.filter((id) => id !== dogId) : [...prev, dogId]));
   };
-
-  // 실시간 위치 추적 설정
-  useEffect(() => {
-    if (!isWalking) return;
-
-    let watchId: number;
-
-    const startWatchingPosition = () => {
-      if (!navigator.geolocation) {
-        console.error('Geolocation is not supported');
-        return;
-      }
-
-      watchId = navigator.geolocation.watchPosition(
-        (position) => {
-          const newPosition = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-
-          setUserPosition(newPosition);
-          setCenter(newPosition);
-          setWalkingPath((prev) => [...prev, newPosition]);
-        },
-        (error) => {
-          console.error('Error watching position:', error);
-        },
-        {
-          enableHighAccuracy: true,
-          maximumAge: 0,
-          timeout: 5000,
-        },
-      );
-    };
-
-    startWatchingPosition();
-
-    return () => {
-      if (watchId) {
-        navigator.geolocation.clearWatch(watchId);
-      }
-    };
-  }, [isWalking]);
-
-  useEffect(() => {
-    if (isWalking) {
-      setCenter(userPosition);
-    }
-  }, [userPosition, isWalking]);
 
   const handleStartWalkClick = () => {
     setIsModalOpen(false);
@@ -111,7 +65,6 @@ const WalkingMap = () => {
       setIsLoading(true);
       const success = await startWalking(selectedDogs);
       if (success) {
-        setWalkingPath([currentPosition]);
         setShowCountdown(false);
         setShowWalkingStatus(true);
       }
@@ -122,7 +75,7 @@ const WalkingMap = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [startWalking, selectedDogs, currentPosition]);
+  }, [startWalking, selectedDogs]);
 
   const handleStopWalk = () => {
     setIsEndModalOpen(true);
@@ -157,7 +110,7 @@ const WalkingMap = () => {
   return (
     <div className="relative w-full h-full">
       <Map center={center} style={{ width: '100%', height: '100%' }} level={mapLevel} zoomable={true}>
-        <MapMarker position={userPosition} image={PRESENT_SPOT_IMAGE} />
+        <MapMarker position={currentPosition || contextPosition} image={PRESENT_SPOT_IMAGE} />
         {isWalking && walkingPath.length > 1 && (
           <Polyline path={walkingPath} strokeWeight={5} strokeColor="#FF5A5F" strokeOpacity={0.7} strokeStyle="solid" />
         )}
