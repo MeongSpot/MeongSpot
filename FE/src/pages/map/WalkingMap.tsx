@@ -30,6 +30,9 @@ const WalkingMap = () => {
   const { startWalking, endWalking, totalDistance, isWalking } = useWalking();
 
   const [center, setCenter] = useState<LatLng>(currentPosition);
+  const [mapLevel, setMapLevel] = useState(3);
+  const [walkingPath, setWalkingPath] = useState<LatLng[]>([]);
+  const [userPosition, setUserPosition] = useState<LatLng>(currentPosition);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -39,7 +42,6 @@ const WalkingMap = () => {
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [walkSeconds, setWalkSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [walkingPath, setWalkingPath] = useState<LatLng[]>([]);
 
   useEffect(() => {
     setCenter(currentPosition);
@@ -49,12 +51,57 @@ const WalkingMap = () => {
     setSelectedDogs((prev) => (prev.includes(dogId) ? prev.filter((id) => id !== dogId) : [...prev, dogId]));
   };
 
+  // 실시간 위치 추적 설정
+  useEffect(() => {
+    if (!isWalking) return;
+
+    let watchId: number;
+
+    const startWatchingPosition = () => {
+      if (!navigator.geolocation) {
+        console.error('Geolocation is not supported');
+        return;
+      }
+
+      watchId = navigator.geolocation.watchPosition(
+        (position) => {
+          const newPosition = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+
+          setUserPosition(newPosition);
+          setCenter(newPosition);
+
+          // 경로에 새 위치 추가
+          setWalkingPath((prev) => [...prev, newPosition]);
+        },
+        (error) => {
+          console.error('Error watching position:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000,
+        },
+      );
+    };
+
+    startWatchingPosition();
+
+    return () => {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [isWalking]);
+
+  // 지도 중앙 위치 자동 조정
   useEffect(() => {
     if (isWalking) {
-      setWalkingPath((prev) => [...prev, currentPosition]);
-      setCenter(currentPosition);
+      setCenter(userPosition);
     }
-  }, [currentPosition, isWalking]);
+  }, [userPosition, isWalking]);
 
   const handleStartWalk = async () => {
     try {
@@ -102,15 +149,15 @@ const WalkingMap = () => {
     setIsCompleteModalOpen(false);
     setWalkSeconds(0);
     setSelectedDogs([]);
-    navigate('/mypage');
+    navigate('/');
   };
 
   return (
     <div className="relative w-full h-full">
-      <Map center={center} style={{ width: '100%', height: '100%' }} level={3} zoomable={true}>
+      <Map center={center} style={{ width: '100%', height: '100%' }} level={mapLevel} zoomable={true}>
         {/* 현재 위치 마커 */}
-        <MapMarker position={currentPosition} image={PRESENT_SPOT_IMAGE} />
-        {/* 산책 경로 표시 */}
+        <MapMarker position={userPosition} image={PRESENT_SPOT_IMAGE} />
+        {/* 산책 경로 */}
         {isWalking && walkingPath.length > 1 && (
           <Polyline path={walkingPath} strokeWeight={5} strokeColor="#FF5A5F" strokeOpacity={0.7} strokeStyle="solid" />
         )}

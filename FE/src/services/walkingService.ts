@@ -4,16 +4,12 @@ import { StartWalkingRequest, StartWalkingResponse, WalkingLocationPayload } fro
 
 class WalkingService {
   private socket: WebSocket | null = null;
-  // private readonly SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (
-  //   import.meta.env.DEV 
-  //     ? 'ws://localhost:8082/ws/location'
-  //     : 'ws://meongspot.kro.kr/ws/location'
-  // );
-  private readonly SOCKET_URL = 'ws://meongspot.kro.kr/ws/location'
+  private readonly SOCKET_URL = 'wss://meongspot.kro.kr/socket/gps/ws/location';
 
   private retryCount = 0;
   private readonly MAX_RETRIES = 3;
   private reconnectTimeout: NodeJS.Timeout | null = null;
+  private isConnecting = false;
 
   async startWalking(dogIds: number[]): Promise<StartWalkingResponse> {
     const response = await axiosInstance.post<StartWalkingResponse>('/api/walking-log/start', {
@@ -29,16 +25,24 @@ class WalkingService {
 
   connectWebSocket(onError?: (error: Event) => void): WebSocket {
     try {
-      if (this.socket?.readyState === WebSocket.OPEN) {
-        this.socket.close();
+      if (this.isConnecting) {
+        console.log('Connection already in progress');
+        return this.socket!;
       }
 
+      if (this.socket?.readyState === WebSocket.OPEN) {
+        console.log('WebSocket already connected');
+        return this.socket;
+      }
+
+      this.isConnecting = true;
       console.log('Attempting to connect to WebSocket:', this.SOCKET_URL);
       this.socket = new WebSocket(this.SOCKET_URL);
 
       this.socket.onopen = () => {
         console.log('Walking WebSocket connected successfully');
         this.retryCount = 0;
+        this.isConnecting = false;
         if (this.reconnectTimeout) {
           clearTimeout(this.reconnectTimeout);
           this.reconnectTimeout = null;
@@ -47,6 +51,7 @@ class WalkingService {
 
       this.socket.onclose = (event) => {
         console.log('Walking WebSocket closed:', event);
+        this.isConnecting = false;
         if (!event.wasClean && this.retryCount < this.MAX_RETRIES) {
           console.log(`Attempting to reconnect... (${this.retryCount + 1}/${this.MAX_RETRIES})`);
           this.retryCount++;
@@ -62,6 +67,7 @@ class WalkingService {
 
       this.socket.onerror = (error) => {
         console.error('Walking WebSocket error:', error);
+        this.isConnecting = false;
         onError?.(error);
       };
 
@@ -77,6 +83,7 @@ class WalkingService {
 
       return this.socket;
     } catch (error) {
+      this.isConnecting = false;
       console.error('Failed to create WebSocket connection:', error);
       throw error;
     }
@@ -111,14 +118,16 @@ class WalkingService {
         this.socket.send(message);
       } catch (error) {
         console.error('Failed to send location:', error);
-        if (!this.isConnected() && this.retryCount < this.MAX_RETRIES) {
+        // 연결이 끊어졌을 때만 재연결 시도
+        if (!this.isConnected() && !this.isConnecting && this.retryCount < this.MAX_RETRIES) {
           this.connectWebSocket();
         }
       }
-    } else {
+    } else if (!this.isConnecting) {
+      // 연결 시도 중이 아닐 때만 새로운 연결 시도
       const status = this.getSocketStatus();
       console.error('Walking WebSocket is not connected. Status:', status);
-      if (status !== '연결 중...' && this.retryCount < this.MAX_RETRIES) {
+      if (this.retryCount < this.MAX_RETRIES) {
         this.connectWebSocket();
       }
     }
