@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import useChat from '@/hooks/chat/useChat';
 import useChatDetail from '@/hooks/chat/useChatDetail';
 import useChatStore from '@/store/chatStore';
+import useMarkRead from '@/hooks/chat/useMarkRead';
 import { differenceInCalendarDays, format } from 'date-fns';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 
@@ -25,6 +26,7 @@ const SingleChatPage = () => {
   const messages = getChatsByRoomId(roomId) || [];
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const markRead = useMarkRead(roomId); // 커스텀 훅 호출
   const topOfMessagesRef = useRef<HTMLDivElement | null>(null);
 
   const scrollToBottom = useCallback(() => {
@@ -34,7 +36,7 @@ const SingleChatPage = () => {
   useEffect(() => {
     if (fetchedMessages.length > 0) {
       setChats(roomId, fetchedMessages);
-      if (page === 0) scrollToBottom();  // 첫 페이지일 때만 아래로 스크롤
+      if (page === 0) scrollToBottom(); // 첫 페이지일 때만 아래로 스크롤
     }
   }, [fetchedMessages, roomId, setChats, scrollToBottom, page]);
 
@@ -71,6 +73,13 @@ const SingleChatPage = () => {
     return () => clearTimeout(loadingTimeout);
   }, []);
 
+  // 컴포넌트가 언마운트될 때 읽음 처리 호출
+  useEffect(() => {
+    return () => {
+      markRead(); // 채팅방을 나갈 때 읽음 처리 호출
+    };
+  }, [markRead]);
+
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
       const newMessage = {
@@ -87,6 +96,7 @@ const SingleChatPage = () => {
   };
 
   const handleBack = () => {
+    markRead(); // 뒤로 가기 버튼 클릭 시에도 읽음 처리 호출
     navigate('/chat', { state: { animateBack: true } });
   };
 
@@ -127,10 +137,8 @@ const SingleChatPage = () => {
         {(loading || showLoading) && <LoadingOverlay />}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* 무한 스크롤 감지 요소 */}
         <div ref={topOfMessagesRef} />
 
-        {/* 날짜가 처음 등장하는 메시지에만 날짜 표시 */}
         {[...messages].reverse().map((msg, index) => {
           const isSender = msg.senderId === myId;
           const showDateLabel = isDifferentDate(msg.sentAt, messages[index - 1]?.sentAt);
@@ -172,7 +180,6 @@ const SingleChatPage = () => {
           );
         })}
 
-        {/* 스크롤을 맨 아래로 이동시키기 위한 참조 요소 */}
         <div ref={messagesEndRef} />
       </div>
 
