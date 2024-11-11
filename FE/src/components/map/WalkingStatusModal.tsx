@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+// WalkingStatusModal.tsx
+import { useRef, useEffect } from 'react';
 
-interface WalkingStatusModalProps {
+export interface WalkingStatusModalProps {
   isOpen: boolean;
   onClose: () => void;
   selectedDogs: number[];

@@ -1,6 +1,7 @@
+
+// WalkStartModal.tsx
 import React, { useEffect, useCallback } from 'react';
 import { useDog } from '@/hooks/dog/useDog';
-import { useWalking } from '@/hooks/map/useWalking';
 import DogSelectionAccordion from './DogSelectionAccordion';
 import StartWalkButton from './StartWalkButton';
 import { Toast } from '@/components/common/Message/Toast';
@@ -15,7 +16,6 @@ interface WalkStartModalProps {
 
 const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, selectedDogs, onDogSelect, onStartWalk }) => {
   const { myDogsName, getMyDogsName, isLoading } = useDog();
-  const { startWalking, toast } = useWalking();
 
   const fetchDogs = useCallback(async () => {
     try {
@@ -43,22 +43,10 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
     return `${selectedDogsList[0].name} 외 ${selectedDogsList.length - 1}마리`;
   }, [selectedDogs, myDogsName]);
 
-  const handleStartWalk = async () => {
-    try {
-      const success = await startWalking(selectedDogs);
-      if (success) {
-        onStartWalk(); // 성공한 경우에만 모달 전환
-      }
-    } catch (err) {
-      console.error('Failed to start walking:', err);
-    }
-  };
-
   const selectedDogsText = getSelectedDogsText();
 
   return (
     <>
-      <Toast message={toast.message} isVisible={toast.isVisible} onHide={toast.onHide} />
       <div
         className={`fixed inset-0 z-20 bg-gray-800 bg-opacity-50 flex justify-center items-end transition-all duration-300 mb-16 ${
           isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -116,7 +104,7 @@ const WalkStartModal: React.FC<WalkStartModalProps> = ({ isOpen, onClose, select
                 </div>
 
                 <div className="bg-white z-10 mb-4">
-                  <StartWalkButton isDisabled={selectedDogs.length === 0} onClick={handleStartWalk} />
+                  <StartWalkButton isDisabled={selectedDogs.length === 0} onClick={onStartWalk} />
                 </div>
               </>
             )}
