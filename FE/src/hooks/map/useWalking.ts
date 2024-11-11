@@ -20,6 +20,7 @@ export const useWalking = () => {
   const [lastSentTime, setLastSentTime] = useState(0);
   const [walkingPath, setWalkingPath] = useState<LatLng[]>([]);
   const [totalDistance, setTotalDistance] = useState(0);
+  const [currentPosition, setCurrentPosition] = useState<LatLng | null>(null);
   const loginId = useAuthStore((state) => state.loginId);
 
   const THROTTLE_DELAY = 5000; // 5초마다 위치 전송
@@ -63,6 +64,7 @@ export const useWalking = () => {
 
       return prevPath;
     });
+    setCurrentPosition(newPosition);
   }, []);
 
   const clearWatchPosition = useCallback(() => {
@@ -218,6 +220,8 @@ export const useWalking = () => {
     stopWalking,
     endWalking,
     totalDistance,
+    currentPosition,
+    walkingPath,
     toast: {
       message: toastMessage,
       isVisible: showToast,
