@@ -25,6 +25,7 @@ public class CreateMeetingDto {
     private int hour;
     private int minute;
     private String detailLocation;
+    private String information;
     private List<String> hashtag;
     private int maxParticipants;
     private List<Long> dogIds;
@@ -38,6 +39,7 @@ public class CreateMeetingDto {
                 .hour(request.getHour())
                 .minute(request.getMinute())
                 .detailLocation(request.getDetailLocation())
+                .information(request.getInformation())
                 .hashtag(request.getHashtag())
                 .maxParticipants(request.getMaxParticipants())
                 .dogIds(request.getDogs())
@@ -52,6 +54,7 @@ public class CreateMeetingDto {
                 .maxParticipants(maxParticipants)
                 .meetingAt(date)
                 .detailLocation(detailLocation)
+                .information(information)
                 .build();
     }
 }

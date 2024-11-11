@@ -37,4 +37,5 @@ public class CreateMeetingRequest {
     @NotEmpty
     @Size(min = 1)
     private List<Long> dogs;
+    private String information;
 }

@@ -113,6 +113,7 @@ public class FindMeetingService {
                 .maxParticipants(meeting.getMaxParticipants())
                 .meetingAt(meeting.getMeetingAt())
                 .detailLocation(meeting.getDetailLocation())
+                .information(meeting.getInformation())
                 .build();
     }
 }

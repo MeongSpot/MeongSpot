@@ -17,4 +17,5 @@ public class FindMeetingResponse {
     private int maxParticipants;
     private LocalDateTime meetingAt;
     private String detailLocation;
+    private String information;
 }

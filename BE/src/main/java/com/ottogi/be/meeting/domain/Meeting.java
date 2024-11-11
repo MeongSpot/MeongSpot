@@ -48,18 +48,22 @@ public class Meeting {
     @Column(nullable = false)
     private Boolean isDone;
 
+    @Column(length = 256)
+    private String information;
+
     @PrePersist
     protected void onCreate() {
         isDone = false;
     }
 
     @Builder
-    public Meeting(Spot spot, ChatRoom chatRoom, String title, int maxParticipants, LocalDateTime meetingAt, String detailLocation, Boolean isDone) {
+    public Meeting(Spot spot, ChatRoom chatRoom, String title, int maxParticipants, LocalDateTime meetingAt, String detailLocation, Boolean isDone, String information) {
         this.spot = spot;
         this.chatRoom = chatRoom;
         this.title = title;
         this.maxParticipants = maxParticipants;
         this.meetingAt = meetingAt;
         this.detailLocation = detailLocation;
+        this.information = information;
     }
 }
