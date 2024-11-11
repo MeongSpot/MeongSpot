@@ -17,6 +17,23 @@ const AllMeetUpRoomPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? false;
+  const [showLoading, setShowLoading] = useState(false);
+
+  // 로딩 상태 관리
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoading) {
+      timer = setTimeout(() => {
+        setShowLoading(true);
+      }, 300); // 300ms 후에 로딩 표시
+    } else {
+      setShowLoading(false);
+    }
+
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isLoading]);
 
   useEffect(() => {
     console.log('useEffect triggered:', { spotId, sortBy }); // 디버깅
@@ -67,7 +84,7 @@ const AllMeetUpRoomPage = () => {
   return (
     <AnimatePresence>
       <motion.div
-        className="p-4 relative" // relative 추가
+        className="p-4"
         initial={{ x: animateBack ? -300 : 0, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: animateBack ? 300 : 0, opacity: 0 }}
@@ -82,7 +99,7 @@ const AllMeetUpRoomPage = () => {
         </div>
         <hr className="my-4 -mx-4 w-screen" />
 
-        {isLoading ? (
+        {showLoading ? (
           <LoadingOverlay message="모임을 불러오는 중입니다..." />
         ) : error ? (
           <div className="text-center py-4 text-red-500">{error}</div>
