@@ -1,3 +1,4 @@
+// WalkingMap.tsx
 import { useState, useEffect, useCallback } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Map, MapMarker, Polyline } from 'react-kakao-maps-sdk';
@@ -72,8 +73,6 @@ const WalkingMap = () => {
 
           setUserPosition(newPosition);
           setCenter(newPosition);
-
-          // 경로에 새 위치 추가
           setWalkingPath((prev) => [...prev, newPosition]);
         },
         (error) => {
@@ -96,31 +95,34 @@ const WalkingMap = () => {
     };
   }, [isWalking]);
 
-  // 지도 중앙 위치 자동 조정
   useEffect(() => {
     if (isWalking) {
       setCenter(userPosition);
     }
   }, [userPosition, isWalking]);
 
-  const handleStartWalk = async () => {
+  const handleStartWalkClick = () => {
+    setIsModalOpen(false);
+    setShowCountdown(true);
+  };
+
+  const handleCountdownComplete = useCallback(async () => {
     try {
       setIsLoading(true);
-      setWalkingPath([currentPosition]); // 시작 위치 설정
-      await startWalking(selectedDogs);
-      setIsModalOpen(false);
-      setShowCountdown(true);
+      const success = await startWalking(selectedDogs);
+      if (success) {
+        setWalkingPath([currentPosition]);
+        setShowCountdown(false);
+        setShowWalkingStatus(true);
+      }
     } catch (error) {
       console.error('Failed to start walking:', error);
+      setIsModalOpen(true);
+      setShowCountdown(false);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleCountdownComplete = () => {
-    setShowCountdown(false);
-    setShowWalkingStatus(true);
-  };
+  }, [startWalking, selectedDogs, currentPosition]);
 
   const handleStopWalk = () => {
     setIsEndModalOpen(true);
@@ -155,9 +157,7 @@ const WalkingMap = () => {
   return (
     <div className="relative w-full h-full">
       <Map center={center} style={{ width: '100%', height: '100%' }} level={mapLevel} zoomable={true}>
-        {/* 현재 위치 마커 */}
         <MapMarker position={userPosition} image={PRESENT_SPOT_IMAGE} />
-        {/* 산책 경로 */}
         {isWalking && walkingPath.length > 1 && (
           <Polyline path={walkingPath} strokeWeight={5} strokeColor="#FF5A5F" strokeOpacity={0.7} strokeStyle="solid" />
         )}
@@ -168,7 +168,7 @@ const WalkingMap = () => {
         onClose={() => setIsModalOpen(false)}
         selectedDogs={selectedDogs}
         onDogSelect={handleDogSelect}
-        onStartWalk={handleStartWalk}
+        onStartWalk={handleStartWalkClick}
       />
 
       {showCountdown && <CountdownOverlay onComplete={handleCountdownComplete} />}
