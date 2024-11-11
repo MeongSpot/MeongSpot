@@ -136,7 +136,11 @@ const MyPage: React.FC = () => {
           <div className="bg-zinc-100 w-full h-3"></div>
 
           <div className="p-4 flex flex-col space-y-5">
-            <div className="flex items-center justify-between">
+              <div
+                onClick={() => {
+                  navigate('/walkinglog');
+                }}
+                className="flex items-center justify-between">
               <p className="font-semibold">산책 기록</p>
               <div className="flex items-center space-x-1 text-zinc-700">
                 <FaAngleRight className="" />
