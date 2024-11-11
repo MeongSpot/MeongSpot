@@ -22,7 +22,6 @@ public class ChatController {
     private final ChatMessageRepository chatMessageRepository;
 
     private static final String CHAT_EXCHANGE_NAME = "chat.exchange";
-    private static final String CHAT_QUEUE_NAME = "chat.queue";
 
     @MessageMapping("chat.info.{chatRoomId}")
     public void infoSave(@Payload ConnectDto dto, SimpMessageHeaderAccessor headerAccessor) {

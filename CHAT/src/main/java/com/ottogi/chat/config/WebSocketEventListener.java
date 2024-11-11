@@ -8,6 +8,8 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.time.LocalDateTime;
+
 @Component
 @RequiredArgsConstructor
 public class WebSocketEventListener implements ApplicationListener<SessionDisconnectEvent> {
