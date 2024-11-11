@@ -4,7 +4,6 @@ import com.ottogi.chat.dto.ChatMessageDto;
 import com.ottogi.chat.dto.ConnectDto;
 import com.ottogi.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -25,11 +24,6 @@ public class ChatController {
     private static final String CHAT_EXCHANGE_NAME = "chat.exchange";
     private static final String CHAT_QUEUE_NAME = "chat.queue";
 
-    @MessageMapping("chat.enter.{chatRoomId}")
-    public void enterChatRoom(@DestinationVariable Long chatRoomId) {
-
-    }
-
     @MessageMapping("chat.info.{chatRoomId}")
     public void infoSave(@Payload ConnectDto dto, SimpMessageHeaderAccessor headerAccessor) {
         Long memberId = dto.getMemberId();
@@ -43,11 +37,8 @@ public class ChatController {
     public void messageSend(@Payload ChatMessageDto dto, @DestinationVariable Long chatRoomId) {
         dto.setChatRoomId(chatRoomId);
         dto.setSentAt(LocalDateTime.now());
+        chatMessageRepository.save(dto.toEntity());
         rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId, dto);
     }
 
-    @RabbitListener(queues = CHAT_QUEUE_NAME)
-    public void receiveMessage(ChatMessageDto dto) {
-        chatMessageRepository.save(dto.toEntity());
-    }
 }
