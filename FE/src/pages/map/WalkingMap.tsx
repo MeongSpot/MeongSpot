@@ -1,7 +1,7 @@
-// WalkingMap.tsx
+// components/map/WalkingMap.tsx
 import { useState, useEffect, useCallback } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Map, MapMarker, Polyline } from 'react-kakao-maps-sdk';
+import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import WalkStartModal from '@/components/map/WalkStartModal';
 import WalkingStatusModal from '@/components/map/WalkingStatusModal';
@@ -28,7 +28,7 @@ const PRESENT_SPOT_IMAGE = {
 const WalkingMap = () => {
   const navigate = useNavigate();
   const { currentPosition: contextPosition } = useOutletContext<ContextType>();
-  const { startWalking, endWalking, totalDistance, isWalking, currentPosition, walkingPath } = useWalking();
+  const { startWalking, endWalking, totalDistance, isWalking, currentPosition } = useWalking();
 
   const [center, setCenter] = useState<LatLng>(contextPosition);
   const [mapLevel, setMapLevel] = useState(3);
@@ -42,7 +42,6 @@ const WalkingMap = () => {
   const [walkSeconds, setWalkSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  // 지도 중앙 위치 자동 조정
   useEffect(() => {
     if (isWalking && currentPosition) {
       setCenter(currentPosition);
@@ -111,9 +110,6 @@ const WalkingMap = () => {
     <div className="relative w-full h-full">
       <Map center={center} style={{ width: '100%', height: '100%' }} level={mapLevel} zoomable={true}>
         <MapMarker position={currentPosition || contextPosition} image={PRESENT_SPOT_IMAGE} />
-        {isWalking && walkingPath.length > 1 && (
-          <Polyline path={walkingPath} strokeWeight={5} strokeColor="#FF5A5F" strokeOpacity={0.7} strokeStyle="solid" />
-        )}
       </Map>
 
       <WalkStartModal
