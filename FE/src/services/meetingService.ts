@@ -19,15 +19,12 @@ export const meetingService = {
 
   fetchMeetings: async (spotId: number, order: OrderType) => {
     try {
-      console.log('Making API call to:', `/api/meetings?order=${order}&spotId=${spotId}`); // 디버깅
       const response = await axiosInstance.get<MeetingListResponse>(`/api/meetings?order=${order}&spotId=${spotId}`);
-      console.log('API Response:', response.data); // 디버깅
       if (response.data.code === 'MT102') {
         return response.data.data;
       }
       throw new Error(response.data.message);
     } catch (error) {
-      console.error('API Error:', error); // 디버깅
       throw error;
     }
   },

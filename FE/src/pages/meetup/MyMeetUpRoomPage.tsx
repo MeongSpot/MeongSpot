@@ -17,7 +17,8 @@ interface Event {
 }
 
 const MyMeetUpRoomPage = () => {
-  const [sortBy, setSortBy] = useState('latest');
+  // sortBy 타입을 'latest' | 'oldest'로 명시
+  const [sortBy, setSortBy] = useState<'latest' | 'oldest'>('latest');
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? false;
@@ -47,8 +48,9 @@ const MyMeetUpRoomPage = () => {
     },
   ]);
 
-  const handleSortChange = (sortType: string) => {
-    setSortBy(sortType);
+  // handleSortChange의 파라미터 타입도 명시
+  const handleSortChange = (sortType: 'latest' | 'oldest') => {
+    setSortBy(sortType as 'latest' | 'oldest');
 
     const sortedEvents = [...events].sort((a, b) => {
       const dateA = new Date(`${a.date} ${a.time}`);
@@ -64,6 +66,22 @@ const MyMeetUpRoomPage = () => {
     navigate(`/chat/group/${roomId}`, { state: { animateBack: true } });
   };
 
+  const renderContent = () => (
+    <div className="p-4">
+      <h1 className="text-center text-lg font-bold mb-4">모임</h1>
+      <hr className="my-4 -mx-4 w-screen" />
+      <div className="flex justify-between items-center mb-4">
+        <span className="text-gray-600">총 {events.length}개</span>
+        <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
+      </div>
+      <div className="space-y-4">
+        {events.map((event) => (
+          <MyRoomListCard key={event.id} event={event} onClick={handleCardClick} />
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <AnimatePresence>
       {location.state?.animateBack ? (
@@ -74,32 +92,10 @@ const MyMeetUpRoomPage = () => {
           exit={{ x: animateBack ? 300 : 0, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
-          <h1 className="text-center text-lg font-bold mb-4">모임</h1>
-          <hr className="my-4 -mx-4 w-screen" />
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-gray-600">총 {events.length}개</span>
-            <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
-          </div>
-          <div className="space-y-4">
-            {events.map((event) => (
-              <MyRoomListCard key={event.id} event={event} onClick={handleCardClick} />
-            ))}
-          </div>
+          {renderContent()}
         </motion.div>
       ) : (
-        <div className="p-4">
-          <h1 className="text-center text-lg font-bold mb-4">모임</h1>
-          <hr className="my-4 -mx-4 w-screen" />
-          <div className="flex justify-between items-center mb-4">
-            <span className="text-gray-600">총 {events.length}개</span>
-            <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
-          </div>
-          <div className="space-y-4">
-            {events.map((event) => (
-              <MyRoomListCard key={event.id} event={event} onClick={handleCardClick} />
-            ))}
-          </div>
-        </div>
+        renderContent()
       )}
     </AnimatePresence>
   );
