@@ -1,3 +1,4 @@
+// hooks/map/useWalking.ts
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { walkingService } from '@/services/walkingService';
 import { WalkingLocationPayload, WALKING_API_CODE } from '@/types/walking';
@@ -18,9 +19,9 @@ export const useWalking = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [lastSentTime, setLastSentTime] = useState(0);
-  const [walkingPath, setWalkingPath] = useState<LatLng[]>([]);
-  const [totalDistance, setTotalDistance] = useState(0);
   const [currentPosition, setCurrentPosition] = useState<LatLng | null>(null);
+  const [totalDistance, setTotalDistance] = useState(0);
+  const lastPositionRef = useRef<LatLng | null>(null);
   const loginId = useAuthStore((state) => state.loginId);
 
   const THROTTLE_DELAY = 5000; // 5초마다 위치 전송
@@ -49,41 +50,41 @@ export const useWalking = () => {
     setShowToast(false);
   }, []);
 
-  const updateDistance = useCallback((newPosition: LatLng) => {
-    setWalkingPath((prevPath) => {
-      if (prevPath.length === 0) return [newPosition];
-
-      const lastPosition = prevPath[prevPath.length - 1];
-      const distance = calculateDistance(lastPosition, newPosition);
-
-      if (distance >= MIN_DISTANCE) {
-        const newPath = [...prevPath, newPosition];
-        setTotalDistance((prevDistance) => prevDistance + distance);
-        return newPath;
-      }
-
-      return prevPath;
-    });
-    setCurrentPosition(newPosition);
-  }, []);
-
-  const clearWatchPosition = useCallback(() => {
-    if (watchId !== null) {
-      navigator.geolocation.clearWatch(watchId);
-      setWatchId(null);
-    }
-  }, [watchId]);
-
-  const sendLocationThrottled = useCallback(
-    (locationData: WalkingLocationPayload) => {
+  const shouldSendLocation = useCallback(
+    (newPosition: LatLng): boolean => {
       const now = Date.now();
-      if (now - lastSentTime >= THROTTLE_DELAY) {
-        walkingService.sendLocation(locationData);
-        setLastSentTime(now);
+      const timeElapsed = now - lastSentTime;
+
+      // 5초가 지나지 않았다면 전송하지 않음
+      if (timeElapsed < THROTTLE_DELAY) {
+        return false;
       }
+
+      // 마지막 위치가 없다면 첫 전송이므로 true
+      if (!lastPositionRef.current) {
+        return true;
+      }
+
+      // 마지막 위치와의 거리 계산
+      const distance = calculateDistance(lastPositionRef.current, newPosition);
+
+      // 2미터 이상 이동했을 때만 전송
+      return distance >= MIN_DISTANCE;
     },
     [lastSentTime],
   );
+
+  const sendLocation = useCallback((locationData: WalkingLocationPayload) => {
+    walkingService.sendLocation(locationData);
+    setLastSentTime(Date.now());
+    lastPositionRef.current = { lat: locationData.lat, lng: locationData.lng };
+
+    // 거리 계산 및 업데이트
+    if (lastPositionRef.current) {
+      const distance = calculateDistance(lastPositionRef.current, { lat: locationData.lat, lng: locationData.lng });
+      setTotalDistance((prev) => prev + distance);
+    }
+  }, []);
 
   const watchLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -103,15 +104,16 @@ export const useWalking = () => {
           lng: position.coords.longitude,
         };
 
-        updateDistance(newPosition);
+        setCurrentPosition(newPosition);
 
-        const locationData: WalkingLocationPayload = {
-          loginId,
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-
-        sendLocationThrottled(locationData);
+        if (shouldSendLocation(newPosition)) {
+          const locationData: WalkingLocationPayload = {
+            loginId,
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          sendLocation(locationData);
+        }
       },
       (error) => {
         let errorMessage = '위치 정보를 가져오는데 실패했습니다';
@@ -137,7 +139,14 @@ export const useWalking = () => {
     );
 
     setWatchId(id);
-  }, [loginId, sendLocationThrottled, showMessage, updateDistance]);
+  }, [loginId, sendLocation, shouldSendLocation, showMessage]);
+
+  const clearWatchPosition = useCallback(() => {
+    if (watchId !== null) {
+      navigator.geolocation.clearWatch(watchId);
+      setWatchId(null);
+    }
+  }, [watchId]);
 
   const startWalking = useCallback(
     async (dogIds: number[]) => {
@@ -147,10 +156,10 @@ export const useWalking = () => {
         }
 
         const response = await walkingService.startWalking(dogIds);
-        // WK100도 성공 코드로 처리
         if (response.code === WALKING_API_CODE.START_SUCCESS) {
-          setWalkingPath([]);
           setTotalDistance(0);
+          lastPositionRef.current = null;
+          setLastSentTime(0);
 
           const newSocket = walkingService.connectWebSocket(() => {
             showMessage('산책 서버 연결에 실패했습니다');
@@ -161,7 +170,7 @@ export const useWalking = () => {
           setIsWalking(true);
           watchLocation();
           showMessage('산책이 시작되었습니다');
-          return true; // 성공 시 true 반환
+          return true;
         } else {
           throw new Error(response.message);
         }
@@ -182,8 +191,8 @@ export const useWalking = () => {
     }
     clearWatchPosition();
     setIsWalking(false);
-    setWalkingPath([]);
     setTotalDistance(0);
+    lastPositionRef.current = null;
   }, [socket, clearWatchPosition]);
 
   const endWalking = useCallback(async () => {
@@ -221,7 +230,6 @@ export const useWalking = () => {
     endWalking,
     totalDistance,
     currentPosition,
-    walkingPath,
     toast: {
       message: toastMessage,
       isVisible: showToast,
