@@ -1,5 +1,6 @@
 import React from 'react';
 
+// WalkEndModal.tsx
 interface WalkEndModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -33,13 +34,7 @@ const WalkEndModal: React.FC<WalkEndModalProps> = ({ isOpen, onClose, onConfirm 
             취소
           </button>
           <div className="w-px bg-gray-300"></div>
-          <button
-            onClick={() => {
-              onConfirm();
-              onClose();
-            }}
-            className="w-1/2 py-3 text-red-500 hover:bg-gray-100 focus:outline-none"
-          >
+          <button onClick={onConfirm} className="w-1/2 py-3 text-red-500 hover:bg-gray-100 focus:outline-none">
             끝내기
           </button>
         </div>

@@ -5,17 +5,41 @@ import { StartWalkingRequest, StartWalkingResponse, WalkingLocationPayload } fro
 class WalkingService {
   private socket: WebSocket | null = null;
   private readonly SOCKET_URL = 'wss://meongspot.kro.kr/socket/gps/ws/location';
-
   private retryCount = 0;
   private readonly MAX_RETRIES = 3;
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private isConnecting = false;
+  private isStarting = false; // API 호출 중복 방지를 위한 플래그
+  private startTimeout: NodeJS.Timeout | null = null;
 
   async startWalking(dogIds: number[]): Promise<StartWalkingResponse> {
-    const response = await axiosInstance.post<StartWalkingResponse>('/api/walking-log/start', {
-      dogIds,
-    });
-    return response.data;
+    if (this.isStarting) {
+      console.log('Walking start request already in progress');
+      throw new Error('이미 산책 시작 요청이 진행 중입니다.');
+    }
+
+    try {
+      this.isStarting = true;
+
+      // 이전 타임아웃이 있다면 클리어
+      if (this.startTimeout) {
+        clearTimeout(this.startTimeout);
+      }
+
+      const response = await axiosInstance.post<StartWalkingResponse>('/api/walking-log/start', {
+        dogIds,
+      });
+
+      // 성공 후 1초 뒤에 플래그 초기화
+      this.startTimeout = setTimeout(() => {
+        this.isStarting = false;
+      }, 1000);
+
+      return response.data;
+    } catch (error) {
+      this.isStarting = false;
+      throw error;
+    }
   }
 
   async endWalking(): Promise<StartWalkingResponse> {
