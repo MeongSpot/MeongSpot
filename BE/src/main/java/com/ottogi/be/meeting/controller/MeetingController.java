@@ -7,9 +7,11 @@ import com.ottogi.be.meeting.dto.JoinMeetingDto;
 import com.ottogi.be.meeting.dto.MeetingDto;
 import com.ottogi.be.meeting.dto.request.CreateMeetingRequest;
 import com.ottogi.be.meeting.dto.request.JoinMeetingRequest;
+import com.ottogi.be.meeting.dto.response.FindMeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingTopResponse;
 import com.ottogi.be.meeting.service.CreateMeetingService;
+import com.ottogi.be.meeting.service.FindHashtagService;
 import com.ottogi.be.meeting.service.FindMeetingService;
 import com.ottogi.be.meeting.service.JoinMeetingService;
 import jakarta.validation.Valid;
@@ -28,6 +30,7 @@ public class MeetingController {
     private final CreateMeetingService createMeetingService;
     private final JoinMeetingService joinMeetingService;
     private final FindMeetingService findMeetingService;
+    private final FindHashtagService findHashtagService;
 
     @PostMapping()
     public ResponseEntity<?> meetingAdd(@Valid @RequestBody CreateMeetingRequest createMeetingRequest,
@@ -55,6 +58,18 @@ public class MeetingController {
     public ResponseEntity<?> meetingTopList(@RequestParam Long spotId) {
         MeetingTopResponse result = findMeetingService.findMeetingTopList(spotId);
         return ResponseEntity.ok(new ApiResponse<>("MT103", "모임 상위 5개 목록 조회 성공", result));
+    }
+
+    @GetMapping("/{meetingId}/info")
+    public ResponseEntity<?> meetingDetails(@PathVariable Long meetingId) {
+        FindMeetingResponse result = findMeetingService.findMeeting(meetingId);
+        return ResponseEntity.ok(new ApiResponse<>("MT104", "모임 상세 정보 조회 성공", result));
+    }
+
+    @GetMapping("/{meetingId}/hashtag")
+    public ResponseEntity<?> hashtagList(@PathVariable Long meetingId) {
+        List<String> result = findHashtagService.findHashTag(meetingId);
+        return ResponseEntity.ok(new ApiResponse<>("MT105", "모임 해시태그 조회 성공", result));
     }
 
 }

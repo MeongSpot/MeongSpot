@@ -1,6 +1,7 @@
 package com.ottogi.be.meeting.repository;
 
 import com.ottogi.be.meeting.domain.Hashtag;
+import com.ottogi.be.meeting.domain.Meeting;
 import com.ottogi.be.meeting.dto.MeetingHashtagDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,7 @@ public interface HashTagRepository extends JpaRepository<Hashtag, Long> {
             WHERE h.meeting.id in :meetingIds
             """)
     List<MeetingHashtagDto> findAllByMeetingIds(List<Long> meetingIds);
+
+    @Query("SELECT h.tag FROM Hashtag h WHERE h.meeting = :meeting")
+    List<String> findTagsByMeeting(Meeting meeting);
 }

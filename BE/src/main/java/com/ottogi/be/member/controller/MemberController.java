@@ -6,6 +6,7 @@ import com.ottogi.be.member.dto.MemberDetailsDto;
 import com.ottogi.be.member.dto.request.ModifyNicknameRequest;
 import com.ottogi.be.member.dto.request.ModifyProfileImageRequest;
 import com.ottogi.be.member.dto.request.SignupRequest;
+import com.ottogi.be.member.dto.response.FindMeetingMemberResponse;
 import com.ottogi.be.member.dto.response.MemberDetailsResponse;
 import com.ottogi.be.member.dto.response.ProfileInfoResponse;
 import com.ottogi.be.member.service.*;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,6 +35,7 @@ public class MemberController {
     private final FindMemberInfoService findMemberInfoService;
     private final ModifyProfileImageService modifyProfileImageService;
     private final ModifyNicknameService modifyNicknameService;
+    private final FindMeetingMemberService findMeetingMemberService;
 
     @PostMapping
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
@@ -86,5 +89,10 @@ public class MemberController {
         return ResponseEntity.ok(new ApiResponse<>("ME107", "닉네임 변경 성공", null));
     }
 
+    @GetMapping("/meeting/{meetingId}")
+    ResponseEntity<?> meetingMemberList(@PathVariable Long meetingId) {
+        List<FindMeetingMemberResponse> result = findMeetingMemberService.findMeetingMemberList(meetingId);
+        return ResponseEntity.ok(new ApiResponse<>("ME108", "모임 참여 멤버 조회 성공", result));
+    }
 
 }
