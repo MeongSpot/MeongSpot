@@ -9,6 +9,7 @@ export const useDog = () => {
   const [dogBreeds, setDogBreeds] = useState<string[]>([]);
   const [myDogs, setMyDogs] = useState<DogList[]>([]);
   const [myDogsName, setMyDogsName] = useState<DogName[]>([]);
+  const [dogDetail, setDogDetail] = useState<DogList | null>(null);
 
   // 반려견 품종 목록 조회
   const getDogBreeds = async () => {
@@ -67,5 +68,21 @@ export const useDog = () => {
     }
   };
 
-  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName };
+  // 반려견 상세 조회
+  const getDogDetail = async (dogId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await dogService.getDogDetail(dogId);
+      setDogDetail(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get dog detail:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail };
 };

@@ -1,25 +1,18 @@
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { DogList } from '@/types/dogInfo';
 import { IoMdFemale, IoMdMale } from 'react-icons/io';
+import { useDog } from '@/hooks/dog/useDog';
 import '../../css/DogDetail.css';
+import LoadingOverlay from '@/components/common/LoadingOverlay';
+import { is } from 'date-fns/locale';
 
 const DogDetail = () => {
   const navigate = useNavigate();
-  const [dog, setDog] = useState<DogList | null>({
-    id: 1,
-    name: '감자',
-    birth: '2022-01-01',
-    introduction:
-      '밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 밥을 잘 먹어요 ',
-    gender: 'FEMALE',
-    isNeuter: true,
-    profileImage: 'https://meongspotd107.s3.ap-northeast-2.amazonaws.com/b796affc-f6ba-4911-b606-03131adc4462_wink.png',
-    age: 10,
-    breed: '시고르잡종',
-    personality: ['낯가려요', '적극적이에요'],
-  });
+  const { getDogDetail, dogDetail, isLoading } = useDog();
+  const { id } = useParams();
 
   const [isPageSlideIn, setIsPageSlideIn] = useState(false);
   const [startY, setStartY] = useState<number | null>(null);
@@ -27,13 +20,18 @@ const DogDetail = () => {
   const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
-    // 페이지 로드 후 약간의 딜레이 후 애니메이션 시작
-    const timer = setTimeout(() => {
-      setIsPageSlideIn(true);
-    }, 50); // 50ms 딜레이
-
-    return () => clearTimeout(timer);
+    getDogDetail(Number(id));
   }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setIsPageSlideIn(true);
+      }, 50); // 50ms 딜레이
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
 
   const formatBirthDate = (birth: string) => {
     const [year, month, day] = birth.split('-');
@@ -65,11 +63,11 @@ const DogDetail = () => {
     setStartY(null);
   };
 
-  if (!dog) return <div>강아지 정보가 없습니다.</div>;
+  if (!dogDetail) return null;
 
   return (
     <div className={`relative page-container ${isPageSlideIn ? 'slide-up' : 'slide-hidden'}`}>
-      <img className="w-full h-96 object-cover" src={dog.profileImage} alt="강아지 프로필" />
+      <img className="w-full h-96 object-cover" src={dogDetail.profileImage} alt="강아지 프로필" />
       <div
         className="absolute top-0 flex items-center justify-start px-4 py-5 cursor-pointer"
         onClick={() => navigate(-1)}
@@ -94,25 +92,25 @@ const DogDetail = () => {
         <div className="px-5 pt-5 pb-14 flex-1 flex flex-col justify-start space-y-5 overflow-y-auto">
           <div>
             <div className="flex items-center">
-              <h1 className="text-3xl font-bold">{dog.name}</h1>
+              <h1 className="text-3xl font-bold">{dogDetail.name}</h1>
               <p className="text-sm text-gray-500 ml-2">
-                {dog.gender === 'MALE' ? <IoMdMale size={24} /> : <IoMdFemale size={24} />}
+                {dogDetail.gender === 'MALE' ? <IoMdMale size={24} /> : <IoMdFemale size={24} />}
               </p>
             </div>
-            <p className="text-sm text-gray-500 mt-1">{dog.breed}</p>
+            <p className="text-sm text-gray-500 mt-1">{dogDetail.breed}</p>
           </div>
 
           <div className="grid grid-cols-3 gap-2">
             <button className="py-5 bg-[#ffeace] rounded-xl">
-              <p className="text-lg font-semibold">{dog.age} 살</p>
+              <p className="text-lg font-semibold">{dogDetail.age} 살</p>
               <p className="text-sm text-zinc-500">나이</p>
             </button>
             <button className="py-5 bg-[#ffeace] rounded-xl">
-              <p className="text-lg font-semibold">{formatBirthDate(dog.birth)}</p>
+              <p className="text-lg font-semibold">{formatBirthDate(dogDetail.birth)}</p>
               <p className="text-sm text-zinc-500">생일</p>
             </button>
             <button className="py-5 bg-[#ffeace] rounded-xl">
-              <p className="text-lg font-semibold">{dog.isNeuter ? '했음' : '안했음'}</p>
+              <p className="text-lg font-semibold">{dogDetail.isNeuter ? '했음' : '안했음'}</p>
               <p className="text-sm text-zinc-500">중성화</p>
             </button>
           </div>
@@ -120,7 +118,7 @@ const DogDetail = () => {
           <div className="pt-5 space-y-2">
             <h2 className="font-semibold">성격</h2>
             <div className="flex flex-wrap gap-2">
-              {dog.personality.map((personality, idx) => (
+              {dogDetail.personality.map((personality, idx) => (
                 <span key={idx} className="px-2 py-1 bg-zinc-100 rounded-xl text-sm">
                   {personality}
                 </span>
@@ -130,7 +128,7 @@ const DogDetail = () => {
 
           <div className="pt-5 space-y-2">
             <h2 className="font-semibold">소개</h2>
-            <p className="text-sm text-gray-500 leading-relaxed">{dog.introduction}</p>
+            <p className="text-sm text-gray-500 leading-relaxed">{dogDetail.introduction}</p>
           </div>
         </div>
       </div>
