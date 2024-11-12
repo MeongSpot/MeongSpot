@@ -8,6 +8,7 @@ import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
 import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
 import com.ottogi.be.chat.dto.response.ChatRoomResponse;
+import com.ottogi.be.chat.event.EnterMeetingChatRoomEvent;
 import com.ottogi.be.chat.exception.ChatRoomNotFoundException;
 import com.ottogi.be.chat.repository.ChatMemberRepository;
 import com.ottogi.be.chat.repository.ChatMessageRepository;
@@ -16,6 +17,7 @@ import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ public class FindChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public List<ChatRoomResponse> findChatRoomList(String loginId) {
@@ -91,12 +94,11 @@ public class FindChatRoomService {
         ChatMember chatMember = chatMemberRepository.findByChatRoomIdAndMyId(chatRoom.getId(), member.getId())
                 .orElseThrow(ChatRoomNotFoundException::new);
 
-        boolean isNew = true;
-
-        if (chatRoom.getChatRoomType() != ChatRoomType.MEETING || chatMember.getReadAt() != null) {
-            chatMember.updateReadAt();
-            isNew = false;
+        if (chatRoom.getChatRoomType() == ChatRoomType.MEETING && chatMember.getReadAt() == null) {
+            eventPublisher.publishEvent(new EnterMeetingChatRoomEvent(chatRoom.getId(), member.getNickname()));
         }
+
+        chatMember.updateReadAt();
 
         LocalDateTime leftAt = chatMember.getLeftAt();
 
@@ -123,6 +125,6 @@ public class FindChatRoomService {
 
         boolean hasNext = chatMessageDtoList.size() == pageable.getPageSize();
 
-        return new FindChatRoomResponse(member.getId(), member.getNickname(), member.getProfileImage(), isNew, new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
+        return new FindChatRoomResponse(member.getId(), member.getNickname(), member.getProfileImage(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
     }
 }

@@ -6,7 +6,6 @@ import com.ottogi.chat.dto.ChatMessageDto;
 import com.ottogi.chat.dto.EnterChatRoomDto;
 import com.ottogi.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -36,6 +35,7 @@ public class ChatController {
                 .messageType(MessageType.NOTICE)
                 .build();
 
+        chatMessageRepository.save(dto.toEntity());
         rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId, dto);
     }
 
@@ -43,12 +43,7 @@ public class ChatController {
     public void messageSend(@Payload ChatMessageDto dto, @DestinationVariable Long chatRoomId) {
         dto.setChatRoomId(chatRoomId);
         dto.setSentAt(LocalDateTime.now());
+        chatMessageRepository.save(dto.toEntity());
         rabbitTemplate.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId, dto);
     }
-
-    @RabbitListener(queues = CHAT_QUEUE_NAME)
-    public void receiveMessage(ChatMessageDto dto) {
-        chatMessageRepository.save(dto.toEntity());
-    }
-
 }
