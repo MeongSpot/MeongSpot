@@ -57,10 +57,9 @@ const MeetUpDogListPage = () => {
 
   return (
     <motion.div
-      className="flex flex-col h-screen"
-      initial={{ x: animateBack ? 300 : 0, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: animateBack ? -300 : 0, opacity: 0 }}
+      initial={{ x: 300, opacity: 0 }} // 항상 오른쪽에서 시작
+      animate={{ x: 0, opacity: 1 }} // 가운데로 이동
+      exit={{ x: 300, opacity: 0 }} // 왼쪽으로 퇴장
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       <div className="flex items-center bg-deep-coral text-white p-4">

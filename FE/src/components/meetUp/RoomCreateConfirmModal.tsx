@@ -18,7 +18,11 @@ const RoomCreateConfirmModal: React.FC<RoomCreateConfirmModalProps> = ({ isOpen,
   };
 
   const handleCreateMeetup = () => {
-    navigate(`/allMeetUpRoom/${spotId}/create`);
+    navigate(`/allMeetUpRoom/${spotId}/create`, {
+      state: {
+        spotName: spotName, // spotName 추가
+      },
+    });
     onClose(); // 모달 닫기 추가
   };
 

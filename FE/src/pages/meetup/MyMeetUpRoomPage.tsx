@@ -63,7 +63,7 @@ const MyMeetUpRoomPage = () => {
   };
 
   const handleCardClick = (roomId: number) => {
-    navigate(`/chat/group/${roomId}`, { state: { animateBack: true } });
+    navigate(`/chat/group/${roomId}`, { state: { animateBack: false } });
   };
 
   const renderContent = () => (
@@ -86,10 +86,9 @@ const MyMeetUpRoomPage = () => {
     <AnimatePresence>
       {location.state?.animateBack ? (
         <motion.div
-          className="p-4"
-          initial={{ x: animateBack ? -300 : 0, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: animateBack ? 300 : 0, opacity: 0 }}
+          initial={{ x: 300, opacity: 0 }} // 항상 오른쪽에서 시작
+          animate={{ x: 0, opacity: 1 }} // 가운데로 이동
+          exit={{ x: 300, opacity: 0 }} // 왼쪽으로 퇴장
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
           {renderContent()}

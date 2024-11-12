@@ -221,7 +221,7 @@ const router = createBrowserRouter([
       },
       // Protected routes
       {
-        path: 'meetupdoglist',
+        path: 'meetupdoglist/:id',
         element: (
           <AuthGuard>
             <MeetUpDogListPage />
