@@ -1,5 +1,6 @@
 package com.ottogi.be.member.domain;
 
+import com.ottogi.be.dog.domain.Dog;
 import com.ottogi.be.member.domain.enums.Gender;
 import com.ottogi.be.member.domain.enums.Role;
 import jakarta.persistence.*;
@@ -15,6 +16,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -28,6 +31,9 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    private List<Dog> dogList = new ArrayList<>();
 
     @Column(unique = true, nullable = false, length = 16)
     private String loginId;

@@ -13,7 +13,6 @@ import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.notification.exception.NotificationNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service

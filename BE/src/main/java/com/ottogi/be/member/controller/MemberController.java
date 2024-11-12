@@ -3,12 +3,14 @@ package com.ottogi.be.member.controller;
 import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
 import com.ottogi.be.member.dto.MemberDetailsDto;
+import com.ottogi.be.member.dto.SearchMemberDto;
 import com.ottogi.be.member.dto.request.ModifyNicknameRequest;
 import com.ottogi.be.member.dto.request.ModifyProfileImageRequest;
 import com.ottogi.be.member.dto.request.SignupRequest;
 import com.ottogi.be.member.dto.response.FindMeetingMemberResponse;
 import com.ottogi.be.member.dto.response.MemberDetailsResponse;
 import com.ottogi.be.member.dto.response.ProfileInfoResponse;
+import com.ottogi.be.member.dto.response.SearchMemberResponse;
 import com.ottogi.be.member.service.*;
 import com.ottogi.be.member.validation.annotation.LoginId;
 import com.ottogi.be.member.validation.annotation.Nickname;
@@ -36,6 +38,7 @@ public class MemberController {
     private final ModifyProfileImageService modifyProfileImageService;
     private final ModifyNicknameService modifyNicknameService;
     private final FindMeetingMemberService findMeetingMemberService;
+    private final SearchMemberService searchMemberService;
 
     @PostMapping
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest request) {
@@ -93,6 +96,13 @@ public class MemberController {
     ResponseEntity<?> meetingMemberList(@PathVariable Long meetingId) {
         List<FindMeetingMemberResponse> result = findMeetingMemberService.findMeetingMemberList(meetingId);
         return ResponseEntity.ok(new ApiResponse<>("ME108", "모임 참여 멤버 조회 성공", result));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> memberSearch(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
+                                          @RequestParam String nickname) {
+        List<SearchMemberResponse> result = searchMemberService.searchMember(new SearchMemberDto(loginMemberInfo.getLoginId(), nickname));
+        return ResponseEntity.ok(new ApiResponse<>("ME109", "사용자 검색 성공", result));
     }
 
 }

@@ -7,7 +7,6 @@ import com.ottogi.be.friend.dto.request.FriendInvitationRequest;
 import com.ottogi.be.friend.dto.response.FriendResponse;
 import com.ottogi.be.friend.service.FindFriendService;
 import com.ottogi.be.friend.service.InviteFriendService;
-import com.ottogi.be.notification.dto.request.FCMTokenRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
