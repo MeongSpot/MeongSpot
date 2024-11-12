@@ -47,11 +47,18 @@ const SingleChatPage = () => {
 
   useEffect(() => {
     if (fetchedMessages.length > 0) {
-      setLocalMessages((prevMessages) => [...fetchedMessages, ...prevMessages]); // 기존 메시지와 새 메시지 병합
+      setLocalMessages((prevMessages) => {
+        // 이전 페이지의 메시지와 중복되지 않도록 체크
+        const newMessages = fetchedMessages.filter(
+          (newMsg) => !prevMessages.some((oldMsg) => oldMsg.sentAt === newMsg.sentAt)
+        );
+        return [...newMessages, ...prevMessages];
+      });
+  
       if (page === 0) scrollToBottom();
     }
   }, [fetchedMessages, page]);
-
+  
   useEffect(() => {
     const firstNonSenderMessage = localMessages.find((msg) => msg.senderId !== myId);
     if (firstNonSenderMessage) {
