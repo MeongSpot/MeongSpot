@@ -1,90 +1,81 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { BiPlus } from 'react-icons/bi';
 import { IoChevronBack } from 'react-icons/io5';
-import EveryRoomListCard from '@/components/meetUp/RoomListCard';
+import AllRoomListCard from '@/components/meetUp/AllRoomListCard';
 import RoomSortButton from '@/components/meetUp/RoomSortButton';
 import { AnimatePresence, motion } from 'framer-motion';
-
-interface Event {
-  id: number;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  participants: string[];
-  maxParticipants: number;
-  currentParticipants: number;
-  tags: string[];
-}
+import { useMeeting } from '@/hooks/meetup/useMeeting';
+import type { Meeting, MeetupEvent } from '@/types/meetup';
+import LoadingOverlay from '@/components/common/LoadingOverlay';
 
 const AllMeetUpRoomPage = () => {
-  const [sortBy, setSortBy] = useState('latest');
+  const { spotId } = useParams<{ spotId: string }>();
+  const { meetings, isLoading, error, fetchMeetings } = useMeeting();
+  const [sortBy, setSortBy] = useState<'recent' | 'remain'>('recent');
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? false;
-  const { id: placeId } = useParams<{ id: string }>();
+  const [showLoading, setShowLoading] = useState(false);
+  const uiSortBy = sortBy === 'recent' ? 'latest' : 'oldest';
+  // 로딩 상태 관리
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoading) {
+      timer = setTimeout(() => {
+        setShowLoading(true);
+      }, 300); // 300ms 후에 로딩 표시
+    } else {
+      setShowLoading(false);
+    }
 
-  const [events, setEvents] = useState<Event[]>([
-    {
-      id: 1,
-      title: '아침 산책 같이해요!',
-      date: '2024-01-25',
-      time: '08:00',
-      location: '공원 입구',
-      participants: ['감자', '깅깅', '보리'],
-      maxParticipants: 4,
-      currentParticipants: 3,
-      tags: ['#아침활동', '#조용한강아지', '#소형견'],
-    },
-    {
-      id: 2,
-      title: '주말 등산 모임',
-      date: '2024-01-28',
-      time: '10:00',
-      location: '북산 입구',
-      participants: ['초코', '콩이', '뭉치', '해피'],
-      maxParticipants: 6,
-      currentParticipants: 4,
-      tags: ['#등산', '#모험가견', '#중형견이상'],
-    },
-    {
-      id: 3,
-      title: '친구 만들기 산책',
-      date: '2024-01-30',
-      time: '14:00',
-      location: '강변 산책로',
-      participants: ['감자', '별이'],
-      maxParticipants: 5,
-      currentParticipants: 2,
-      tags: ['#새친구환영', '#누구나참여', '#강아지친구만들기'],
-    },
-  ]);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isLoading]);
 
+  useEffect(() => {
+    if (spotId) {
+      fetchMeetings(Number(spotId), sortBy);
+    }
+  }, [spotId, sortBy, fetchMeetings]);
+
+  useEffect(() => {
+    if (spotId) {
+      fetchMeetings(Number(spotId), sortBy);
+    }
+  }, [spotId, sortBy, fetchMeetings]);
+
+  // sortType 매핑 함수 추가
   const handleSortChange = (sortType: string) => {
-    setSortBy(sortType);
-
-    const sortedEvents = [...events].sort((a, b) => {
-      const dateA = new Date(`${a.date} ${a.time}`);
-      const dateB = new Date(`${b.date} ${b.time}`);
-
-      if (sortType === 'latest') {
-        return dateB.getTime() - dateA.getTime(); // 최신순
-      } else {
-        return dateA.getTime() - dateB.getTime(); // 남은 시간순
-      }
-    });
-
-    setEvents(sortedEvents);
+    // 'latest' -> 'recent', 'oldest' -> 'remain' 매핑
+    const orderType = sortType === 'latest' ? 'recent' : 'remain';
+    setSortBy(orderType);
   };
 
   const handleCardClick = (roomId: number) => {
-    navigate(`/participateDog/${roomId}`, { state: { animateBack: true } });
+    navigate(`/participatedog/${roomId}`, {
+      state: {
+        animateBack: true,
+        spotId: spotId, // spotId를 state로 전달
+      },
+    });
   };
 
   const handlePlusClick = () => {
-    navigate(`/allMeetUpRoom/${placeId}/create`);
+    navigate(`/allMeetUpRoom/${spotId}/create`);
   };
+
+  const convertToMeetupEvent = (meeting: Meeting): MeetupEvent => ({
+    id: meeting.meetingId,
+    title: meeting.title,
+    date: new Date(meeting.meetingAt).toISOString().split('T')[0],
+    time: new Date(meeting.meetingAt).toTimeString().slice(0, 5),
+    location: meeting.detailLocation,
+    maxParticipants: meeting.maxParticipants,
+    currentParticipants: meeting.participants,
+    tags: meeting.hashtag,
+  });
 
   return (
     <AnimatePresence>
@@ -103,15 +94,28 @@ const AllMeetUpRoomPage = () => {
           <BiPlus onClick={handlePlusClick} className="text-xl cursor-pointer" />
         </div>
         <hr className="my-4 -mx-4 w-screen" />
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-gray-600">총 {events.length}개</span>
-          <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
-        </div>
-        <div className="space-y-4">
-          {events.map((event) => (
-            <EveryRoomListCard key={event.id} event={event} onClick={handleCardClick} />
-          ))}
-        </div>
+
+        {showLoading ? (
+          <LoadingOverlay message="모임을 불러오는 중입니다..." />
+        ) : error ? (
+          <div className="text-center py-4 text-red-500">{error}</div>
+        ) : (
+          <>
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-gray-600">총 {meetings.length}개</span>
+              <RoomSortButton sortBy={uiSortBy} onSortChange={handleSortChange} />
+            </div>
+            <div className="space-y-4">
+              {meetings.map((meeting) => (
+                <AllRoomListCard
+                  key={meeting.meetingId}
+                  event={convertToMeetupEvent(meeting)}
+                  onClick={() => handleCardClick(meeting.meetingId)}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </motion.div>
     </AnimatePresence>
   );

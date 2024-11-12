@@ -13,14 +13,21 @@ const App = () => {
       '/signup/info',
       '/signup/complete',
       '/allMeetUpRoom/create',
+      '/mypage/update',
       '/settings',
       '/notification',
       '/registerdog',
       '/selectbreed',
       '/friendslist',
+      '/dog',
+      '/walkinglog',
+      '/searchuser',
     ].includes(location.pathname) ||
     (location.pathname.startsWith('/chat/') && id) ||
-    (location.pathname.startsWith('/participateDog/') && id);
+    (location.pathname.startsWith('/participateDog/') && id) ||
+    (location.pathname.startsWith('/dog/') && id) ||
+    (location.pathname.startsWith('/walkinglog/') && id) ||
+    (location.pathname.startsWith('/profile/') && id);
 
   return (
     <div className="mobile-container">

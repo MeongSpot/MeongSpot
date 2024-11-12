@@ -1,4 +1,5 @@
 export interface DogInfo {
+  id?: number;
   profileImage: string;
   profile_file?: File | null;
   name: string;
@@ -9,12 +10,12 @@ export interface DogInfo {
     year: string;
     month: string;
     day: string;
-  }
+  };
   gender: string;
   isNeuter: boolean | null;
   introduction: string;
   personality: number[];
-};
+}
 
 export interface RegisterDogResponse {
   code: string;
@@ -38,11 +39,28 @@ export interface DogList {
   gender: string;
   isNeuter: boolean | null;
   introduction: string;
-  personality: number[];
-};
+  personality: string[];
+}
 
 export interface DogListResponse {
   code: string;
   message: string;
   data: DogList[];
+}
+
+export interface DogName {
+  id: number;
+  name: string;
+}
+
+export interface DogNameResponse {
+  code: string;
+  message: string;
+  data: DogName[];
+}
+
+export interface DogDetailResponse {
+  code: string;
+  message: string;
+  data: DogList;
 }

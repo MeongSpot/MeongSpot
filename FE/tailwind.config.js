@@ -1,27 +1,20 @@
 import daisyui from 'daisyui';
 
 /** @type {import('tailwindcss').Config} */
+// tailwind.config.js
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        'cream-bg': '#FEECCE', // 크림색 배경
-        'light-orange': '#F7B267', // 밝은 주황색
-        'deep-coral': '#F4845F', // 진한 코랄
-        'peach-orange': '#F79D65', // 복숭아 주황
-        'warm-orange': '#F79D65', // 따뜻한 주황
+        'cream-bg': '#FEECCE',
+        'light-orange': '#F7B267',
+        'deep-coral': '#F4845F',
+        'peach-orange': '#F79D65',
+        'warm-orange': '#F25C54',
       },
       fontWeight: {
-        thin: 100,
-        extralight: 200,
-        light: 300,
-        regular: 400,
-        medium: 500,
-        semibold: 600,
-        bold: 700,
-        extrabold: 800,
-        black: 900,
+        // ... 기존 설정 유지
       },
       keyframes: {
         slideDown: {
@@ -36,11 +29,24 @@ export default {
           '0%, 5%': { transform: 'translateX(0)' },
           '95%, 100%': { transform: 'translateX(-100%)' },
         },
+        // 카운트다운 애니메이션 추가
+        countdownFadeIn: {
+          '0%': {
+            opacity: '0',
+            transform: 'translate(-50%, -50%) scale(0.5)',
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translate(-50%, -50%) scale(1)',
+          },
+        },
       },
       animation: {
         slideDown: 'slideDown 0.3s ease-out forwards',
         slideUp: 'slideUp 0.3s ease-out forwards',
         marquee: 'marquee 8s linear infinite',
+        // 카운트다운 애니메이션 추가
+        countdownFadeIn: 'countdownFadeIn 0.3s ease-out',
       },
     },
   },

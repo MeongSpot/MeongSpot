@@ -39,14 +39,19 @@ const AddDog: React.FC = () => {
     formData.append('name', dogRegisterInfo.name);
     formData.append('breed', dogRegisterInfo.breedId);
     formData.append('size', dogRegisterInfo.size);
-    formData.append('age', String(dogRegisterInfo.age)); // 숫자형은 문자열로 변환하여 추가
     formData.append('gender', dogRegisterInfo.gender);
     formData.append('isNeuter', String(dogRegisterInfo.isNeuter)); // boolean 값도 문자열로 변환
 
-    // 생일 추가 (Optional)
+    // 생일 추가 및 나이 계산 (Optional)
     if (dogRegisterInfo.birth.year && dogRegisterInfo.birth.month && dogRegisterInfo.birth.day) {
       const birthDate = `${dogRegisterInfo.birth.year}-${dogRegisterInfo.birth.month}-${dogRegisterInfo.birth.day}`;
       formData.append('birth', birthDate);
+
+      const birthYear = parseInt(dogRegisterInfo.birth.year, 10);
+      const currentYear = new Date().getFullYear();
+      const koreanAge = currentYear - birthYear + 1; // 한국 나이 계산
+
+      formData.append('age', koreanAge.toString());
     }
 
     // 소개 (Optional)
@@ -61,7 +66,8 @@ const AddDog: React.FC = () => {
       });
     }
 
-    registerDog(formData); // 등록 요청 시도
+    registerDog(formData);
+    resetDogInfo();
   };
 
   const handleBack = () => {
@@ -96,19 +102,34 @@ const AddDog: React.FC = () => {
         dogRegisterInfo.name,
         dogRegisterInfo.breedId,
         dogRegisterInfo.size,
-        dogRegisterInfo.age,
         dogRegisterInfo.gender,
         dogRegisterInfo.isNeuter,
       ];
+
+      // 생일이 과거 날짜인지 확인하는 함수
+      const isPastDate = () => {
+        if (!dogRegisterInfo.birth) return true; // 생일이 없으면 통과
+        const { year, month, day } = dogRegisterInfo.birth;
+        if (!year || !month || !day) return true; // 생일의 모든 필드가 입력되지 않았다면 통과
+
+        const birthDate = new Date(`${year}-${month}-${day}`);
+        const currentDate = new Date();
+
+        return birthDate <= currentDate;
+      };
+
       setIsValid(
         requiredFields.every(
           (field) =>
-            field !== null && field !== '' && field !== undefined && koreanNameRegex.test(dogRegisterInfo.name) && dogRegisterInfo.personality.length > 0,
+            field !== null &&
+            field !== '' &&
+            field !== undefined &&
+            koreanNameRegex.test(dogRegisterInfo.name) &&
+            dogRegisterInfo.personality.length > 0 &&
+            isPastDate(),
         ),
       );
     };
-
-    console.log(dogRegisterInfo.personality);
 
     checkValidity();
   }, [dogRegisterInfo]);

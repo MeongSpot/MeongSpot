@@ -1,8 +1,9 @@
 import React from 'react';
 
+// RoomSortButton.tsx
 interface SortButtonsProps {
-  sortBy: string;
-  onSortChange: (sortType: string) => void;
+  sortBy: 'latest' | 'oldest';
+  onSortChange: (sortType: 'latest' | 'oldest') => void; // 타입을 더 구체적으로 변경
 }
 
 const RoomSortButton: React.FC<SortButtonsProps> = ({ sortBy, onSortChange }) => (

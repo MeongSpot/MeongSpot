@@ -1,9 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { MdNotifications } from 'react-icons/md';
-import { RiFocus3Line } from 'react-icons/ri';
+import { RiFocus3Line, RiCompass3Line } from 'react-icons/ri';
 import { TopBar } from '@/components/map/TopBar';
 import type { LatLng } from '@/types/map';
+
+interface DeviceOrientationEventiOS extends DeviceOrientationEvent {
+  webkitCompassHeading?: number;
+}
 
 const MapPage = () => {
   const location = useLocation();
@@ -12,9 +16,15 @@ const MapPage = () => {
   const [currentLocation, setCurrentLocation] = useState('');
   const [currentPosition, setCurrentPosition] = useState<LatLng>({ lat: 36.0970625, lng: 128.4019375 });
   const [isTracking, setIsTracking] = useState(false);
+  const [isCompassMode, setIsCompassMode] = useState(false);
+  const [heading, setHeading] = useState<number | null>(null);
   const [isWalkingMode, setIsWalkingMode] = useState(location.pathname === '/walking');
   const [searchResult, setSearchResult] = useState<LatLng | null>(null);
 
+  // 모바일 디바이스 체크
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  // 현재 위치 가져오기
   const getCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) return;
 
@@ -35,14 +45,11 @@ const MapPage = () => {
     );
   }, []);
 
-  useEffect(() => {
-    getCurrentLocation();
-  }, [getCurrentLocation]);
+  // 위치 추적 시작
+  const startTracking = useCallback(() => {
+    if (!navigator.geolocation) return null;
 
-  useEffect(() => {
-    if (!isTracking || !navigator.geolocation) return;
-
-    const watchId = navigator.geolocation.watchPosition(
+    return navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         setCurrentPosition({ lat: latitude, lng: longitude });
@@ -54,12 +61,80 @@ const MapPage = () => {
           }
         });
       },
-      () => setIsTracking(false),
+      () => {
+        setIsTracking(false);
+        setIsCompassMode(false);
+      },
       { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 },
     );
+  }, []);
 
-    return () => navigator.geolocation.clearWatch(watchId);
-  }, [isTracking]);
+  // 나침반 모드 시작
+  const startCompassTracking = useCallback(() => {
+    if (!isMobile || !window.DeviceOrientationEvent) return null;
+
+    const handleOrientation = (event: DeviceOrientationEventiOS) => {
+      // iOS와 안드로이드의 방향값 처리
+      const direction = event.webkitCompassHeading ?? event.alpha ?? 0;
+      setHeading(direction);
+    };
+
+    if (typeof (DeviceOrientationEvent as any).requestPermission === 'function') {
+      // iOS 13+ 권한 요청
+      (DeviceOrientationEvent as any)
+        .requestPermission()
+        .then((response: string) => {
+          if (response === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation as EventListener, true);
+          }
+        })
+        .catch(console.error);
+    } else {
+      // 안드로이드 및 이전 iOS 버전
+      window.addEventListener('deviceorientation', handleOrientation as EventListener, true);
+    }
+
+    return () => {
+      window.removeEventListener('deviceorientation', handleOrientation as EventListener, true);
+    };
+  }, [isMobile]);
+
+  // 초기 위치 가져오기
+  useEffect(() => {
+    getCurrentLocation();
+  }, [getCurrentLocation]);
+
+  // Walking 모드 체크 및 자동 트래킹 시작
+  useEffect(() => {
+    const isWalking = location.pathname === '/walking';
+    setIsWalkingMode(isWalking);
+
+    if (isWalking && !isTracking) {
+      setIsTracking(true);
+    }
+  }, [location.pathname, isTracking]);
+
+  // 트래킹 모드 관리
+  useEffect(() => {
+    let watchId: number | null = null;
+    let compassCleanup: (() => void) | null = null;
+
+    if (isTracking) {
+      watchId = startTracking();
+      if (isMobile && isCompassMode) {
+        compassCleanup = startCompassTracking();
+      }
+    }
+
+    return () => {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+      if (compassCleanup) {
+        compassCleanup();
+      }
+    };
+  }, [isTracking, isCompassMode, startTracking, startCompassTracking, isMobile]);
 
   const handleSearch = useCallback(() => {
     if (!searchKeyword.trim()) return;
@@ -71,6 +146,10 @@ const MapPage = () => {
           lat: parseFloat(data[0].y),
           lng: parseFloat(data[0].x),
         });
+
+        setTimeout(() => {
+          setSearchResult(null);
+        }, 10);
       }
     });
   }, [searchKeyword]);
@@ -84,12 +163,32 @@ const MapPage = () => {
   );
 
   const handleTrackingToggle = useCallback(() => {
-    const newTrackingState = !isTracking;
-    setIsTracking(newTrackingState);
-    if (newTrackingState) {
-      getCurrentLocation();
+    if (!isMobile) {
+      // PC에서는 현재 위치 추적만 토글
+      if (!isTracking) {
+        setIsTracking(true);
+        getCurrentLocation();
+      } else {
+        setIsTracking(false);
+      }
+      return;
     }
-  }, [isTracking, getCurrentLocation]);
+
+    // 모바일일 경우에만 나침반 모드까지 제공
+    if (!isTracking) {
+      // 트래킹 시작
+      setIsTracking(true);
+      setIsCompassMode(false);
+      getCurrentLocation();
+    } else if (!isCompassMode) {
+      // 나침반 모드 시작
+      setIsCompassMode(true);
+    } else {
+      // 모든 모드 끄기
+      setIsTracking(false);
+      setIsCompassMode(false);
+    }
+  }, [isTracking, isCompassMode, getCurrentLocation, isMobile]);
 
   return (
     <div className="w-full h-screen flex flex-col relative">
@@ -108,7 +207,7 @@ const MapPage = () => {
             <MdNotifications className="text-2xl text-gray-600" />
           </button>
           <button
-            className={`p-3 rounded-full shadow-md ${
+            className={`p-3 rounded-full shadow-md transition-all duration-300 ${
               isTracking
                 ? isWalkingMode
                   ? 'text-white bg-deep-coral'
@@ -117,7 +216,11 @@ const MapPage = () => {
             }`}
             onClick={handleTrackingToggle}
           >
-            <RiFocus3Line className="text-2xl" />
+            {isMobile && isCompassMode ? (
+              <RiCompass3Line className="text-2xl animate-pulse" />
+            ) : (
+              <RiFocus3Line className="text-2xl" />
+            )}
           </button>
         </div>
       </div>
@@ -129,9 +232,17 @@ const MapPage = () => {
             currentLocation,
             currentPosition,
             isTracking,
-            onMapMove: () => isTracking && setIsTracking(false),
+            isCompassMode,
+            heading,
+            onMapMove: () => {
+              if (!isWalkingMode) {
+                setIsTracking(false);
+                setIsCompassMode(false);
+              }
+            },
             searchResult,
             onSearch: handleSearch,
+            getCurrentLocation,
           }}
         />
       </div>

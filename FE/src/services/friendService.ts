@@ -14,4 +14,19 @@ export const friendService = {
     }
   },
 
+  // 친구 삭제
+  deleteFriend: async (friendId: number) => {
+    try {
+      const response = await axiosInstance.delete(`/api/friends/${friendId}`);
+      if (response.data.code === 'FR103') {
+        return response.data.data;
+      }
+      if (response.data.code === 'ME003') {
+        throw new Error('친구 끊기 실패');
+      }
+    } catch (error) {
+      console.error('Failed to delete friend:', error);
+      throw error;
+    }
+  },
 };

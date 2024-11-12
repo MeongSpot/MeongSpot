@@ -1,15 +1,10 @@
 import React, { useState } from 'react';
 import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import { FaDog } from 'react-icons/fa';
-
-interface Dog {
-  id: number;
-  name: string;
-  age: number;
-}
+import { DogName } from '@/types/dogInfo';
 
 interface DogSelectionAccordionProps {
-  dogs: Dog[];
+  dogs: DogName[];
   selectedDogs: number[];
   onDogSelect: (dogId: number) => void;
 }
@@ -35,8 +30,8 @@ const DogSelectionAccordion: React.FC<DogSelectionAccordionProps> = ({ dogs, sel
 
       {/* 아코디언 내용 */}
       <div
-        className={`absolute left-0 right-0 bg-white border border-gray-300 mt-1 rounded-lg ${
-          showDetails ? 'max-h-[110px] opacity-100 visible' : 'max-h-0 opacity-0 invisible'
+        className={` bg-white border border-gray-300 mt-1 rounded-lg ${
+          showDetails ? 'max-h-[170px] opacity-100 visible' : 'max-h-0 opacity-0 invisible'
         } transition-all duration-300`}
         style={{ overflow: 'auto' }}
       >
@@ -44,13 +39,11 @@ const DogSelectionAccordion: React.FC<DogSelectionAccordionProps> = ({ dogs, sel
           <div
             key={dog.id}
             onClick={() => onDogSelect(dog.id)}
-            className={`flex items-center justify-between p-3 cursor-pointer border-b last:border-b-0 ${
+            className={`flex items-center justify-between p-3 pl-5 cursor-pointer border-b last:border-b-0 ${
               selectedDogs.includes(dog.id) ? 'bg-cream-bg' : ''
             }`}
           >
-            <span className="text-base">
-              {dog.name} ({dog.age}세)
-            </span>
+            <span className="text-base">{dog.name}</span>
           </div>
         ))}
       </div>

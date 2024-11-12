@@ -7,28 +7,36 @@ import { tr } from 'date-fns/locale';
 
 const CreateMeetupForm = () => {
   const navigate = useNavigate();
+  const { id: placeId } = useParams();
 
   const backClick = () => {
     navigate(`/allmeetuproom/${placeId}`, { state: { animateBack: true } });
   };
-  const { id: placeId } = useParams();
 
   return (
     <motion.div
-      className="mx-auto p-4 bg-white rounded-lg"
+      className="mx-auto max-w-2xl bg-white min-h-screen"
       initial={{ x: 300, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -300, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
-      <div className="flex items-center mb-4">
-        <button className="mr-3 text-gray-600" onClick={backClick}>
-          <FaArrowLeft size={16} />
-        </button>
-        <h1 className="text-lg font-bold">산책 모임 생성하기</h1>
+      <div className="sticky top-0 bg-white z-10 border-b border-gray-200">
+        <div className="px-4 py-4">
+          <div className="flex items-center">
+            <button 
+              className="mr-3 p-2 hover:bg-gray-100 rounded-full transition-colors" 
+              onClick={backClick}
+            >
+              <FaArrowLeft size={16} className="text-gray-600" />
+            </button>
+            <h1 className="text-lg font-bold">산책 모임 생성하기</h1>
+          </div>
+        </div>
       </div>
-      <hr className="my-4 -mx-4 w-screen" />
-      <RoomCreatForm />
+      <div className="pt-4 pb-20 px-4">
+        <RoomCreatForm />
+      </div>
     </motion.div>
   );
 };

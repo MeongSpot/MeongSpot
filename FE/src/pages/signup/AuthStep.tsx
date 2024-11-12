@@ -60,7 +60,7 @@ const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProp
             </ValidateButton>
           </div>
           <div className="mt-2">
-            <ValidationMessage message="4~16자의 영문 소문자, 숫자만 사용 가능합니다" isValid={isIdValid} />
+            <ValidationMessage message="공백없이 4~16자의 영문 소문자, 숫자만 사용 가능합니다" isValid={isIdValid} />
             {validationMessage && (
               <ValidationMessage
                 message={validationMessage}
@@ -83,7 +83,7 @@ const AuthStep = ({ formData, setFormData, setIsDuplicateChecked }: AuthStepProp
           />
           <div className="mt-2 space-y-1">
             <ValidationMessage message="최소 8자리 이상, 최대 16자리 이하" isValid={passwordLengthValid} />
-            <ValidationMessage message="영문자, 숫자, 특수문자 포함" isValid={passwordCharValid} />
+            <ValidationMessage message="공백없이 영문자, 숫자, 특수문자 포함해야 합니다" isValid={passwordCharValid} />
           </div>
         </div>
       </div>

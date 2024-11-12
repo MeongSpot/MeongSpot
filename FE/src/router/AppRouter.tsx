@@ -8,11 +8,15 @@ import useAuthStore from '@/store/useAuthStore';
 const ErrorPage = lazy(() => import('@/pages/ErrorPage'));
 const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const UserProfile = lazy(() => import('@/pages/profile/UserProfile'));
+const UpdateUser = lazy(() => import('@/pages/mypage/UpdateUser'));
 const Settings = lazy(() => import('@/pages/mypage/Settings'));
+const DogDetail = lazy(() => import('@/pages/mypage/DogDetail'));
 const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
 const SelectBreed = lazy(() => import('@/pages/mypage/SelectBreed'));
 const FriendsList = lazy(() => import('@/pages/mypage/FriendsList'));
 const SearchUser = lazy(() => import('@/pages/mypage/SearchUser'));
+const WalkingLogList = lazy(() => import('@/pages/walkinglog/WalkingLogList'));
+const WalkingLogDetail = lazy(() => import('@/pages/walkinglog/WalkingLogDetail'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
@@ -95,10 +99,26 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: 'mypage/update',
+        element: (
+          <AuthGuard>
+            <UpdateUser />
+          </AuthGuard>
+        ),
+      },
+      {
         path: 'settings',
         element: (
           <AuthGuard>
             <Settings />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'dog/:id',
+        element: (
+          <AuthGuard>
+            <DogDetail />
           </AuthGuard>
         ),
       },
@@ -127,6 +147,22 @@ const router = createBrowserRouter([
         element: <SearchUser />,
       },
       {
+        path: 'walkinglog',
+        element: (
+          <AuthGuard>
+            <WalkingLogList />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'walkinglog/:id',
+        element: (
+          <AuthGuard>
+            <WalkingLogDetail />
+          </AuthGuard>
+        ),
+      },
+      {
         path: 'mymeetuproom',
         element: (
           <AuthGuard>
@@ -135,7 +171,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'allmeetuproom/:id',
+        path: 'allmeetuproom/:spotId',
         element: (
           <AuthGuard>
             <AllMeetUpRoomPage />
@@ -221,7 +257,7 @@ const router = createBrowserRouter([
 ]);
 
 const AppRouter = () => (
-  <Suspense fallback={<div>Loading...</div>}>
+  <Suspense fallback={<div></div>}>
     <RouterProvider router={router} />
   </Suspense>
 );
