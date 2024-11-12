@@ -1,4 +1,3 @@
-// components/map/WalkingMap.tsx
 import { useState, useEffect, useCallback } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
@@ -15,6 +14,10 @@ type ContextType = {
   currentPosition: LatLng;
   currentLocation: string;
   getCurrentLocation: () => void;
+  isTracking: boolean;
+  isCompassMode: boolean;
+  heading: number | null;
+  isMobile: boolean; // 추가
 };
 
 const PRESENT_SPOT_IMAGE = {
@@ -27,7 +30,7 @@ const PRESENT_SPOT_IMAGE = {
 
 const WalkingMap = () => {
   const navigate = useNavigate();
-  const { currentPosition: contextPosition } = useOutletContext<ContextType>();
+  const { currentPosition: contextPosition, isCompassMode, heading, isMobile } = useOutletContext<ContextType>();
   const { startWalking, endWalking, totalDistance, isWalking, currentPosition } = useWalking();
 
   const [center, setCenter] = useState<LatLng>(contextPosition);
@@ -42,6 +45,7 @@ const WalkingMap = () => {
   const [walkSeconds, setWalkSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  // 지도 중심 위치 자동 조정
   useEffect(() => {
     if (isWalking && currentPosition) {
       setCenter(currentPosition);
@@ -107,11 +111,27 @@ const WalkingMap = () => {
   };
 
   return (
-    <div className="relative w-full h-full">
-      <Map center={center} style={{ width: '100%', height: '100%' }} level={mapLevel} zoomable={true}>
-        <MapMarker position={currentPosition || contextPosition} image={PRESENT_SPOT_IMAGE} />
-      </Map>
+    <div className="relative w-full h-full overflow-hidden">
+      {/* 지도 컨테이너 */}
+      <div
+        className="w-full h-full"
+        style={{
+          transform: isMobile && isCompassMode && heading !== null ? `rotate(${-heading}deg)` : 'none',
+          transition: 'transform 0.3s ease-out',
+        }}
+      >
+        <Map
+          center={center}
+          style={{ width: '100%', height: '100%' }}
+          level={mapLevel}
+          zoomable={false}
+          draggable={false}
+        >
+          <MapMarker position={currentPosition || contextPosition} image={PRESENT_SPOT_IMAGE} />
+        </Map>
+      </div>
 
+      {/* 모달들 */}
       <WalkStartModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
