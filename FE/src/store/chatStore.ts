@@ -14,13 +14,16 @@ const useChatStore = create<ChatState>()(
   subscribeWithSelector((set, get) => ({
     chats: {},
 
-    setChats: (roomId, newChats) =>
-      set((state) => ({
-        chats: {
+    setChats: (roomId, newChats) => {
+      set((state) => {
+        const updatedChats = {
           ...state.chats,
           [roomId]: newChats,
-        },
-      })),
+        };
+        console.log("Setting chats for room:", roomId, updatedChats); // 상태 확인
+        return { chats: updatedChats };
+      });
+    },
 
     addChat: (roomId, chat) =>
       set((state) => ({
