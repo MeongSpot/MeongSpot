@@ -1,27 +1,21 @@
-import { useState } from 'react';
 import { FriendListInfo } from '@/types/friend';
+import { UserSearchInfo } from '@/types/user';
 import { useNavigate } from 'react-router-dom';
-import { useFriend } from '@/hooks/friend/useFriend';
-import FriendsDeleteModal from './FriendsDeleteModal';
 
 interface FriendsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onDelete: () => void;
-  friend: FriendListInfo | null;
+  user: UserSearchInfo | null;
 }
 
-const FriendsModal = ({ isOpen, onClose, onDelete, friend }: FriendsModalProps) => {
+const UserModal = ({ isOpen, onClose, user }: FriendsModalProps) => {
   const navigate = useNavigate();
-  const { deleteFriend } = useFriend();
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     onClose();
   };
 
-  if (!friend) return null;
+  if (!user) return null;
 
   return (
     <div
@@ -42,19 +36,19 @@ const FriendsModal = ({ isOpen, onClose, onDelete, friend }: FriendsModalProps) 
           <div className="py-4 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img
-                src={friend.profileImage || '/icons/favicon/favicon-96x96.png'}
+                src={user.profileImage || '/icons/favicon/favicon-96x96.png'}
                 alt="Profile"
                 className="w-14 h-14 rounded-full border object-cover"
               />
               <div>
                 <h2 className="text-lg font-bold">
-                  <span className="font-bold truncate">{friend.nickname}</span>
+                  <span className="font-bold truncate">{user.nickname}</span>
                 </h2>
-                {friend.dogNames.length > 0 && (
+                {user.dogNameList.length > 0 && (
                   <div className="text-sm flex space-x-1">
                     <p className="text-deep-coral">
-                      {friend.dogNames[0]}
-                      {friend.dogNames.length > 1 && ` 외 ${friend.dogNames.length - 1}마리`}
+                      {user.dogNameList[0]}
+                      {user.dogNameList.length > 1 && ` 외 ${user.dogNameList.length - 1}마리`}
                     </p>
                     <p>견주</p>
                   </div>
@@ -63,7 +57,7 @@ const FriendsModal = ({ isOpen, onClose, onDelete, friend }: FriendsModalProps) 
             </div>
             <button
               onClick={() => {
-                navigate(`/profile/${friend.id}`);
+                navigate(`/profile/${user.id}`);
                 onClose();
               }}
               className="py-[0.35rem] px-3 bg-peach-orange rounded-2xl"
@@ -75,28 +69,13 @@ const FriendsModal = ({ isOpen, onClose, onDelete, friend }: FriendsModalProps) 
           <hr />
 
           <div className="pt-5 py-4 space-y-5">
-            <p
-              onClick={() => {
-                setIsDeleteModalOpen(!isDeleteModalOpen);
-              }}
-              className="font-medium"
-            >
-              친구 삭제하기
-            </p>
+            <p className="font-medium">친구 신청하기</p>
             <p className="font-medium">차단하기</p>
           </div>
         </div>
       </div>
-
-      {isDeleteModalOpen && (
-        <FriendsDeleteModal
-          isOpen={isDeleteModalOpen}
-          onClose={() => setIsDeleteModalOpen(false)}
-          onConfirm={onDelete}
-        />
-      )}
     </div>
   );
 };
 
-export default FriendsModal;
+export default UserModal;

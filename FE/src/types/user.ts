@@ -39,3 +39,16 @@ export interface UserProfileInfoResponse {
   message: string;
   data: UserProfileInfo;
 };
+
+export interface UserSearchInfo {
+  id: number;
+  nickname: string;
+  profileImage: string
+  dogNameList: string[];
+}
+
+export interface UserSearchResponse {
+  code: number;
+  message: string;
+  data: UserSearchInfo[];
+}
