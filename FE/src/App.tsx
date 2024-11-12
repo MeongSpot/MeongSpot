@@ -25,7 +25,8 @@ const App = () => {
     (location.pathname.startsWith('/chat/') && id) ||
     (location.pathname.startsWith('/participateDog/') && id) ||
     (location.pathname.startsWith('/dog/') && id) ||
-    (location.pathname.startsWith('/walkinglog/') && id);
+    (location.pathname.startsWith('/walkinglog/') && id) ||
+    (location.pathname.startsWith('/profile/') && id);
 
   return (
     <div className="mobile-container">
