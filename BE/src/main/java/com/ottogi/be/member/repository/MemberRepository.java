@@ -19,6 +19,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         FROM Member m
         LEFT JOIN FETCH m.dogList
         WHERE m.nickname LIKE %:nickname%
+        AND m.id != :myId
         ORDER BY CASE
         WHEN m.nickname LIKE :nickname THEN 0
         WHEN m.nickname LIKE :nickname% THEN 1
@@ -27,5 +28,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         ELSE 4
         END
     """)
-    List<Member> searchByNickname(@Param("nickname") String nickname);
+    List<Member> searchByNickname(@Param("nickname") String nickname, Long myId);
 }

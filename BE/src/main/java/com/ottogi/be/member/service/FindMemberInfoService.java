@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class FindMemberInfoService {
         Member findMember = memberRepository.findById(memberDetailsDto.getId())
                 .orElseThrow(MemberNotFoundException::new);
         boolean isFriend = friendRepository.isFriend(me.getId(), findMember.getId());
+        if (Objects.equals(me.getId(), findMember.getId())) isFriend = true;
         LocalDateTime currentDate = LocalDateTime.now();
         int age = currentDate.getYear() - findMember.getBirth().getYear();
         return MemberDetailsResponse.toDto(findMember, isFriend, age);

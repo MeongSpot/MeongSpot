@@ -4,6 +4,7 @@ import com.ottogi.be.dog.domain.Dog;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.dto.SearchMemberDto;
 import com.ottogi.be.member.dto.response.SearchMemberResponse;
+import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,10 @@ public class SearchMemberService {
 
     @Transactional(readOnly = true)
     public List<SearchMemberResponse> searchMember(SearchMemberDto dto) {
-        List<Member> memberList = memberRepository.searchByNickname(dto.getTargetNickname());
+        Member me = memberRepository.findByLoginId(dto.getLoginId())
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<Member> memberList = memberRepository.searchByNickname(dto.getTargetNickname(), me.getId());
 
         List<SearchMemberResponse> result = new ArrayList<>();
         for (Member member : memberList) {
