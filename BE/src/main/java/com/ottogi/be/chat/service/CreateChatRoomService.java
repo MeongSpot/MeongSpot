@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,18 +33,15 @@ public class CreateChatRoomService {
         Member interlocutor = memberRepository.findById(dto.getInterlocutorId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        if (chatMemberRepository.findChatRoomByMyIdAndInterlocutorId(member.getId(), interlocutor.getId()).isPresent()) {
-            return chatMemberRepository.findChatRoomByMyIdAndInterlocutorId(member.getId(), interlocutor.getId()).get().getId();
-        }
+        Optional<ChatRoom> chatMember = chatMemberRepository.findChatRoomByMyIdAndInterlocutorId(member.getId(), interlocutor.getId());
+
+        if (chatMember.isPresent()) return chatMember.get().getId();
 
         ChatRoom chatRoom = new ChatRoom(ChatRoomType.PERSONAL);
 
         chatRoomRepository.saveAndFlush(chatRoom);
 
-        List<ChatMember> chatMembers = List.of(
-                new ChatMember(chatRoom, member),
-                new ChatMember(chatRoom, interlocutor)
-        );
+        List<ChatMember> chatMembers = List.of(new ChatMember(chatRoom, member), new ChatMember(chatRoom, interlocutor));
         chatMemberRepository.saveAll(chatMembers);
 
         return chatRoom.getId();
