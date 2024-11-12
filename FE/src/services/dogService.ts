@@ -67,4 +67,15 @@ export const dogService = {
       throw error;
     }
   },
+
+  // 사용자 반려견 목록 조회
+  getUserDogs: async (userId: number):Promise<DogListResponse> => {
+    try {
+      const response = await axiosInstance.get(`/api/dogs/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get user dogs:', error);
+      throw error;
+    }
+  },
 };
