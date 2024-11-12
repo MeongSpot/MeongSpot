@@ -23,6 +23,7 @@ public class BreedService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<String> findBreed(String keyword) {
         return breedRepository.findBreedByKeyword(keyword);
     }

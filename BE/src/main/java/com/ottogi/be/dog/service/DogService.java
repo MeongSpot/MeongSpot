@@ -7,7 +7,7 @@ import com.ottogi.be.dog.domain.Personality;
 import com.ottogi.be.dog.dto.DogAddDto;
 import com.ottogi.be.dog.dto.DogModifyDto;
 import com.ottogi.be.dog.dto.response.FindMemberDogResponse;
-import com.ottogi.be.dog.dto.response.FindMyDogResponse;
+import com.ottogi.be.dog.dto.response.FindDogResponse;
 import com.ottogi.be.dog.exception.DogImageUploadException;
 import com.ottogi.be.dog.exception.DogNotFoundException;
 import com.ottogi.be.dog.exception.DogOwnerMismatchException;
@@ -68,14 +68,14 @@ public class DogService {
     }
 
     @Transactional(readOnly = true)
-    public List<FindMyDogResponse> findMyDogList(String loginId) {
+    public List<FindDogResponse> findMyDogList(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
         List<Dog> dogs = dogRepository.findByMember(member);
-        List<FindMyDogResponse> result = new ArrayList<>();
+        List<FindDogResponse> result = new ArrayList<>();
         for (Dog dog : dogs) {
             List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
-            FindMyDogResponse myDogList = FindMyDogResponse.builder()
+            FindDogResponse myDogList = FindDogResponse.builder()
                     .id(dog.getId())
                     .name(dog.getName())
                     .birth(dog.getBirth())

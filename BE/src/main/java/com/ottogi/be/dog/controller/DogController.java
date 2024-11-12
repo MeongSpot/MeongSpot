@@ -57,7 +57,7 @@ public class DogController {
 
     @GetMapping
     public ResponseEntity<?> myDogList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        List<FindMyDogResponse> result = dogService.findMyDogList(loginMemberInfo.getLoginId());
+        List<FindDogResponse> result = dogService.findMyDogList(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("DO104", "내 반려견 목록 조회 성공", result));
     }
 
@@ -94,10 +94,10 @@ public class DogController {
         return ResponseEntity.ok(new ApiResponse<>("DO109", "모임 참여 반려견 목록 조회 성공", result));
     }
 
-    @GetMapping("/{dogId}/my")
-    public ResponseEntity<?> myDogDetails(@PathVariable Long dogId) {
-        FindMyDogResponse result = findDogService.findMyDog(dogId);
-        return ResponseEntity.ok(new ApiResponse<>("DO110", "나의 반려견 상세 조회 성공", result));
+    @GetMapping("/{dogId}/details")
+    public ResponseEntity<?> dogDetails(@PathVariable Long dogId) {
+        FindDogResponse result = findDogService.findDog(dogId);
+        return ResponseEntity.ok(new ApiResponse<>("DO110", "반려견 상세 조회 성공", result));
     }
 
 }

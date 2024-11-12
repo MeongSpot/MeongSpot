@@ -2,7 +2,7 @@ package com.ottogi.be.dog.service;
 
 import com.ottogi.be.dog.domain.Dog;
 import com.ottogi.be.dog.dto.response.FindDogNameResponse;
-import com.ottogi.be.dog.dto.response.FindMyDogResponse;
+import com.ottogi.be.dog.dto.response.FindDogResponse;
 import com.ottogi.be.dog.exception.DogNotFoundException;
 import com.ottogi.be.dog.repository.DogPersonalityRepository;
 import com.ottogi.be.dog.repository.DogRepository;
@@ -31,11 +31,11 @@ public class FindDogService {
     }
 
     @Transactional(readOnly = true)
-    public FindMyDogResponse findMyDog(Long dogId) {
+    public FindDogResponse findDog(Long dogId) {
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(DogNotFoundException::new);
         List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
-        return FindMyDogResponse.builder()
+        return FindDogResponse.builder()
                 .id(dogId)
                 .name(dog.getName())
                 .birth(dog.getBirth())
