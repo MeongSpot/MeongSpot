@@ -17,11 +17,16 @@ import { DogInfo } from '@/types/dogInfo';
 import { useFriend } from '@/hooks/friend/useFriend';
 import { useMyPage } from '@/hooks/mypage/useMyPage';
 import { useDog } from '@/hooks/dog/useDog';
+import { useWalkingLog } from '@/hooks/walkinglog/useWalkingLog';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 
 const MyPage: React.FC = () => {
   const { getFriends, friendsCount } = useFriend();
   const { myDogs, getMyDogs } = useDog();
+  const { getWalkingLogList, monthlyWalkingLogs } = useWalkingLog();
+  const [totalWalkingCount, setTotalWalkingCount] = useState(0);
+  const [totalWalkingDistance, setTotalWalkingDistance] = useState(0);
+  const [totalWalkingTime, setTotalWalkingTime] = useState(0);
   const { userData, getMyPageUser } = useMyPage();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -30,7 +35,8 @@ const MyPage: React.FC = () => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        await Promise.all([getFriends(), getMyDogs(), getMyPageUser()]);
+        // 데이터 호출이 완료될 때까지 대기
+        await Promise.all([getFriends(), getMyDogs(), getMyPageUser(), getWalkingLogList()]);
       } catch (error) {
         console.error('데이터를 불러오는 중 오류가 발생했습니다:', error);
       } finally {
@@ -40,6 +46,16 @@ const MyPage: React.FC = () => {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (monthlyWalkingLogs) {
+      setTotalWalkingDistance(monthlyWalkingLogs.reduce((acc, cur) => acc + (cur.monthlyWalkDistance || 0), 0));
+      setTotalWalkingTime(
+        parseFloat((monthlyWalkingLogs.reduce((acc, cur) => acc + (cur.monthlyWalkTime || 0), 0) / 60).toFixed(2)),
+      );
+      setTotalWalkingCount(monthlyWalkingLogs.reduce((acc, cur) => acc + (cur.monthlyWalkCount || 0), 0));
+    }
+  }, [monthlyWalkingLogs]);
 
   return (
     <div className="pb-16">
@@ -135,12 +151,13 @@ const MyPage: React.FC = () => {
 
           <div className="bg-zinc-100 w-full h-3"></div>
 
-          <div className="p-4 flex flex-col space-y-5">
-              <div
-                onClick={() => {
-                  navigate('/walkinglog');
-                }}
-                className="flex items-center justify-between">
+          <div className="p-4 pb-10 flex flex-col space-y-5">
+            <div
+              onClick={() => {
+                navigate('/walkinglog');
+              }}
+              className="flex items-center justify-between"
+            >
               <p className="font-semibold">산책 기록</p>
               <div className="flex items-center space-x-1 text-zinc-700">
                 <FaAngleRight className="" />
@@ -149,20 +166,20 @@ const MyPage: React.FC = () => {
             <div className="grid grid-cols-3 divide-x divide-zinc-300">
               <div className="flex flex-col justify-center items-center space-y-2">
                 <div className="flex items-end space-x-1">
-                  <p className="text-2xl font-extrabold">15</p>
+                  <p className="text-[1.4rem] font-extrabold">{totalWalkingCount}</p>
                 </div>
                 <p className="text-xs text-zinc-700">이번달 산책 횟수</p>
               </div>
               <div className="flex flex-col justify-center items-center space-y-2">
                 <div className="flex items-end space-x-1">
-                  <p className="text-2xl font-extrabold">30</p>
+                  <p className="text-[1.4rem] font-extrabold">{totalWalkingDistance.toFixed(2)}</p>
                   <p className="text-xs text-zinc-600">km</p>
                 </div>
                 <p className="text-xs text-zinc-700">이번달 산책 거리</p>
               </div>
               <div className="flex flex-col justify-center items-center space-y-2">
                 <div className="flex items-end space-x-1">
-                  <p className="text-2xl font-extrabold">10</p>
+                  <p className="text-[1.4rem] font-extrabold">{totalWalkingTime}</p>
                   <p className="text-xs text-zinc-600">h</p>
                 </div>
                 <p className="text-xs text-zinc-700">이번달 산책 시간</p>
