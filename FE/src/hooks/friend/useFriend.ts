@@ -24,5 +24,20 @@ export const useFriend = () => {
     }
   };
 
-  return { getFriends, friendsList, friendsCount, isLoading, filteredFriendsList, setFilteredFriendsList };
+  // 친구 끊기 (삭제)
+  const deleteFriend = async (friendId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await friendService.deleteFriend(friendId);
+      setFriendsList(friendsList.filter((friend) => friend.id !== friendId));
+      setFilteredFriendsList(filteredFriendsList.filter((friend) => friend.id !== friendId));
+      setFriendsCount(friendsCount - 1);
+    } catch (error) {
+      console.error("Failed to delete friend:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { getFriends, friendsList, friendsCount, isLoading, filteredFriendsList, setFilteredFriendsList, deleteFriend };
 };
