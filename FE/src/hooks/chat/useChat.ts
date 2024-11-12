@@ -3,10 +3,12 @@
   import useChatStore from '@/store/chatStore';
   import { Chat } from '@/types/singleChat';
   import { debounce } from 'lodash';
+  import useMarkRead from './useMarkRead';
 
   const useChat = (roomId: number) => {
     const addChat = useChatStore((state) => state.addChat);
     const clientRef = useRef<Client | null>(null);
+    const markAsRead = useMarkRead(roomId);
     
     useEffect(() => {
       if (clientRef.current) {
@@ -25,6 +27,7 @@
             if (message.body) {
               const newMessage: Chat = JSON.parse(message.body);
               addChat(roomId, newMessage);
+              markAsRead();
               console.log(`새 메시지 수신: 방 번호 ${roomId}`, newMessage);
             }
           });

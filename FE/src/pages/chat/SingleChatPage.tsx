@@ -8,6 +8,7 @@ import useChatDetail from '@/hooks/chat/useChatDetail';
 import useMarkRead from '@/hooks/chat/useMarkRead';
 import { differenceInCalendarDays, format } from 'date-fns';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import { Chat } from '@/types/singleChat';
 
 const SingleChatPage = () => {
   const navigate = useNavigate();
@@ -18,49 +19,45 @@ const SingleChatPage = () => {
   const initialFriendName = location.state?.friendName;
   const [targetNickname, setTargetNickname] = useState(initialFriendName || '');
   const [showLoading, setShowLoading] = useState(true);
+  const [localMessages, setLocalMessages] = useState<Chat[]>([]);
 
   const { messages: fetchedMessages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
   const { sendMessage } = useChat(roomId);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const topOfMessagesRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleScrollToTopLoad = useCallback(() => {
-    
-    if (messagesContainerRef.current && topOfMessagesRef.current && !loading && !isLastPage) {
+    if (messagesContainerRef.current && !loading && !isLastPage) {
       const previousScrollHeight = messagesContainerRef.current.scrollHeight;
       setPage((prevPage) => prevPage + 1);
 
-      // 페이지가 증가한 후, 새 메시지가 로드되면 기존 메시지 위에 새 메시지가 추가되도록 설정
       setTimeout(() => {
         if (messagesContainerRef.current) {
           const newScrollHeight = messagesContainerRef.current.scrollHeight;
           messagesContainerRef.current.scrollTop = newScrollHeight - previousScrollHeight;
         }
-      }, 100); // 약간의 지연 시간을 두어 메시지가 추가될 시간을 확보
+      }, 100);
     }
   }, [loading, isLastPage]);
 
   useEffect(() => {
     if (fetchedMessages.length > 0) {
+      setLocalMessages((prevMessages) => [...fetchedMessages, ...prevMessages]); // 기존 메시지와 새 메시지 병합
       if (page === 0) scrollToBottom();
-    }
-    if (fetchedMessages.length && page === 0) {
-      scrollToBottom();
     }
   }, [fetchedMessages, page]);
 
   useEffect(() => {
-    const firstNonSenderMessage = fetchedMessages.find((msg) => msg.senderId !== myId);
+    const firstNonSenderMessage = localMessages.find((msg) => msg.senderId !== myId);
     if (firstNonSenderMessage) {
       setTargetNickname(firstNonSenderMessage.nickname);
     }
-  }, [fetchedMessages, myId]);
+  }, [localMessages, myId]);
 
   useEffect(() => {
     const loadingTimeout = setTimeout(() => setShowLoading(false), 500);
@@ -69,7 +66,7 @@ const SingleChatPage = () => {
 
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
-      const newMessage = {
+      const newMessage: Chat = { // 타입 명시
         senderId: myId,
         message,
         sentAt: new Date().toISOString(),
@@ -78,7 +75,11 @@ const SingleChatPage = () => {
         messageType: 'text',
       };
       sendMessage(message, myId);
+
+      // 새 메시지를 로컬 상태에 추가하여 즉시 반영
+      setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
+      scrollToBottom();
     }
   };
 
@@ -130,51 +131,47 @@ const SingleChatPage = () => {
         {(loading || showLoading) && <LoadingOverlay />}
         {error && <p className="text-red-500">{error}</p>}
 
-        <div ref={topOfMessagesRef} />
-
-        {fetchedMessages.map((msg, index) => {
+        {/* 로컬 상태의 메시지를 사용하여 즉시 업데이트 반영 */}
+        {localMessages.map((msg, index) => {
           const isSender = msg.senderId === myId;
-          const showDateLabel = isDifferentDate(msg.sentAt, fetchedMessages[index - 1]?.sentAt);
+          const showDateLabel = isDifferentDate(msg.sentAt, localMessages[index - 1]?.sentAt);
           return (
-     
-            
-              <div key={`${msg.sentAt}-${index}`} className="flex flex-col mb-4">
-                {showDateLabel && (
-                  <div className="flex justify-center my-2">
-                    <span className="text-xs text-gray-500">{formatDateLabel(msg.sentAt)}</span>
+            <div key={`${msg.sentAt}-${index}`} className="flex flex-col mb-4">
+              {showDateLabel && (
+                <div className="flex justify-center my-2">
+                  <span className="text-xs text-gray-500">{formatDateLabel(msg.sentAt)}</span>
+                </div>
+              )}
+              <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
+                {!isSender && (
+                  <div onClick={() => navigate(`/profile/${msg.senderId}`)}>
+                    <img
+                      src={msg.profileImage || ''}
+                      alt="Profile"
+                      className="w-8 h-8 rounded-full object-cover mx-2"
+                    />
                   </div>
                 )}
-                <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
-                  {!isSender && (
-                    <div onClick={() => navigate(`/profile/${msg.senderId}`)}>
-                      <img
-                        src={msg.profileImage || ''} // null일 경우 빈 문자열로 설정
-                        alt="Profile"
-                        className="w-8 h-8 rounded-full object-cover mx-2"
-                      />
+                <div className="flex flex-col max-w-xs">
+                  {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
+                  <div className={`flex items-end ${isSender ? 'flex-row-reverse' : ''}`}>
+                    <div className={`${isSender ? 'bg-cream-bg' : 'bg-gray-200'} text-gray-800 rounded-lg px-4 py-2`}>
+                      {msg.message}
                     </div>
-                  )}
-                  <div className="flex flex-col max-w-xs">
-                    {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
-                    <div className={`flex items-end ${isSender ? 'flex-row-reverse' : ''}`}>
-                      <div className={`${isSender ? 'bg-cream-bg' : 'bg-gray-200'} text-gray-800 rounded-lg px-4 py-2`}>
-                        {msg.message}
-                      </div>
-                      <span
-                        className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
-                        style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
-                      >
-                        {msg.sentAt &&
-                          new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
+                    <span
+                      className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
+                      style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
+                    >
+                      {msg.sentAt &&
+                        new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
                 </div>
               </div>
+            </div>
           );
-          
         })}
-          <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="flex items-center p-3 border-t bg-white">

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { Chat } from '@/types/singleChat';
+import { Chat, ChatRoom } from '@/types/singleChat';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 interface ChatState {
