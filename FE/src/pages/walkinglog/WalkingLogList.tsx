@@ -72,7 +72,7 @@ const WalkingLogList = () => {
                     key={log.dogImage}
                     className="flex w-full justify-end items-center space-x-2 transform translate-y-4 opacity-0"
                     style={{
-                      transition: `opacity 0.3s ease ${index * 0.1}s, transform 0.3s ease ${index * 0.1}s`,
+                      transition: `opacity 0.3s ease ${index * 0.08}s, transform 0.3s ease ${index * 0.08}s`,
                       opacity: showAllDogs ? 1 : 0,
                       transform: showAllDogs ? 'translate-y-0' : 'translate-y-4',
                     }}
