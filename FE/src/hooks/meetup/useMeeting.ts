@@ -1,7 +1,18 @@
 // hooks/meeting/useMeeting.ts
 import { useState, useCallback } from 'react';
-import type { Meeting, UseMeetingReturn, OrderType } from '@/types/meetup';
+import type { Meeting, OrderType, CreateMeetingRequest } from '@/types/meetup';
 import { meetingService } from '@/services/meetingService';
+
+// 리턴 타입을 확장하여 새로운 createMeeting 함수를 포함
+interface UseMeetingReturn {
+  meetings: Meeting[];
+  spotName: string;
+  isLoading: boolean;
+  error: string | null;
+  fetchTopMeetings: (spotId: number) => Promise<void>;
+  fetchMeetings: (spotId: number, order: OrderType) => Promise<void>;
+  createMeeting: (data: CreateMeetingRequest) => Promise<void>;
+}
 
 export const useMeeting = (): UseMeetingReturn => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
@@ -36,6 +47,19 @@ export const useMeeting = (): UseMeetingReturn => {
     }
   }, []);
 
+  const createMeeting = useCallback(async (data: CreateMeetingRequest) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await meetingService.createMeeting(data);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     meetings,
     spotName,
@@ -43,5 +67,6 @@ export const useMeeting = (): UseMeetingReturn => {
     error,
     fetchTopMeetings,
     fetchMeetings,
+    createMeeting,
   };
 };

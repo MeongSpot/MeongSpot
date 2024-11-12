@@ -60,7 +60,7 @@ export interface MeetupEvent {
   date: string;
   time: string;
   location: string;
-  participants: string[];
+  participants?: string[];
   maxParticipants: number;
   currentParticipants: number;
   tags: string[];
@@ -87,3 +87,22 @@ export interface MeetingListResponse {
 }
 
 export type OrderType = 'recent' | 'remain';
+
+export interface CreateMeetingRequest {
+  spotId: number;
+  title: string;
+  date: string;
+  hour: number;
+  minute: number;
+  detailLocation: string;
+  information: string;
+  hashtag: string[];
+  maxParticipants: number;
+  dogs: number[];
+}
+
+export interface CreateMeetingResponse {
+  code: string;
+  message: string;
+  data: null;
+}
