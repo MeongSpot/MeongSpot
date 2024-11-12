@@ -1,8 +1,9 @@
-  import { useEffect, useRef, useState } from 'react';
+  import { useEffect, useRef, useState, useCallback } from 'react';
   import { Client } from '@stomp/stompjs';
   import axiosInstance from '@/services/axiosInstance';
   import useChatStore from '@/store/chatStore';
   import { Chat } from '@/types/singleChat';
+  import { debounce } from 'lodash';
 
   const useChat = (roomId: number) => {
     const setChats = useChatStore((state) => state.setChats);
@@ -25,7 +26,6 @@
 
     
     useEffect(() => {
-
       if (clientRef.current) {
         clientRef.current.deactivate();
       }
@@ -68,48 +68,31 @@
       };
     }, [roomId, addChat]);
 
-    const markAsRead = (myId: number) => {
-      if (clientRef.current?.connected) {
-        const readMessage = {
-          memberId: myId,
-          chatRoomId: roomId,
-        };
+    const sendMessage = useCallback(
+      debounce((message: string, myId: number) => {
+        if (clientRef.current?.connected) {
+          const chatMessage = {
+            memberId: myId,
+            chatRoomId: roomId,
+            roomId,
+            senderId: myId,
+            message,
+            timestamp: new Date().toISOString(),
+          };
   
-        clientRef.current.publish({
-          destination: `/pub/chat.info.${roomId}`,
-          body: JSON.stringify(readMessage),
-        });
+          clientRef.current.publish({
+            destination: `/pub/send.message.${roomId}`,
+            body: JSON.stringify(chatMessage),
+          });
   
-        console.log(`채팅방 읽음 처리 메시지 전송 성공: 방 번호 ${roomId}, 사용자 ID: ${myId}`);
-      } else {
-        console.error('WebSocket이 연결되지 않았습니다. 읽음 상태를 보낼 수 없습니다.');
-      }
-    };
-
-    const sendMessage = (message: string, myId: number) => {
-      if (clientRef.current?.connected) {
-        const chatMessage = {
-          memberId: myId,
-          chatRoomId: roomId,
-          roomId,
-          senderId: myId,
-          message,
-          timestamp: new Date().toISOString(),
-        };
-
-        clientRef.current.publish({
-          destination: `/pub/send.message.${roomId}`,
-          body: JSON.stringify(chatMessage),
-        });
-
-        markAsRead(myId)
-        console.log(`메시지 전송 성공: ${message}`, chatMessage);
-      } else {
-        console.error('WebSocket이 연결되지 않았습니다. 메시지를 보낼 수 없습니다.');
-      }
-    };
-
-    return { sendMessage, markAsRead };
+          console.log(`메시지 전송 성공: ${message}`, chatMessage);
+        } else {
+          console.error('WebSocket이 연결되지 않았습니다. 메시지를 보낼 수 없습니다.');
+        }
+      }, 300),
+      [roomId]
+    );
+    return { sendMessage };
   };
 
   export default useChat;
