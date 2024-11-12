@@ -46,8 +46,9 @@ public class JoinMeetingService {
         List<Long> dogIds = joinMeetingDto.getDogIds();
         if (!dogRepository.isOwner(member, dogIds, dogIds.size())) throw new DogOwnerMismatchException();
 
-        int participants = meetingMemberRepository.countMembersByMeeting(meeting);
-        if (participants >= meeting.getMaxParticipants()) throw new OverMaxParticipantsException();
+        if (meeting.getParticipants() >= meeting.getMaxParticipants()) throw new OverMaxParticipantsException();
+
+        meeting.joinCount();
 
         List<Dog> dogs = dogRepository.findAllById(dogIds);
         List<MeetingMember> list = new ArrayList<>();

@@ -1,5 +1,6 @@
 package com.ottogi.be.meeting.dto.response;
 
+import com.ottogi.be.meeting.domain.Meeting;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +19,15 @@ public class FindMeetingResponse {
     private LocalDateTime meetingAt;
     private String detailLocation;
     private String information;
+
+    public static FindMeetingResponse from(Meeting meeting) {
+        return FindMeetingResponse.builder()
+                .title(meeting.getTitle())
+                .participants(meeting.getParticipants())
+                .maxParticipants(meeting.getMaxParticipants())
+                .meetingAt(meeting.getMeetingAt())
+                .detailLocation(meeting.getDetailLocation())
+                .information(meeting.getInformation())
+                .build();
+    }
 }

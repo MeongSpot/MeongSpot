@@ -7,7 +7,6 @@ import com.ottogi.be.meeting.dto.response.MeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingTopResponse;
 import com.ottogi.be.meeting.exception.MeetingNotFoundException;
 import com.ottogi.be.meeting.repository.HashTagRepository;
-import com.ottogi.be.meeting.repository.MeetingMemberRepository;
 import com.ottogi.be.meeting.repository.MeetingRepository;
 import com.ottogi.be.spot.domain.Spot;
 import com.ottogi.be.spot.exception.SpotNotFoundException;
@@ -29,13 +28,13 @@ public class FindMeetingService {
 
     private final SpotRepository spotRepository;
     private final MeetingRepository meetingRepository;
-    private final MeetingMemberRepository meetingMemberRepository;
     private final HashTagRepository hashTagRepository;
 
     @Transactional(readOnly = true)
     public List<MeetingResponse> findMeetingList(MeetingDto meetingDto) {
         Spot spot = spotRepository.findById(meetingDto.getSpotId())
                 .orElseThrow(SpotNotFoundException::new);
+
         List<Meeting> meetings = new ArrayList<>();
         if (meetingDto.getOrder().equals("recent")) {
             meetings = meetingRepository.findAllBySpotAndMeetingAtAfterOrderByIdDesc(spot, LocalDateTime.now());
@@ -43,13 +42,7 @@ public class FindMeetingService {
             meetings = meetingRepository.findAllBySpotAndMeetingAtAfterOrderByMeetingAt(spot, LocalDateTime.now());
         }
 
-        List<Long> meetingIds = meetings.stream().map(Meeting::getId).toList();
-
-        List<MeetingMemberCountDto> counts = meetingMemberRepository.countMembersByMeetingIds(meetingIds);
-        Map<Long, Integer> countsMap = counts.stream()
-                .collect(Collectors.toMap(MeetingMemberCountDto::getMeetingId, meetingMemberCountDto -> meetingMemberCountDto.getCount().intValue()));
-
-        List<MeetingHashtagDto> hashtags = hashTagRepository.findAllByMeetingIds(meetingIds);
+        List<MeetingHashtagDto> hashtags = hashTagRepository.findAllByMeetings(meetings);
         Map<Long, List<String>> hashtagMap = hashtags.stream()
                 .collect(Collectors.groupingBy(MeetingHashtagDto::getMeetingId, Collectors.mapping(MeetingHashtagDto::getHashtag, Collectors.toList())));
 
@@ -57,7 +50,7 @@ public class FindMeetingService {
                 .map(meeting -> MeetingResponse.builder()
                         .meetingId(meeting.getId())
                         .title(meeting.getTitle())
-                        .participants(countsMap.get(meeting.getId()))
+                        .participants(meeting.getParticipants())
                         .maxParticipants(meeting.getMaxParticipants())
                         .meetingAt(meeting.getMeetingAt())
                         .detailLocation(meeting.getDetailLocation())
@@ -73,13 +66,7 @@ public class FindMeetingService {
                 .orElseThrow(SpotNotFoundException::new);
         List<Meeting> meetings = meetingRepository.findTop5BySpotAndMeetingAtAfterOrderByIdDesc(spot, LocalDateTime.now());
 
-        List<Long> meetingIds = meetings.stream().map(Meeting::getId).toList();
-
-        List<MeetingMemberCountDto> counts = meetingMemberRepository.countMembersByMeetingIds(meetingIds);
-        Map<Long, Integer> countsMap = counts.stream()
-                .collect(Collectors.toMap(MeetingMemberCountDto::getMeetingId, meetingMemberCountDto -> meetingMemberCountDto.getCount().intValue()));
-
-        List<MeetingHashtagDto> hashtags = hashTagRepository.findAllByMeetingIds(meetingIds);
+        List<MeetingHashtagDto> hashtags = hashTagRepository.findAllByMeetings(meetings);
         Map<Long, List<String>> hashtagMap = hashtags.stream()
                 .collect(Collectors.groupingBy(MeetingHashtagDto::getMeetingId, Collectors.mapping(MeetingHashtagDto::getHashtag, Collectors.toList())));
 
@@ -87,7 +74,7 @@ public class FindMeetingService {
                 .map(meeting -> MeetingResponse.builder()
                         .meetingId(meeting.getId())
                         .title(meeting.getTitle())
-                        .participants(countsMap.get(meeting.getId()))
+                        .participants(meeting.getParticipants())
                         .maxParticipants(meeting.getMaxParticipants())
                         .meetingAt(meeting.getMeetingAt())
                         .detailLocation(meeting.getDetailLocation())
@@ -106,14 +93,7 @@ public class FindMeetingService {
     public FindMeetingResponse findMeeting(Long meetingId) {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(MeetingNotFoundException::new);
-        int count = meetingMemberRepository.countMembersByMeeting(meeting);
-        return FindMeetingResponse.builder()
-                .title(meeting.getTitle())
-                .participants(count)
-                .maxParticipants(meeting.getMaxParticipants())
-                .meetingAt(meeting.getMeetingAt())
-                .detailLocation(meeting.getDetailLocation())
-                .information(meeting.getInformation())
-                .build();
+
+        return FindMeetingResponse.from(meeting);
     }
 }

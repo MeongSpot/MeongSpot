@@ -36,6 +36,9 @@ public class Meeting {
     private int maxParticipants;
 
     @Column(nullable = false)
+    private int participants;
+
+    @Column(nullable = false)
     private LocalDateTime meetingAt;
 
     @CreatedDate
@@ -53,17 +56,26 @@ public class Meeting {
 
     @PrePersist
     protected void onCreate() {
+        participants = 1;
         isDone = false;
     }
 
     @Builder
-    public Meeting(Spot spot, ChatRoom chatRoom, String title, int maxParticipants, LocalDateTime meetingAt, String detailLocation, Boolean isDone, String information) {
+    public Meeting(Spot spot, ChatRoom chatRoom, String title, int maxParticipants, int participants, LocalDateTime meetingAt, String detailLocation, Boolean isDone, String information) {
         this.spot = spot;
         this.chatRoom = chatRoom;
         this.title = title;
         this.maxParticipants = maxParticipants;
+        this.participants = participants;
         this.meetingAt = meetingAt;
         this.detailLocation = detailLocation;
         this.information = information;
+    }
+
+    public void joinCount() {
+        participants += 1;
+    }
+    public void leaveCount() {
+        participants -= 1;
     }
 }
