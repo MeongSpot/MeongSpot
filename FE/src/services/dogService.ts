@@ -51,4 +51,20 @@ export const dogService = {
       return [];
     }
   },
+
+  // 반려견 상세 조회
+  getDogDetail: async (dogId: number) => {
+    try {
+      const response = await axiosInstance.get(`/api/dogs/${dogId}/details`);
+      if (response.data.code === 'DO110') {
+        return response.data;
+      }
+      if (response.data.code === 'DO002') {
+        throw new Error('반려견 상세 정보 조회 실패');
+      }
+    } catch (error) {
+      console.error('Failed to get dog detail:', error);
+      throw error;
+    }
+  },
 };

@@ -58,3 +58,9 @@ export interface DogNameResponse {
   message: string;
   data: DogName[];
 }
+
+export interface DogDetailResponse {
+  code: string;
+  message: string;
+  data: DogList;
+}
