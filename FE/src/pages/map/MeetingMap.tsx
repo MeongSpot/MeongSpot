@@ -1,4 +1,3 @@
-// MeetingMap.tsx
 import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
 import { useNavigate, useOutletContext } from 'react-router-dom';
@@ -28,7 +27,8 @@ const SPOT_IMAGES: Record<'present' | 'spot', SpotImageType> = {
 const MeetingMap = () => {
   const navigate = useNavigate();
   const mapRef = useRef<kakao.maps.Map>(null);
-  const { currentPosition, isTracking, onMapMove, searchResult } = useOutletContext<MapContextType>();
+  const { currentPosition, isTracking, onMapMove, searchResult, isCompassMode, heading, isMobile } =
+    useOutletContext<MapContextType>();
 
   const [center, setCenter] = useState<LatLng>(currentPosition);
   const [mapLevel, setMapLevel] = useState(5);
@@ -53,7 +53,7 @@ const MeetingMap = () => {
 
   // 지도 이동 또는 줌 변경 완료 시
   const handleMapChanged = useCallback(() => {
-    if (!mapRef.current || isInitialLoad || isMoving) return;
+    if (!mapRef.current || isInitialLoad || isMoving || isCompassMode) return; // isCompassMode 조건 추가
 
     const newCenter = {
       lat: mapRef.current.getCenter().getLat(),
@@ -68,7 +68,7 @@ const MeetingMap = () => {
     const levelChanged = mapRef.current.getLevel() !== mapLevel;
 
     setCenterChanged(distance > 100 || levelChanged);
-  }, [currentPosition, isInitialLoad, onMapMove, isMoving, mapLevel]);
+  }, [currentPosition, isInitialLoad, onMapMove, isMoving, mapLevel, isCompassMode]); // isCompassMode 의존성 추가
 
   // 재검색 버튼 클릭 시
   const handleResearch = useCallback(async () => {
@@ -77,6 +77,13 @@ const MeetingMap = () => {
     setShowToast(!markers?.length);
     setCenterChanged(false);
   }, [loadSpotsWithAPI]);
+
+  // 위치 추적 모드일 때 지도 중심점 업데이트
+  useEffect(() => {
+    if (isTracking && !isMoving) {
+      setCenter(currentPosition);
+    }
+  }, [isTracking, currentPosition, isMoving]);
 
   // 초기 맵 생성
   const handleMapCreate = useCallback(
@@ -153,7 +160,6 @@ const MeetingMap = () => {
         setMapLevel(targetLevel);
         setCenter(searchResult);
 
-        // 즉시 해당 위치의 스팟 검색
         loadSpotsWithAPI(mapRef.current!).then((markers) => {
           setShowToast(!markers?.length);
         });
@@ -161,7 +167,6 @@ const MeetingMap = () => {
       }
     };
 
-    // 애니메이션 시작
     requestAnimationFrame(animate);
 
     return () => {
@@ -170,63 +175,71 @@ const MeetingMap = () => {
   }, [searchResult, loadSpotsWithAPI]);
 
   return (
-    <div className="relative w-full h-full">
-      <Map
-        ref={mapRef}
-        center={center}
-        style={{ width: '100%', height: '100%' }}
-        level={mapLevel}
-        zoomable={true}
-        draggable={true}
-        onDragEnd={handleMapChanged}
-        onZoomChanged={handleMapChanged}
-        onCreate={handleMapCreate}
+    <div className="relative w-full h-full overflow-hidden">
+      <div
+        className="w-full h-full"
+        style={{
+          transform: isMobile && isCompassMode && heading !== null ? `rotate(${-heading}deg)` : 'none',
+          transition: 'transform 0.3s ease-out',
+        }}
       >
-        <MapMarker position={currentPosition} image={SPOT_IMAGES.present} />
-        <MarkerClusterer
-          key={markerKey}
-          averageCenter={true}
-          minLevel={6}
-          calculator={[10, 30, 50]}
-          styles={[
-            {
-              width: '40px',
-              height: '40px',
-              background: '#F25C54',
-              color: '#ffffff',
-              display: 'flex', // Flexbox 사용
-              alignItems: 'center', // 세로 중앙 정렬
-              justifyContent: 'center', // 가로 중앙 정렬
-              borderRadius: '50%', // 완전한 원형으로
-              border: '2px solid #F25C54',
-              fontSize: '16px',
-              fontWeight: '600',
-              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // 그림자 효과 추가
-            },
-          ]}
+        <Map
+          ref={mapRef}
+          center={center}
+          style={{ width: '100%', height: '100%' }}
+          level={mapLevel}
+          zoomable={!isTracking}
+          draggable={!isTracking}
+          onDragEnd={handleMapChanged}
+          onZoomChanged={handleMapChanged}
+          onCreate={handleMapCreate}
         >
-          {visibleMarkers.map((marker) => {
-            const spotInfo = findSpotInfo(marker.position.lat, marker.position.lng);
-            return (
-              spotInfo && (
-                <SpotMarker
-                  key={`${marker.position.lat}-${marker.position.lng}`}
-                  marker={marker}
-                  onClick={() =>
-                    handleSpotClick({
-                      id: spotInfo.spotId,
-                      position: { lat: spotInfo.lat, lng: spotInfo.lng },
-                      content: spotInfo.name,
-                      meetups: [],
-                    })
-                  }
-                  image={SPOT_IMAGES.spot}
-                />
-              )
-            );
-          })}
-        </MarkerClusterer>
-      </Map>
+          <MapMarker position={currentPosition} image={SPOT_IMAGES.present} />
+          <MarkerClusterer
+            key={markerKey}
+            averageCenter={true}
+            minLevel={6}
+            calculator={[10, 30, 50]}
+            styles={[
+              {
+                width: '40px',
+                height: '40px',
+                background: '#F25C54',
+                color: '#ffffff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                border: '2px solid #F25C54',
+                fontSize: '16px',
+                fontWeight: '600',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+              },
+            ]}
+          >
+            {visibleMarkers.map((marker) => {
+              const spotInfo = findSpotInfo(marker.position.lat, marker.position.lng);
+              return (
+                spotInfo && (
+                  <SpotMarker
+                    key={`${marker.position.lat}-${marker.position.lng}`}
+                    marker={marker}
+                    onClick={() =>
+                      handleSpotClick({
+                        id: spotInfo.spotId,
+                        position: { lat: spotInfo.lat, lng: spotInfo.lng },
+                        content: spotInfo.name,
+                        meetups: [],
+                      })
+                    }
+                    image={SPOT_IMAGES.spot}
+                  />
+                )
+              );
+            })}
+          </MarkerClusterer>
+        </Map>
+      </div>
 
       {isModalVisible && (
         <SpotModal
