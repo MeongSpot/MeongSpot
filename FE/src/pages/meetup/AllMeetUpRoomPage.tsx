@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { BiPlus } from 'react-icons/bi';
 import { IoChevronBack } from 'react-icons/io5';
-import EveryRoomListCard from '@/components/meetUp/RoomListCard';
+import AllRoomListCard from '@/components/meetUp/AllRoomListCard';
 import RoomSortButton from '@/components/meetUp/RoomSortButton';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useMeeting } from '@/hooks/meetup/useMeeting';
@@ -12,13 +12,11 @@ import LoadingOverlay from '@/components/common/LoadingOverlay';
 const AllMeetUpRoomPage = () => {
   const { spotId } = useParams<{ spotId: string }>();
   const { meetings, isLoading, error, fetchMeetings } = useMeeting();
-  // sortBy 초기값을 'recent'로 설정
   const [sortBy, setSortBy] = useState<'recent' | 'remain'>('recent');
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? false;
   const [showLoading, setShowLoading] = useState(false);
-  // sortBy 값을 UI용으로 변환
   const uiSortBy = sortBy === 'recent' ? 'latest' : 'oldest';
   // 로딩 상태 관리
   useEffect(() => {
@@ -74,7 +72,6 @@ const AllMeetUpRoomPage = () => {
     date: new Date(meeting.meetingAt).toISOString().split('T')[0],
     time: new Date(meeting.meetingAt).toTimeString().slice(0, 5),
     location: meeting.detailLocation,
-    participants: [], // API에서 참가자 목록을 제공하지 않음
     maxParticipants: meeting.maxParticipants,
     currentParticipants: meeting.participants,
     tags: meeting.hashtag,
@@ -110,7 +107,7 @@ const AllMeetUpRoomPage = () => {
             </div>
             <div className="space-y-4">
               {meetings.map((meeting) => (
-                <EveryRoomListCard
+                <AllRoomListCard
                   key={meeting.meetingId}
                   event={convertToMeetupEvent(meeting)}
                   onClick={() => handleCardClick(meeting.meetingId)}

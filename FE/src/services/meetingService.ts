@@ -1,5 +1,11 @@
 import axiosInstance from '@/services/axiosInstance';
-import type { TopMeetingsResponse, MeetingListResponse, OrderType } from '@/types/meetup';
+import type {
+  TopMeetingsResponse,
+  MeetingListResponse,
+  OrderType,
+  CreateMeetingRequest,
+  CreateMeetingResponse,
+} from '@/types/meetup';
 
 export const meetingService = {
   fetchTopMeetings: async (spotId: number) => {
@@ -26,6 +32,21 @@ export const meetingService = {
       throw new Error(response.data.message);
     } catch (error) {
       throw error;
+    }
+  },
+
+  createMeeting: async (meetingData: CreateMeetingRequest): Promise<CreateMeetingResponse> => {
+    try {
+      const response = await axiosInstance.post<CreateMeetingResponse>('/api/meetings', meetingData);
+      if (response.data.code === 'MT100') {
+        return response.data;
+      }
+      throw new Error(response.data.message);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to create meeting: ${error.message}`);
+      }
+      throw new Error('Failed to create meeting');
     }
   },
 };

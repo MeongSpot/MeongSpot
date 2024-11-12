@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import MyRoomListCard from '@/components/meetUp/RoomListCard';
+import MyRoomListCard from '@/components/meetUp/MyRoomListCard';
 import RoomSortButton from '@/components/meetUp/RoomSortButton';
 
 interface Event {

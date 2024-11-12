@@ -21,7 +21,7 @@ interface EventCardProps {
   onClick: (roomId: number) => void;
 }
 
-const RoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
+const MyRoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedChatName, setSelectedChatName] = useState('');
@@ -29,7 +29,7 @@ const RoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
 
   const openModal = (chatName: string) => {
     setSelectedChatName(chatName);
-    setIsModalVisible(true)
+    setIsModalVisible(true);
     setTimeout(() => setIsModalOpen(true), 10);
   };
 
@@ -95,4 +95,4 @@ const RoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
   );
 };
 
-export default RoomListCard;
+export default MyRoomListCard;
