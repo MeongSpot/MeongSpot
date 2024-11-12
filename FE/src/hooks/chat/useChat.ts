@@ -1,29 +1,12 @@
   import { useEffect, useRef, useState, useCallback } from 'react';
   import { Client } from '@stomp/stompjs';
-  import axiosInstance from '@/services/axiosInstance';
   import useChatStore from '@/store/chatStore';
   import { Chat } from '@/types/singleChat';
   import { debounce } from 'lodash';
 
   const useChat = (roomId: number) => {
-    const setChats = useChatStore((state) => state.setChats);
     const addChat = useChatStore((state) => state.addChat);
     const clientRef = useRef<Client | null>(null);
-
-    useEffect(() => {
-      const fetchChats = async () => {
-        try {
-          const response = await axiosInstance.get(`/api/chat/rooms/${roomId}`);
-          setChats(roomId, response.data.chats);
-          console.log(`채팅 데이터 불러오기 성공: 방 번호 ${roomId}`, response.data);
-        } catch (error) {
-          console.error(`Failed to fetch chats for room ${roomId}:`, error);
-        }
-      };
-
-      fetchChats();
-    }, [roomId, setChats]);
-
     
     useEffect(() => {
       if (clientRef.current) {
