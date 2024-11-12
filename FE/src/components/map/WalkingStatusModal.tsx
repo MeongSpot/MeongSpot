@@ -1,4 +1,3 @@
-// WalkingStatusModal.tsx
 import { useRef, useEffect } from 'react';
 
 export interface WalkingStatusModalProps {
@@ -23,11 +22,22 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
   distance,
 }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!isPaused) {
+    // 모달이 처음 열릴 때 시작 시간 설정
+    if (isOpen && startTimeRef.current === null) {
+      startTimeRef.current = Date.now();
+      setWalkSeconds(0);
+    }
+
+    // 타이머 로직
+    if (isOpen && !isPaused) {
       intervalRef.current = setInterval(() => {
-        setWalkSeconds((prev) => prev + 1);
+        if (startTimeRef.current) {
+          const elapsedSeconds = Math.floor((Date.now() - startTimeRef.current) / 1000);
+          setWalkSeconds(elapsedSeconds);
+        }
       }, 1000);
     }
 
@@ -36,7 +46,18 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
         clearInterval(intervalRef.current);
       }
     };
-  }, [isPaused, setWalkSeconds]);
+  }, [isOpen, isPaused, setWalkSeconds]);
+
+  // 모달이 닫힐 때 초기화
+  useEffect(() => {
+    if (!isOpen) {
+      startTimeRef.current = null;
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      setWalkSeconds(0);
+    }
+  }, [isOpen, setWalkSeconds]);
 
   const formatTime = (totalSeconds: number) => {
     const hours = Math.floor(totalSeconds / 3600);

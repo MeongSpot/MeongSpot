@@ -47,6 +47,9 @@ export interface MapContextType {
   isTracking: boolean;
   onMapMove: () => void;
   searchResult: LatLng | null;
+  isCompassMode: boolean; // 추가
+  heading: number | null; // 추가
+  isMobile: boolean; // 추가
 }
 
 export interface SpotImageType {
