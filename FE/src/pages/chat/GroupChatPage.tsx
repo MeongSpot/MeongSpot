@@ -5,8 +5,10 @@ import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate, useLocation } from 'react-router-dom';
 import GroupChatInfoModal from '@/components/chat/GroupChatInfoModal';
 import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';
 
 const GroupChatPage = () => {
+  const { id: roomId } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ const GroupChatPage = () => {
   const animateBack = location.state?.animateBack ?? true;
 
   const handleBack = () => {
-    navigate('/mymeetuproom', { state: { animateBack: true } });
+    navigate('/mymeetuproom', { state: { animateBack: false } });
   };
 
   const chats = [
@@ -35,9 +37,8 @@ const GroupChatPage = () => {
 
   const handleViewDetails = () => {
     setIsModalOpen(false);
-    navigate('/meetUpDogList');
+    navigate(`/meetupdoglist/${roomId}`, { state: { animateBack: false } });
   };
-
   const userClick = () => {
     // 나중에 상대방 유저페이지로 경로 변경
     navigate('/mypage');
@@ -45,9 +46,9 @@ const GroupChatPage = () => {
 
   return (
     <motion.div
-      initial={{ x: animateBack ? 300 : 0, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={{ x: animateBack ? -300 : 0, opacity: 0 }}
+      initial={{ x: 300, opacity: 0 }} // 항상 오른쪽에서 시작
+      animate={{ x: 0, opacity: 1 }} // 가운데로 이동
+      exit={{ x: 300, opacity: 0 }} // 왼쪽으로 퇴장
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="flex flex-col h-screen"
     >

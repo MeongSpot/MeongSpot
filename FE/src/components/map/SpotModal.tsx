@@ -113,10 +113,10 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
               ))}
             </Swiper>
           ) : (
-            <div className="bg-[#F6F6F6] p-6 rounded-lg border border-gray-100 shadow-sm text-center">
-              <p className="text-gray-600 mb-4">아직 등록된 모임이 없어요!</p>
+            <div className="bg-[#F6F6F6] p-8 rounded-lg border border-gray-100 shadow-sm text-center">
+              <p className="text-gray-600 mb-5">아직 등록된 모임이 없어요!</p>
               <button
-                className="bg-deep-coral text-white px-6 py-2 rounded-full hover:bg-opacity-90 transition-colors"
+                className="bg-deep-coral w-full font-bold text-lg text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors"
                 onClick={() => setShowCreateConfirm(true)}
               >
                 새로운 모임 만들기

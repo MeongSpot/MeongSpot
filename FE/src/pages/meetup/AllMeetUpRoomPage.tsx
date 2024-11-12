@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useMeeting } from '@/hooks/meetup/useMeeting';
 import type { Meeting, MeetupEvent } from '@/types/meetup';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import MascotDog from '@/components/common/Logo/Mascot';
 
 const AllMeetUpRoomPage = () => {
   const { spotId } = useParams<{ spotId: string }>();
@@ -16,6 +17,7 @@ const AllMeetUpRoomPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? false;
+  const spotName = location.state?.spotName;
   const [showLoading, setShowLoading] = useState(false);
   const uiSortBy = sortBy === 'recent' ? 'latest' : 'oldest';
   // 로딩 상태 관리
@@ -63,7 +65,11 @@ const AllMeetUpRoomPage = () => {
   };
 
   const handlePlusClick = () => {
-    navigate(`/allMeetUpRoom/${spotId}/create`);
+    navigate(`/allmeetuproom/${spotId}/create`, {
+      state: {
+        spotName: spotName, // 현재 페이지가 가지고 있는 spotName을 전달
+      },
+    });
   };
 
   const convertToMeetupEvent = (meeting: Meeting): MeetupEvent => ({
@@ -90,7 +96,9 @@ const AllMeetUpRoomPage = () => {
           <button className="mr-3 text-gray-600" onClick={() => navigate('/meeting', { state: { animateBack: true } })}>
             <IoChevronBack size={24} />
           </button>
-          <h1 className="text-lg font-bold">모임</h1>
+          <h1 className="text-lg font-bold">
+            {spotName ? <span className="text-deep-coral">{spotName}</span> : '모임'}
+          </h1>
           <BiPlus onClick={handlePlusClick} className="text-xl cursor-pointer" />
         </div>
         <hr className="my-4 -mx-4 w-screen" />
@@ -105,15 +113,27 @@ const AllMeetUpRoomPage = () => {
               <span className="text-gray-600">총 {meetings.length}개</span>
               <RoomSortButton sortBy={uiSortBy} onSortChange={handleSortChange} />
             </div>
-            <div className="space-y-4">
-              {meetings.map((meeting) => (
-                <AllRoomListCard
-                  key={meeting.meetingId}
-                  event={convertToMeetupEvent(meeting)}
-                  onClick={() => handleCardClick(meeting.meetingId)}
-                />
-              ))}
-            </div>
+            {meetings.length > 0 ? (
+              <div className="space-y-4">
+                {meetings.map((meeting) => (
+                  <AllRoomListCard
+                    key={meeting.meetingId}
+                    event={convertToMeetupEvent(meeting)}
+                    onClick={() => handleCardClick(meeting.meetingId)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="min-h-screen flex flex-col items-center justify-center mt-[-10vh]">
+                <div className="flex flex-col justify-center items-center h-64 text-gray-500">
+                  <div className="rounded-full bg-gray-200 p-4 mb-4">
+                    <MascotDog className="w-16 h-16 grayscale" />
+                  </div>
+                  <p className="text-sm mb-2">{spotName ? `${spotName}에` : ''} 등록된 모임이 없습니다</p>
+                  <p className="text-xs text-deep-coral">새로운 모임을 만들어보세요!</p>
+                </div>
+              </div>
+            )}
           </>
         )}
       </motion.div>
