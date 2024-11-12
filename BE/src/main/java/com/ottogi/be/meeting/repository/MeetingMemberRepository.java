@@ -51,4 +51,6 @@ public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Lo
             WHERE mm.meeting.id = :meetingId
             """)
     List<FindMeetingMemberResponse> findMemberByMeetingId(Long meetingId);
+
+    void deleteAllByMemberAndMeeting(Member member, Meeting meeting);
 }

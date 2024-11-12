@@ -39,15 +39,11 @@ public class MeetingMember {
     @Column(nullable = false)
     private Boolean isAlarm;
 
-    @Column(nullable = false)
-    private Boolean isParticipate;
-
     @Builder
     public MeetingMember(Member member, Dog dog, Meeting meeting) {
         this.member = member;
         this.dog = dog;
         this.meeting = meeting;
         this.isAlarm = true;
-        this.isParticipate = true;
     }
 }

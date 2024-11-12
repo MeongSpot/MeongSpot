@@ -49,4 +49,6 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
         WHERE cm.chatRoom.id = :chatRoomId AND cm.member.id = :myId
     """)
     Optional<ChatMember> findByChatRoomIdAndMyId(@Param("chatRoomId") Long chatRoomId, @Param("myId") Long myId);
+
+    int countByChatRoom(ChatRoom chatRoom);
 }
