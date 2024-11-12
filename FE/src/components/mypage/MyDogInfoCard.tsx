@@ -22,7 +22,7 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
 
   return (
     <div
-      onClick={() => {navigate("/dog/1")}}
+      onClick={() => {navigate(`/dog/${dog.id}`)}}
       className="h-[16.7rem] px-3 py-4 bg-white rounded-xl space-y-5">
       <div className="px-2 flex justify-between items-center">
         <div className="flex items-center space-x-3">
