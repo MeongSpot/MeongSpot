@@ -16,8 +16,8 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
     { label: '생일', value: dog.birth },
   ];
 
-  const maxTraitsToShow = 5; // 표시할 최대 성격 개수
-  const traitsToShow = dog.personality?.slice(0, dog.personality?.length === 5 ? maxTraitsToShow : maxTraitsToShow - 1) || [];
+  const maxTraitsToShow = 4; // 표시할 최대 성격 개수
+  const traitsToShow = dog.personality?.slice(0, dog.personality?.length === 4 ? maxTraitsToShow : maxTraitsToShow - 1) || [];
   const remainingTraitsCount = dog.personality?.length - traitsToShow.length || 0;
 
   return (
@@ -26,13 +26,18 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
       className="h-[16.7rem] px-3 py-4 bg-white rounded-xl space-y-5">
       <div className="px-2 flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <img className="w-14 h-14 border rounded-full" src={dog.profileImage} alt="반려견 프로필 이미지" />
+          <img className="w-14 h-14 border rounded-full object-cover" src={dog.profileImage} alt="반려견 프로필 이미지" />
           <div>
             <p className="font-semibold">{dog.name}</p>
             <p className="text-xs font-medium text-zinc-500">{dog.breed}</p>
           </div>
         </div>
-        {isOwnProfile && <PiNotePencil className="text-2xl" />}
+        {isOwnProfile && <PiNotePencil
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/dog/${dog.id}/update`);
+          }}
+          className="text-2xl" />}
       </div>
 
       <div className="px-4 flex flex-col space-y-4">
@@ -49,7 +54,7 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
 
         <div className="flex flex-wrap gap-x-3 gap-y-2">
           {traitsToShow.map((trait, index) => (
-            <button key={index} className="text-xs px-3 py-1 bg-zinc-100 rounded-full">
+            <button key={index} className="text-[0.72rem] px-3 py-1 bg-zinc-100 rounded-full">
               # {trait}
             </button>
           ))}
