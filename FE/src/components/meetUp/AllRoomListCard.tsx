@@ -15,6 +15,7 @@ interface Event {
 
 interface EventCardProps {
   event: Event;
+  onClick?: () => void;
 }
 
 const AllRoomListCard: React.FC<EventCardProps> = ({ event }) => {
