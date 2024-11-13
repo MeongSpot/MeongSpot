@@ -73,7 +73,9 @@ const GroupChatPage = () => {
       sendMessage(message, myId);
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom(); // 100ms 후에 스크롤 이동
+      }, 100); // 필요에 따라 시간을 조정
     }
   };
 

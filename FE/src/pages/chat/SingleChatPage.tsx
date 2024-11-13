@@ -29,7 +29,7 @@ const SingleChatPage = () => {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current.scrollIntoView();
     }
   };
 
@@ -89,7 +89,9 @@ const SingleChatPage = () => {
       // 새 메시지를 로컬 상태에 추가하여 즉시 반영
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom(); // 100ms 후에 스크롤 이동
+      }, 100); // 필요에 따라 시간을 조정
     }
   };
 
@@ -115,15 +117,6 @@ const SingleChatPage = () => {
     const previousDate = new Date(previous).toDateString();
     return currentDate !== previousDate;
   };
-
-  // 메시지가 업데이트될 때마다 스크롤
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      scrollToBottom();
-    }, 100); // 필요에 따라 지연 시간 조정
-
-    return () => clearTimeout(timeoutId);
-  }, [localMessages]);  // 메시지가 업데이트될 때마다 실행
 
   return (
     <motion.div
