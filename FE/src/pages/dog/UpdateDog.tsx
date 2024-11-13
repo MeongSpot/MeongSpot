@@ -1,19 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import DogInputForm from '@/components/mypage/DogInputForm';
-import { IoClose } from 'react-icons/io5';
+import { IoChevronBack } from 'react-icons/io5';
 import { DogInfo } from '@/types/dogInfo';
 import FooterButton from '@/components/common/Button/FooterButton';
 import useDogInfoStore from '@/store/dogInfoStore';
 import { useDog } from '@/hooks/dog/useDog';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
-import { is } from 'date-fns/locale';
+import { PersonalityList } from '@/types/dogInfo';
+import DogDeleteModal from '@/components/dog/DogDeleteModal';
 
-const AddDog: React.FC = () => {
+const UpdateDog = () => {
   const navigate = useNavigate();
   const { dogRegisterInfo, setDogRegisterInfo } = useDogInfoStore();
-  const { registerDog, isLoading } = useDog();
+  const { updateDog, isLoading, getDogDetail, dogDetail } = useDog();
   const [isvalid, setIsValid] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const { id } = useParams();
+
+  // 모달 관련 변수
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -30,9 +36,12 @@ const AddDog: React.FC = () => {
   const handleRegister = () => {
     const formData = new FormData();
 
-    // 프로필 이미지 파일이 존재할 경우 추가
+    // 프로필 이미지 파일이 없을 경우 빈 파일로 추가
     if (dogRegisterInfo.profile_file) {
       formData.append('profileImage', dogRegisterInfo.profile_file);
+    } else {
+      const emptyFile = new Blob([], { type: 'image/png' }); // 빈 파일 생성 (타입은 적절히 설정)
+      formData.append('profileImage', emptyFile, 'empty.png'); // 파일명도 지정 가능
     }
 
     // 문자열, 숫자, boolean 값 추가
@@ -66,17 +75,27 @@ const AddDog: React.FC = () => {
       });
     }
 
-    registerDog(formData);
+    // formData 데이터 확인
+    for (const pair of formData.entries()) {
+      console.log(pair[0] + ', ' + pair[1]);
+    }
+
+    updateDog(Number(id), formData);
     resetDogInfo();
   };
 
   const handleBack = () => {
-    navigate('/mypage');
+    setIsVisible(false); // 닫기 애니메이션 시작
+    setTimeout(() => {
+      navigate(`/mypage`);
+    }, 150); // 애니메이션 시간과 동일하게 설정
+
     resetDogInfo();
   };
 
   const resetDogInfo = () => {
     setDogRegisterInfo({
+      profile_file: null,
       profileImage: '',
       name: '',
       breedId: '',
@@ -93,6 +112,47 @@ const AddDog: React.FC = () => {
       personality: [],
     });
   };
+
+  const handleDeleteDog = useCallback((dogId: number) => {
+    // deleteDog(dogId);
+    setIsDeleteModalOpen(false);
+  }, []);
+
+  useEffect(() => {
+    getDogDetail(Number(id));
+  }, [id]);
+
+  useEffect(() => {
+    if (dogDetail) {
+      // 생일을 "year", "month", "day"로 분할하여 할당
+      const [year, month, day] = dogDetail.birth ? dogDetail.birth.split('-') : ['', '', ''];
+
+      // personality의 name에 해당하는 id 추출
+      const personalityIds = dogDetail.personality
+        .map((name) => {
+          const matchingPersonality = PersonalityList.find((p) => p.name === name);
+          return matchingPersonality ? matchingPersonality.id : null;
+        })
+        .filter((id): id is number => id !== null); // null 값을 제거하고 number 타입만 남김
+
+      setDogRegisterInfo({
+        ...dogRegisterInfo,
+        profileImage: dogDetail.profileImage || '',
+        name: dogDetail.name || '',
+        breedId: dogDetail.breed || '',
+        size: dogDetail.size || '',
+        gender: dogDetail.gender || '',
+        isNeuter: dogDetail.isNeuter || null,
+        introduction: dogDetail.introduction || '',
+        personality: personalityIds,
+        birth: {
+          year,
+          month,
+          day,
+        },
+      });
+    }
+  }, [dogDetail]);
 
   useEffect(() => {
     // 필수 값이 모두 채워져 있는지 확인
@@ -134,20 +194,32 @@ const AddDog: React.FC = () => {
     checkValidity();
   }, [dogRegisterInfo]);
 
+  useEffect(() => {
+    if (!isLoading) {
+      const timer = setTimeout(() => {
+        setIsVisible(true);
+      }, 50); // 50ms 딜레이
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading]);
+
   return (
-    <div>
+    <div className={`relative transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
       {isLoading && <LoadingOverlay message="로딩 중..." />}
 
       <div className="p-4 grid grid-cols-3 items-center">
-        <div></div>
-        <p className="text-center text-lg font-bold">반려견 등록</p>
-        <div className="flex justify-end">
-          <IoClose
+        <div className="">
+          <IoChevronBack
             onClick={() => {
               handleBack();
             }}
             size={24}
           />
+        </div>
+        <p className="text-center text-lg font-bold">반려견 수정</p>
+        <div className="flex justify-end items-center">
+          <p className="text-sm font-medium text-zinc-400">삭제하기</p>
         </div>
       </div>
       <hr />
@@ -155,12 +227,12 @@ const AddDog: React.FC = () => {
       {/* 반려견 이미지 등록 */}
       <div className="mt-12">
         <div className="flex flex-col items-center space-y-3">
-          <div className="w-20 h-20 relative">
+          <div className="w-24 h-24 relative">
             <label htmlFor="fileInput">
               <img
                 src={dogRegisterInfo.profileImage || '/icons/imageAddIcon.png'}
                 alt="반려견이미지"
-                className="cursor-pointer w-full h-full object-cover rounded-full"
+                className={`cursor-pointer w-full h-full object-cover rounded-full ${dogRegisterInfo.profileImage ? 'border' : ''}`}
               />
             </label>
             <input
@@ -187,10 +259,23 @@ const AddDog: React.FC = () => {
         }}
         disabled={!isvalid}
       >
-        등록하기
+        수정하기
       </FooterButton>
+
+      {/* 반려견 삭제 모달 */}
+      {dogDetail && (
+        <DogDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => {
+            setIsDeleteModalOpen(false);
+          }}
+          onConfirm={() => {
+            handleDeleteDog(dogDetail.id);
+          }}
+        />
+      )}
     </div>
   );
 };
 
-export default AddDog;
+export default UpdateDog;

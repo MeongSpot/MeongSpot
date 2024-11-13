@@ -75,6 +75,7 @@ export const useDog = () => {
     try {
       const response = await dogService.getDogDetail(dogId);
       setDogDetail(response.data);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Failed to get dog detail:', error);
@@ -99,5 +100,20 @@ export const useDog = () => {
     }
   }
 
-  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs };
+  // 반려견 수정
+  const updateDog = async (dogId: number, data: FormData) => {
+    setIsLoading(true);
+    try {
+      const response = await dogService.updateDog(dogId, data);
+      navigate('/mypage');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to update dog:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs, updateDog };
 };

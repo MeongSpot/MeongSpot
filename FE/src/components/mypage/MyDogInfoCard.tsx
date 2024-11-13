@@ -32,7 +32,12 @@ const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
             <p className="text-xs font-medium text-zinc-500">{dog.breed}</p>
           </div>
         </div>
-        {isOwnProfile && <PiNotePencil className="text-2xl" />}
+        {isOwnProfile && <PiNotePencil
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/dog/${dog.id}/update`);
+          }}
+          className="text-2xl" />}
       </div>
 
       <div className="px-4 flex flex-col space-y-4">

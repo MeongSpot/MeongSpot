@@ -63,10 +63,12 @@ const WalkingLogMap = () => {
 
   useEffect(() => {
     // 컴포넌트가 마운트된 후 100ms 지연 후에 isVisible을 true로 설정
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsVisible(true);
     }, 50);
     getWalkingLogDetail(Number(id));
+
+    return () => clearTimeout(timer);
   }, [id]);
 
   useEffect(() => {
