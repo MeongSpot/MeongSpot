@@ -81,7 +81,7 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
 
   return (
     <div
-      className={`fixed inset-0 z-20 flex justify-center items-end transition-all duration-300 mb-16 ${
+      className={`absolute inset-0 z-20 flex justify-center items-end transition-all duration-300 mb-16 ${
         isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
     >
