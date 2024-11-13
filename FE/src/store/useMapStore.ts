@@ -1,19 +1,21 @@
-// store/useMapStore.ts
 import { create } from 'zustand';
 import type { LatLng } from '@/types/map';
 import type { SpotInfo } from '@/types/meetup';
 
 interface MapState {
-  center: LatLng | null;
+  lastPosition: LatLng | null;
   mapLevel: number;
   selectedSpot: SpotInfo | null;
   isModalOpen: boolean;
-  setMapState: (state: Partial<MapState>) => void;
-  resetMapState: () => void;
+  setLastPosition: (position: LatLng) => void;
+  setMapLevel: (level: number) => void;
+  setSelectedSpot: (spot: SpotInfo | null) => void;
+  setModalOpen: (isOpen: boolean) => void;
+  resetState: () => void;
 }
 
 const initialState = {
-  center: null,
+  lastPosition: null,
   mapLevel: 4,
   selectedSpot: null,
   isModalOpen: false,
@@ -22,13 +24,11 @@ const initialState = {
 const useMapStore = create<MapState>((set) => ({
   ...initialState,
 
-  setMapState: (newState) =>
-    set((state) => ({
-      ...state,
-      ...newState,
-    })),
-
-  resetMapState: () => set(initialState),
+  setLastPosition: (position) => set({ lastPosition: position }),
+  setMapLevel: (level) => set({ mapLevel: level }),
+  setSelectedSpot: (spot) => set({ selectedSpot: spot }),
+  setModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
+  resetState: () => set(initialState),
 }));
 
 export default useMapStore;

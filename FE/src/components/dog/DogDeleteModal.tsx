@@ -2,23 +2,16 @@ import React from 'react';
 
 interface FriendsDeleteModalProps {
   isOpen: boolean;
-  isProfile?: boolean;
   onClose: () => void;
   onConfirm: () => void;
 }
 
-const FriendsDeleteModal = ({isOpen, isProfile, onClose, onConfirm}:FriendsDeleteModalProps) => {
-  const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    onClose();
-  };
-
+const DogDeleteModal = ({ isOpen, onClose, onConfirm }: FriendsDeleteModalProps) => {
   return (
     <div
       className={`fixed inset-0 z-30 flex justify-center items-center transition-opacity duration-300 ${
         isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      } ${isProfile ? 'bg-gray-800 bg-opacity-50' : ''}`}
-      onClick={handleBackgroundClick}
+      }`}
     >
       <div
         className="bg-white rounded-lg w-5/6 max-w-xs transform transition-transform duration-300 overflow-hidden"
@@ -43,4 +36,4 @@ const FriendsDeleteModal = ({isOpen, isProfile, onClose, onConfirm}:FriendsDelet
   );
 };
 
-export default FriendsDeleteModal;
+export default DogDeleteModal;

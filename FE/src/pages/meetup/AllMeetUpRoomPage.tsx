@@ -20,6 +20,8 @@ const AllMeetUpRoomPage = () => {
   const spotName = location.state?.spotName;
   const [showLoading, setShowLoading] = useState(false);
   const uiSortBy = sortBy === 'recent' ? 'latest' : 'oldest';
+  const fromDetail = location.state?.fromDetail;
+
   // 로딩 상태 관리
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -85,15 +87,22 @@ const AllMeetUpRoomPage = () => {
     tags: meeting.hashtag,
   });
 
+  // 애니메이션 설정을 위한 변수
+  const pageAnimation = fromDetail
+    ? {
+        initial: { y: '-100%' },
+        animate: { y: 0 },
+        exit: { y: '100%' },
+      }
+    : {
+        initial: { x: animateBack ? -300 : 0 },
+        animate: { x: 0 },
+        exit: { x: animateBack ? 300 : 0 },
+      };
+
   return (
     <AnimatePresence>
-      <motion.div
-        className=""
-        initial={{ x: animateBack ? -300 : 0, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: animateBack ? 300 : 0, opacity: 0 }}
-        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      >
+      <motion.div className="" {...pageAnimation} transition={{ type: 'spring', stiffness: 300, damping: 35 }}>
         <div className="sticky top-0 flex items-center justify-between mb-4 border-b p-4 bg-white">
           <button className="mr-3 text-gray-600" onClick={() => navigate('/meeting', { state: { animateBack: true } })}>
             <IoChevronBack size={24} />

@@ -78,4 +78,62 @@ export const dogService = {
       throw error;
     }
   },
+
+  // 반려견 수정
+  updateDog: async (dogId: number, data: FormData) => {
+    try {
+      const response = await axiosInstance.put(`/api/dogs/${dogId}`, data);
+      if (response.data.code === 'DO105') {
+        return response.data;
+      }
+      if (response.data.code === 'ME003') {
+        throw new Error('사용자 조회 실패');
+      }
+      if (response.data.code === 'DO002') {
+        throw new Error('반려견 조회 실패');
+      }
+      if (response.data.code === 'DO003') {
+        throw new Error('반려견 주인 매칭 실패');
+      }
+      if (response.data.code === 'DO001') {
+        throw new Error('반려견 성격 조회 실패');
+      }
+    } catch (error) {
+      console.error('Failed to update dog:', error);
+      throw error;
+    }
+  },
+
+  // 반려견 삭제
+  // deleteDog: async (dogId: number) => {
+  //   try {
+  //     const response = await axiosInstance.delete(`/api/dogs/${dogId}`);
+  //     if (response.data.code === 'DO106') {
+  //       return response.data;
+  //     }
+  //     if (response.data.code === 'ME003') {
+  //       throw new Error('사용자 조회 실패');
+  //     }
+  //     if (response.data.code === 'DO002') {
+  //       throw new Error('반려견 조회 실패');
+  //     }
+  //     if (response.data.code === 'DO003') {
+  //       throw new Error('반려견 주인 매칭 실패');
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to delete dog:', error);
+  //     throw error;
+  //   }
+  // },
+
+  // 모임 참여 반려견 조회
+  getMeetingDogs: async (meetingId: number, memberId: number) => {
+    try {
+      const response = await axiosInstance.get(`/api/dogs/meeting?meetingId=${meetingId}&memberId=${memberId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get meeting dogs:', error);
+      throw error;
+    }
+  },
 };

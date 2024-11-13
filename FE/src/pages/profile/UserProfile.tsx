@@ -27,6 +27,7 @@ const UserProfile: React.FC = () => {
   const handleDeleteFriend = useCallback(
     (friendId: number) => {
       deleteFriend(friendId);
+      setIsDeleteModalOpen(false);
     },
     [deleteFriend],
   );
@@ -34,7 +35,7 @@ const UserProfile: React.FC = () => {
   useEffect(() => {
     getUserProfile(Number(id));
     getUserDogs(Number(id));
-  }, [id]);
+  }, [id, handleDeleteFriend]);
 
   useEffect(() => {
     if (chatRoomData) {
@@ -91,13 +92,15 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 items-center space-x-2">
+          <div className="grid grid-cols-2 items-center gap-4">
             {userData.isFriend === false ? (
               <button className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 신청</p>
               </button>
             ) : (
-              <button className="p-3 h-11 bg-deep-coral rounded-3xl">
+                <button
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 삭제</p>
               </button>
             )}
@@ -147,6 +150,7 @@ const UserProfile: React.FC = () => {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={() => handleDeleteFriend(Number(id))}
+          isProfile={true}
         />
       )}
     </div>

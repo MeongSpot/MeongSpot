@@ -11,6 +11,7 @@ export const useDog = () => {
   const [userDogs, setUserDogs] = useState<DogList[]>([]);
   const [myDogsName, setMyDogsName] = useState<DogName[]>([]);
   const [dogDetail, setDogDetail] = useState<DogList | null>(null);
+  const [meetingDogs, setMeetingDogs] = useState<DogList[]>([]);
 
   // 반려견 품종 목록 조회
   const getDogBreeds = async () => {
@@ -99,5 +100,35 @@ export const useDog = () => {
     }
   }
 
-  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs };
+  // 반려견 수정
+  const updateDog = async (dogId: number, data: FormData) => {
+    setIsLoading(true);
+    try {
+      const response = await dogService.updateDog(dogId, data);
+      navigate('/mypage');
+      return response.data;
+    } catch (error) {
+      console.error('Failed to update dog:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 모임 참여 반려견 조회
+  const getMeetingDogs = async (meetingId: number, memberId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await dogService.getMeetingDogs(meetingId, memberId);
+      setMeetingDogs(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get meeting dogs:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs, updateDog, getMeetingDogs, meetingDogs};
 };

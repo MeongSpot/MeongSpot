@@ -42,8 +42,8 @@ const ParticipateDogPage = () => {
     if (fromList) {
       navigate(previousPath || -1, {
         state: {
-          animateBack: true,
           spotName,
+          fromDetail: true,
         },
       });
     } else {
@@ -87,7 +87,7 @@ const ParticipateDogPage = () => {
 
   if (isLoading) {
     return (
-      <motion.div className="fixed inset-0 z-50 bg-gray-200 ">
+      <motion.div className="absolute inset-0 z-50 bg-gray-200 ">
         <LoadingOverlay />
       </motion.div>
     );
@@ -95,17 +95,24 @@ const ParticipateDogPage = () => {
 
   if (error || !meetingDetail) {
     return (
-      <motion.div className="fixed inset-0 z-50 bg-gray-200  flex items-center justify-center">
+      <motion.div className="absolute inset-0 z-50 bg-gray-200  flex items-center justify-center">
         <div className="text-red-500">{error || 'Failed to load meeting details'}</div>
       </motion.div>
     );
   }
 
   return (
-    <motion.div {...containerAnimation} className="fixed inset-0 z-50 bg-gray-100 ">
+    <motion.div {...containerAnimation} className="absolute inset-0 z-50 bg-gray-100">
       <motion.div
-        {...slideAnimation}
-        className="absolute inset-x-0 bottom-0 top-0 bg-gray-200 overflow-hidden flex flex-col"
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{
+          type: 'spring',
+          stiffness: 300,
+          damping: 35,
+        }}
+        className="absolute inset-0 bottom-0 top-0 bg-gray-200 overflow-hidden flex flex-col"
       >
         <div className="flex items-center bg-deep-coral text-white p-4">
           <h1 className="text-lg font-bold flex-1 text-center">
@@ -124,23 +131,29 @@ const ParticipateDogPage = () => {
             </p>
           </div>
 
-          <div className="p-4">
-            <div className="relative">
-              <p className={`text-gray-700 ${!isExpanded && 'line-clamp-3'}`}>{meetingDetail.information}</p>
-              {meetingDetail.information.length > 100 && ( // 텍스트가 긴 경우에만 버튼 표시
-                <button onClick={() => setIsExpanded(!isExpanded)} className="text-deep-coral text-sm mt-2">
-                  {isExpanded ? '접기' : '더보기'}
-                </button>
+          {/* information이 있을 때만 섹션 표시 */}
+          {meetingDetail.information && (
+            <div className="p-4">
+              <div className="relative">
+                <p className={`text-gray-700 ${!isExpanded && 'line-clamp-3'}`}>{meetingDetail.information}</p>
+                {meetingDetail.information.length > 100 && (
+                  <button onClick={() => setIsExpanded(!isExpanded)} className="text-deep-coral text-sm mt-2">
+                    {isExpanded ? '접기' : '더보기'}
+                  </button>
+                )}
+              </div>
+              {/* hashtags가 있을 때만 표시 */}
+              {hashtags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {hashtags.map((tag, index) => (
+                    <span key={index} className="text-xs text-deep-coral bg-orange-100 px-2 py-1 rounded-full">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
-            <div className="flex flex-wrap gap-2 mt-4">
-              {hashtags.map((tag, index) => (
-                <span key={index} className="text-xs text-deep-coral bg-orange-100 px-2 py-1 rounded-full">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-          </div>
+          )}
 
           <div className="border-t border-gray-200 p-4">
             <div className="flex items-center mb-2">
@@ -153,42 +166,48 @@ const ParticipateDogPage = () => {
               <span className="font-medium">시간</span>
               <span className="ml-auto text-gray-600">{meetingTime}</span>
             </div>
-            <div className="flex items-start">
-              <div className="flex items-center">
-                <FaMapMarkerAlt className="text-gray-500 mr-2" />
-                <span className="font-medium">상세 장소</span>
+            {/* detailLocation이 있을 때만 표시 */}
+            {meetingDetail.detailLocation && (
+              <div className="flex items-start">
+                <div className="flex items-center">
+                  <FaMapMarkerAlt className="text-gray-500 mr-2" />
+                  <span className="font-medium">상세 장소</span>
+                </div>
+                <span className="ml-auto text-gray-600 text-right max-w-[200px] break-words">
+                  {meetingDetail.detailLocation}
+                </span>
               </div>
-              <span className="ml-auto text-gray-600 text-right max-w-[200px] overflow-hidden">
-                {meetingDetail.detailLocation}
-              </span>
-            </div>
+            )}
           </div>
 
-          <div className="border-t border-gray-200 pt-4 flex-1 overflow-y-auto no-scrollbar">
-            <div className="flex justify-between items-center font-semibold mb-5">
-              <h3>
-                참여 강아지 <span className="text-deep-coral">{dogImages.length}</span>
-              </h3>
-              <button onClick={detailClick} className="text-sm text-gray-700">
-                상세보기
-              </button>
+          {/* 참여 강아지 섹션 */}
+          {dogImages.length > 0 && (
+            <div className="border-t border-gray-200 pt-4 flex-1 overflow-y-auto no-scrollbar">
+              <div className="flex justify-between items-center font-semibold mb-5">
+                <h3>
+                  참여 강아지 <span className="text-deep-coral">{dogImages.length}</span>
+                </h3>
+                <button onClick={detailClick} className="text-sm text-gray-700">
+                  상세보기
+                </button>
+              </div>
+              <div className="grid grid-cols-5 gap-3">
+                {dogImages.map((imageUrl, index) => (
+                  <div key={index} className="aspect-square">
+                    <img
+                      src={imageUrl}
+                      alt={`참여 강아지 ${index + 1}`}
+                      className="w-full h-full object-cover rounded-full border border-light-orange"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = '/default-dog-image.png';
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-5 gap-3">
-              {dogImages.map((imageUrl, index) => (
-                <div key={index} className="aspect-square">
-                  <img
-                    src={imageUrl}
-                    alt={`참여 강아지 ${index + 1}`}
-                    className="w-full h-full object-cover rounded-full border border-light-orange"
-                    loading="lazy"
-                    onError={(e) => {
-                      e.currentTarget.src = '/default-dog-image.png'; // 기본 이미지 경로로 수정
-                    }}
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
+          )}
         </div>
 
         <div onClick={handleJoinClick} className="p-2 bg-deep-coral">
