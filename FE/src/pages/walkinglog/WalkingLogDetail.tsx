@@ -1,46 +1,99 @@
 import { IoChevronBack } from 'react-icons/io5';
 import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import { useWalkingLog } from '@/hooks/walkinglog/useWalkingLog';
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
-import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
+import { Map, Polyline } from 'react-kakao-maps-sdk';
 import type { LatLng, MapContextType, SpotImageType } from '@/types/map';
 import type { SpotInfo } from '@/types/meetup';
 
 const WalkingLogDetail = () => {
   const navigate = useNavigate();
-  const { getWalkingLogDetail, walkingLogDetail } = useWalkingLog();
+  const { getWalkingLogDetail } = useWalkingLog();
   const { id } = useParams();
+  // 더미 데이터
+  const walkingLogDetail = {
+    startedAt: '2024-11-07T02:57:53.644014',
+    finishedAt: '2024-11-07T02:57:53',
+    dogImage: 'https://meongspotd107.s3.ap-northeast-2.amazonaws.com/661925e5-6b3b-4631-b753-4d0f1c11ee20_wink.png',
+    dogName: '감자',
+    time: null,
+    distance: 0.1445534046379845,
+    trail: [
+      {
+        lat: 36.107209484700626,
+        lng: 128.4173797397128,
+      },
+      {
+        lat: 36.10684687490224,
+        lng: 128.4175620073311,
+      },
+      {
+        lat: 36.10556937758879,
+        lng: 128.41738358452642,
+      },
+      {
+        lat: 36.10515872676945,
+        lng: 128.41743728178403,
+      },
+      {
+        lat: 36.10517235888565,
+        lng: 128.41666575305655,
+      },
+      {
+        lat: 36.105113713844524,
+        lng: 128.41590958369622,
+      },
+      {
+        lat: 36.105137119497094,
+        lng: 128.4024289419908,
+      },
+    ],
+  };
 
   const [mapLevel, setMapLevel] = useState(5);
-  const { currentPosition, isTracking, onMapMove, searchResult, isCompassMode, heading, isMobile } =
-    useOutletContext<MapContextType>();
-  const [center, setCenter] = useState<LatLng>(currentPosition);
+  const {
+    currentPosition = { lat: 37.5665, lng: 126.978 }, // 기본 위치 설정
+    isTracking,
+  } = useOutletContext<MapContextType>();
+  const [center, setCenter] = useState<LatLng | null>(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getWalkingLogDetail(Number(id));
-  }, []);
+  }, [id]);
 
   useEffect(() => {
-    // currentPosition이 설정된 후에 center를 업데이트
-    if (currentPosition) {
-      setCenter(currentPosition);
-      setIsInitialLoad(false);
+    if (walkingLogDetail?.trail && walkingLogDetail.trail.length > 0 && isInitialLoad) {
+      const firstTrailPosition = walkingLogDetail.trail[0];
+      setCenter({ lat: firstTrailPosition.lat, lng: firstTrailPosition.lng });
+      setIsInitialLoad(false); // 초기 설정 후 다시 호출되지 않도록 설정
     }
-  }, [currentPosition]);
+  }, [walkingLogDetail, isInitialLoad]);
 
-  // 초기 맵 생성
-  const handleMapCreate = useCallback(
+  // Polyline 경로 설정
+  const trailPath = useMemo(() => {
+    return (
+      walkingLogDetail?.trail.map((point) => ({
+        lat: point.lat,
+        lng: point.lng,
+      })) || []
+    );
+  }, [walkingLogDetail]);
+
+  const fitBoundsToPath = useCallback(
     (map: kakao.maps.Map) => {
-      if (!map || !currentPosition) return;
-
-      map.setLevel(4);
-      map.setCenter(new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
-      setMapLevel(4);
-      setCenter(currentPosition);
+      if (trailPath.length > 0) {
+        const bounds = new kakao.maps.LatLngBounds();
+        trailPath.forEach((point) => {
+          bounds.extend(new kakao.maps.LatLng(point.lat, point.lng));
+        });
+        map.setBounds(bounds); // 경로가 모두 보이도록 지도의 범위 설정
+        setIsLoading(false);
+      }
     },
-    [currentPosition],
+    [trailPath],
   );
 
   // 날짜 포맷 함수
@@ -56,7 +109,7 @@ const WalkingLogDetail = () => {
     return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
   };
 
-  if (!walkingLogDetail || !center) {
+  if (!walkingLogDetail) {
     return <LoadingOverlay message="로딩 중..." />;
   }
 
@@ -107,16 +160,25 @@ const WalkingLogDetail = () => {
           </div>
         </div>
 
-        <div className="w-[90%] h-64 border rounded-lg">
+        <div className="w-[90%] h-64 border rounded-xl">
           {center && (
             <Map
+              onClick={() => {navigate(`/walkinglog/${id}/map`);}}
               center={center}
-              style={{ width: '100%', height: '100%' }}
+              style={{ width: '100%', height: '100%', borderRadius: '0.8rem' }}
               level={mapLevel}
               zoomable={!isTracking}
               draggable={!isTracking}
-              onCreate={handleMapCreate}
-            ></Map>
+              onCreate={fitBoundsToPath}
+            >
+              <Polyline
+                path={trailPath}
+                strokeWeight={5} // 선 두께
+                strokeColor="#F25C54" // 선 색상
+                strokeOpacity={0.8} // 선 투명도
+                strokeStyle="solid" // 선 스타일
+              />
+            </Map>
           )}
         </div>
       </div>

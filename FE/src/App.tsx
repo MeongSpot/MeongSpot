@@ -29,7 +29,7 @@ const App = () => {
     (location.pathname.startsWith('/participatedog/') && id) ||
     (location.pathname.startsWith('/allmeetuproom/') && spotId) ||
     (location.pathname.startsWith('/dog/') && id) ||
-    (location.pathname.startsWith('/walkinglog/:id') && id) ||
+    (location.pathname.startsWith('/walkinglog/') && id) ||
     (location.pathname.startsWith('/profile/') && id) ||
     (location.pathname.startsWith('/meetupdoglist/') && id);
 
