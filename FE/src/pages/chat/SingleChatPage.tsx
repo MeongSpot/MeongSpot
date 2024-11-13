@@ -28,7 +28,9 @@ const SingleChatPage = () => {
   const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView();
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const handleScrollToTopLoad = useCallback(() => {
@@ -58,7 +60,7 @@ const SingleChatPage = () => {
       if (page === 0) scrollToBottom();
     }
   }, [fetchedMessages, page]);
-  
+
   useEffect(() => {
     const firstNonSenderMessage = localMessages.find((msg) => msg.senderId !== myId);
     if (firstNonSenderMessage) {
@@ -71,6 +73,7 @@ const SingleChatPage = () => {
     return () => clearTimeout(loadingTimeout);
   }, []);
 
+  // 새 메시지 전송
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
       const newMessage: Chat = { // 타입 명시
@@ -95,6 +98,7 @@ const SingleChatPage = () => {
     navigate('/chat', { state: { animateBack: true } });
   };
 
+  // 날짜 형식화
   const formatDateLabel = (dateString: string): string => {
     const date = new Date(dateString);
     const today = new Date();
@@ -104,12 +108,22 @@ const SingleChatPage = () => {
     return format(date, 'yyyy년 M월 d일');
   };
 
+  // 날짜가 다른지 비교
   const isDifferentDate = (current: string, previous: string | null): boolean => {
     if (!previous) return true;
     const currentDate = new Date(current).toDateString();
     const previousDate = new Date(previous).toDateString();
     return currentDate !== previousDate;
   };
+
+  // 메시지가 업데이트될 때마다 스크롤
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      scrollToBottom();
+    }, 100); // 필요에 따라 지연 시간 조정
+
+    return () => clearTimeout(timeoutId);
+  }, [localMessages]);  // 메시지가 업데이트될 때마다 실행
 
   return (
     <motion.div
