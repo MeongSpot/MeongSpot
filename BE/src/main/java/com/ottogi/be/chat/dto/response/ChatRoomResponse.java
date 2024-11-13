@@ -1,5 +1,7 @@
 package com.ottogi.be.chat.dto.response;
 
+import com.ottogi.be.chat.domain.ChatMessage;
+import com.ottogi.be.chat.dto.PersonalChatInfoDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,4 +20,15 @@ public class ChatRoomResponse {
     private String lastMessage;
     private LocalDateTime lastMessageSentAt;
     private Long unreadMessageCnt;
+
+    public static ChatRoomResponse of(PersonalChatInfoDto dto, ChatMessage lastMessage, long unreadMessageCnt) {
+        return ChatRoomResponse.builder()
+                .chatRoomId(dto.getChatRoomId())
+                .interlocutorNickname(dto.getInterlocutorNickname())
+                .interlocutorProfileImage(dto.getInterlocutorProfileImage())
+                .lastMessage(lastMessage.getMessage())
+                .lastMessageSentAt(lastMessage.getSentAt())
+                .unreadMessageCnt(unreadMessageCnt)
+                .build();
+    }
 }

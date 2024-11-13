@@ -2,6 +2,7 @@ package com.ottogi.be.chat.repository;
 
 import com.ottogi.be.chat.domain.ChatMember;
 import com.ottogi.be.chat.domain.ChatRoom;
+import com.ottogi.be.chat.dto.PersonalChatInfoDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,29 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
-
-    @Query("""
-        SELECT cm
-        FROM ChatMember cm
-        JOIN FETCH cm.member m
-        WHERE cm.chatRoom.id IN (
-            SELECT cm2.chatRoom.id
-            FROM ChatMember cm2
-            WHERE cm2.member.loginId = :loginId
-            AND cm2.chatRoom.chatRoomType = 'PERSONAL'
-        )
-        AND cm.member.loginId <> :loginId
-        ORDER BY cm.chatRoom.id ASC
-    """)
-    List<ChatMember> findAllInterlocutorByLoginId(@Param("loginId") String loginId);
-
-    @Query("""
-        SELECT cm
-        FROM ChatMember cm
-        WHERE cm.member.loginId = :loginId AND cm.chatRoom.chatRoomType = 'PERSONAL'
-        ORDER BY cm.chatRoom.id ASC
-    """)
-    List<ChatMember> findAllPersonalChatByLoginId(@Param("loginId") String loginId);
 
     @Query("""
         SELECT cm1.chatRoom
@@ -50,5 +28,13 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
     """)
     Optional<ChatMember> findByChatRoomIdAndMyId(@Param("chatRoomId") Long chatRoomId, @Param("myId") Long myId);
 
-    int countByChatRoom(ChatRoom chatRoom);
+    @Query("""
+        SELECT new com.ottogi.be.chat.dto.PersonalChatInfoDto(
+            cm.chatRoom.id, interlocutor.member.nickname, interlocutor.member.profileImage, cm.readAt, cm.leftAt
+        )
+        FROM ChatMember cm
+        JOIN ChatMember interlocutor ON interlocutor.chatRoom.id = cm.chatRoom.id AND interlocutor.member.id <> :memberId
+        WHERE cm.member.id = :memberId AND cm.chatRoom.chatRoomType = 'PERSONAL'
+    """)
+    List<PersonalChatInfoDto> findAllPersonalChatRoomByMemberId(@Param("memberId") Long memberId);
 }

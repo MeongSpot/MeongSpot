@@ -5,6 +5,7 @@ import com.ottogi.be.chat.domain.ChatMessage;
 import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
+import com.ottogi.be.chat.dto.PersonalChatInfoDto;
 import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
 import com.ottogi.be.chat.dto.response.ChatRoomResponse;
 import com.ottogi.be.chat.exception.ChatRoomNotFoundException;
@@ -15,7 +16,6 @@ import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
@@ -37,46 +37,25 @@ public class FindChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MemberRepository memberRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public List<ChatRoomResponse> findChatRoomList(String loginId) {
-        // 나의 대화 상대
-        List<ChatMember> myInterlocutorInfos = chatMemberRepository.findAllInterlocutorByLoginId(loginId);
-        // 내 대화 목록
-        List<ChatMember> myPersonalChatList = chatMemberRepository.findAllPersonalChatByLoginId(loginId);
+
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        List<PersonalChatInfoDto> personalChatInfoList = chatMemberRepository.findAllPersonalChatRoomByMemberId(member.getId());
 
         List<ChatRoomResponse> result= new ArrayList<>();
 
-        for (int i = 0; i < myInterlocutorInfos.size(); i++) {
-            ChatMember chatMember = myInterlocutorInfos.get(i);
-            Long chatRoomId = chatMember.getChatRoom().getId();
-            ChatMessage lastMessage = chatMessageRepository.findFirstByChatRoomIdOrderBySentAtDesc(chatRoomId);
+        for (PersonalChatInfoDto dto : personalChatInfoList) {
+            ChatMessage lastMessage = chatMessageRepository.findFirstByChatRoomIdOrderBySentAtDesc(dto.getChatRoomId());
+            long unreadMessageCnt = countUnreadMessage(dto.getChatRoomId(), dto.getReadAt());
 
-            LocalDateTime leftAt = myPersonalChatList.get(i).getLeftAt();
-            LocalDateTime readAt = myPersonalChatList.get(i).getReadAt();
-
-            long unreadMessageCnt = 0;
-
-            if (readAt != null) {
-                unreadMessageCnt = chatMessageRepository.countByChatRoomIdAndSentAtAfter(chatRoomId, readAt);
-            } else {
-                unreadMessageCnt = chatMessageRepository.countByChatRoomId(chatRoomId);
-            }
-
-            if (lastMessage != null && (leftAt == null || lastMessage.getSentAt().isAfter(leftAt))) {
-                ChatRoomResponse response = ChatRoomResponse.builder()
-                        .chatRoomId(chatRoomId)
-                        .interlocutorNickname(chatMember.getMember().getNickname())
-                        .interlocutorProfileImage(chatMember.getMember().getProfileImage())
-                        .lastMessage(lastMessage.getMessage())
-                        .lastMessageSentAt(lastMessage.getSentAt())
-                        .unreadMessageCnt(unreadMessageCnt)
-                        .build();
-                result.add(response);
+            if (lastMessage != null && (dto.getLeftAt() == null || lastMessage.getSentAt().isAfter(dto.getLeftAt()))) {
+                result.add(ChatRoomResponse.of(dto, lastMessage, unreadMessageCnt));
             }
         }
-
         result.sort(Comparator.comparing(ChatRoomResponse::getLastMessageSentAt).reversed());
         return result;
     }
@@ -120,5 +99,13 @@ public class FindChatRoomService {
         boolean hasNext = chatMessageDtoList.size() == pageable.getPageSize();
 
         return new FindChatRoomResponse(member.getId(), member.getNickname(), member.getProfileImage(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
+    }
+
+    private long countUnreadMessage(Long chatRoomId, LocalDateTime readAt) {
+        if (readAt != null) {
+            return chatMessageRepository.countByChatRoomIdAndSentAtAfter(chatRoomId, readAt);
+        } else {
+            return chatMessageRepository.countByChatRoomId(chatRoomId);
+        }
     }
 }
