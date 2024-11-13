@@ -66,6 +66,15 @@ export interface DogDetailResponse {
   data: DogList;
 }
 
+export interface MeetingDogInfo {
+  profileImage: string;
+  name: string;
+  breed: string;
+  birth: string;
+  age: number;
+  personality: string[];
+}
+
 export const PersonalityList = [
   { id: 1, name: '낯가려요' },
   { id: 2, name: '새로운 친구 만나는걸 좋아해요' },

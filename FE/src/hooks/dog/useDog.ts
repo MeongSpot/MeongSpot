@@ -11,6 +11,7 @@ export const useDog = () => {
   const [userDogs, setUserDogs] = useState<DogList[]>([]);
   const [myDogsName, setMyDogsName] = useState<DogName[]>([]);
   const [dogDetail, setDogDetail] = useState<DogList | null>(null);
+  const [meetingDogs, setMeetingDogs] = useState<DogList[]>([]);
 
   // 반려견 품종 목록 조회
   const getDogBreeds = async () => {
@@ -75,7 +76,6 @@ export const useDog = () => {
     try {
       const response = await dogService.getDogDetail(dogId);
       setDogDetail(response.data);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       console.error('Failed to get dog detail:', error);
@@ -115,5 +115,20 @@ export const useDog = () => {
     }
   };
 
-  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs, updateDog };
+  // 모임 참여 반려견 조회
+  const getMeetingDogs = async (meetingId: number, memberId: number) => {
+    setIsLoading(true);
+    try {
+      const response = await dogService.getMeetingDogs(meetingId, memberId);
+      setMeetingDogs(response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get meeting dogs:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs, updateDog, getMeetingDogs, meetingDogs};
 };

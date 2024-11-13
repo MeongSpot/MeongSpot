@@ -1,10 +1,18 @@
-import React from 'react';
+import { useEffect } from 'react';
 import DogCard from '@/components/meetUp/DogListCard';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { IoChevronBack } from 'react-icons/io5';
 import { motion } from 'framer-motion';
+import { useMeeting } from '@/hooks/meetup/useMeeting';
+import { useUser } from '@/hooks/user/useUser';
+import { useDog } from '@/hooks/dog/useDog';
+import LoadingOverlay from '@/components/common/LoadingOverlay'; // 경로는 실제 구조에 맞게 수정해주세요
 
 const MeetUpDogListPage = () => {
+  const { id } = useParams();
+  const { meetingDetail, hashtags, dogImages, isLoading, error, fetchMeetingDetail } = useMeeting();
+  const { getMeetingParticipants, meetingParticipants } = useUser();
+
   const dogs = [
     {
       id: 1,
@@ -55,6 +63,34 @@ const MeetUpDogListPage = () => {
     navigate(-1);
   };
 
+  // title이 15자를 초과하면 '...'을 추가하여 표시
+  const truncatedTitle = (title: string) => {
+    if (title.length > 15) {
+      return `${title.slice(0, 15)}...`;
+    } else {
+      return title;
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+      fetchMeetingDetail(id);
+      getMeetingParticipants(Number(id));
+    }
+  }, [id, fetchMeetingDetail]);
+
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
+
+  if (error || !meetingDetail || !meetingParticipants) {
+    return (
+      <motion.div className="absolute inset-0 z-50 bg-gray-200  flex items-center justify-center">
+        <div className="text-red-500">{error || 'Failed to load meeting details'}</div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ x: 300, opacity: 0 }} // 항상 오른쪽에서 시작
@@ -66,12 +102,15 @@ const MeetUpDogListPage = () => {
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
-        <h1 className="text-lg font-bold">저녁 산책 같이해요~</h1>
+        <h1 className="text-lg font-bold">{truncatedTitle(meetingDetail.title)}</h1>
       </div>
       <div className="p-4">
-        <h2 className="text-lg font-bold mb-4">참여 강아지 {dogs.length}</h2>
-        {dogs.map((dog) => (
-          <DogCard key={dog.id} dog={dog} />
+        <h2 className="text-lg font-bold mb-4">
+          참여 멤버
+          <span className="text-deep-coral"> {meetingParticipants.length}</span>
+        </h2>
+        {meetingParticipants.map((member) => (
+          <DogCard key={member.memberId} member={member} meetingId={Number(id)} />
         ))}
       </div>
     </motion.div>

@@ -125,4 +125,15 @@ export const dogService = {
   //     throw error;
   //   }
   // },
+
+  // 모임 참여 반려견 조회
+  getMeetingDogs: async (meetingId: number, memberId: number) => {
+    try {
+      const response = await axiosInstance.get(`/api/dogs/meeting?meetingId=${meetingId}&memberId=${memberId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get meeting dogs:', error);
+      throw error;
+    }
+  },
 };

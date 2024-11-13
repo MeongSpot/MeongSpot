@@ -13,4 +13,15 @@ export const userService = {
       throw error;
     }
   },
+
+  // 모임 참여 사용자 조회
+  getMeetingParticipants: async (meetingId: number) => {
+    try {
+      const response = await axiosInstance.get(`/api/members/meeting/${meetingId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Failed to get meeting participants:', error);
+      throw error;
+    }
+  },
 };

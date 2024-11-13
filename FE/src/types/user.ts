@@ -52,3 +52,11 @@ export interface UserSearchResponse {
   message: string;
   data: UserSearchInfo[];
 }
+
+export interface MeetingParticipantsInfo {
+  memberId: number;
+  profileImage: string | null;
+  nickname: string;
+  birth: string;
+  gender: string;
+}
