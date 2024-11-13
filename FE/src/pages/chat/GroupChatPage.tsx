@@ -16,6 +16,7 @@ const GroupChatPage = () => {
   const { id: roomId } = useParams<{ id:string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] = useState('');
+  const [nickname, setNickname] = useState("");
   const [page, setPage] = useState(0);
   const [localMessages, setLocalMessages] = useState<Chat[]>([]);
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const GroupChatPage = () => {
 
   // isGroupChat을 true로 설정하여 그룹 채팅에 대해 입장 메시지 적용
   const { messages: fetchedMessages, loading, error, myId } = useChatDetail(Number(roomId), page);
-  const { sendMessage } = useChat(Number(roomId), true);
+  const { sendMessage } = useChat(Number(roomId), true, nickname);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(Number(roomId));
@@ -73,7 +74,9 @@ const GroupChatPage = () => {
       sendMessage(message, myId);
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom(); // 100ms 후에 스크롤 이동
+      }, 100); // 필요에 따라 시간을 조정
     }
   };
 
