@@ -1,5 +1,5 @@
 // components/map/SpotModal.tsx
-
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import DogIcon from '/icons/DogIcon.svg';
@@ -12,9 +12,10 @@ import 'swiper/css/pagination';
 import MeetupCard from '@/components/map/MeetupCard';
 import RoomCreateConfirmModal from '@/components/meetUp/RoomCreateConfirmModal';
 
-const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigateToAll }) => {
+const SpotModal: React.FC<SpotModalProps> = ({ isOpen, spot, onClose, onNavigateToAll }) => {
   const { meetings, isLoading, error, fetchTopMeetings } = useMeeting();
   const [showCreateConfirm, setShowCreateConfirm] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (spot && isOpen) {
@@ -25,6 +26,17 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     onClose();
+  };
+
+  const handleCardClick = (roomId: number) => {
+    navigate(`/participatedog/${roomId}`, {
+      state: {
+        animateBack: false,
+        spotId: spot?.id,
+        spotName: spot?.content,
+        fromModal: true,
+      },
+    });
   };
 
   if (!spot) return null;
@@ -86,7 +98,11 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, onClose, spot, onNavigate
               className="meetupSwiper"
             >
               {meetings.map((meeting) => (
-                <SwiperSlide key={meeting.meetingId}>
+                <SwiperSlide
+                  key={meeting.meetingId}
+                  onClick={() => handleCardClick(meeting.meetingId)} // 클릭 이벤트 추가
+                  style={{ cursor: 'pointer' }} // 커서 스타일 추가
+                >
                   <MeetupCard
                     meetup={{
                       id: meeting.meetingId,
