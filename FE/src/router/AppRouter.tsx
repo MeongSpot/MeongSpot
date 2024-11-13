@@ -17,6 +17,7 @@ const FriendsList = lazy(() => import('@/pages/mypage/FriendsList'));
 const SearchUser = lazy(() => import('@/pages/mypage/SearchUser'));
 const WalkingLogList = lazy(() => import('@/pages/walkinglog/WalkingLogList'));
 const WalkingLogDetail = lazy(() => import('@/pages/walkinglog/WalkingLogDetail'));
+const WalkingLogMap = lazy(() => import('@/pages/walkinglog/WalkingLogMap'));
 const MyMeetUpRoomPage = lazy(() => import('@/pages/meetup/MyMeetUpRoomPage'));
 const AllMeetUpRoomPage = lazy(() => import('@/pages/meetup/AllMeetUpRoomPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
@@ -159,6 +160,14 @@ const router = createBrowserRouter([
         element: (
           <AuthGuard>
             <WalkingLogDetail />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'walkinglog/:id/map',
+        element: (
+          <AuthGuard>
+            <WalkingLogMap />
           </AuthGuard>
         ),
       },
