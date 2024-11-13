@@ -2,6 +2,7 @@ package com.ottogi.be.dog.controller;
 
 import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
+import com.ottogi.be.dog.dto.DeleteDogDto;
 import com.ottogi.be.dog.dto.MeetingDogDto;
 import com.ottogi.be.dog.dto.request.DogAddRequest;
 import com.ottogi.be.dog.dto.request.DogModifyRequest;
@@ -29,6 +30,7 @@ public class DogController {
     private final DogService dogService;
     private final FindDogService findDogService;
     private final FindMeetingDogService findMeetingDogService;
+    private final DeleteDogService deleteDogService;
 
     @GetMapping("/breed")
     public ResponseEntity<?> breedList() {
@@ -98,6 +100,13 @@ public class DogController {
     public ResponseEntity<?> dogDetails(@PathVariable Long dogId) {
         FindDogResponse result = findDogService.findDog(dogId);
         return ResponseEntity.ok(new ApiResponse<>("DO110", "반려견 상세 조회 성공", result));
+    }
+
+    @DeleteMapping("/{dogId}")
+    public ResponseEntity<?> dogDelete(@PathVariable Long dogId,
+                                       @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        deleteDogService.deleteDog(new DeleteDogDto(dogId, loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("DO111", "반려견 삭제 성공", null));
     }
 
 }

@@ -62,4 +62,5 @@ public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Lo
             """)
     List<Member> findMembersForNotification(@Param("meeting") Meeting meeting, @Param("member") Member member);
 
+    boolean existsByDogId(Long dogId);
 }

@@ -5,12 +5,18 @@ import com.ottogi.be.dog.domain.enums.Size;
 import com.ottogi.be.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
+@SQLDelete(sql = "UPDATE dog SET is_delete = true where id =?")
+@SQLRestriction("is_delete != true")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EntityListeners(AuditingEntityListener.class)
 public class Dog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,6 +53,14 @@ public class Dog {
 
     @Column(length = 32, nullable = false)
     private String breed;
+
+    @Column(nullable = false)
+    private Boolean isDelete;
+
+    @PrePersist
+    protected void onCreate() {
+        isDelete = false;
+    }
 
     @Builder
     public Dog(Member member, String profileImage, String name, String breed, Size size,

@@ -7,6 +7,7 @@ import com.ottogi.be.meeting.dto.response.MeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingTopResponse;
 import com.ottogi.be.meeting.exception.MeetingNotFoundException;
 import com.ottogi.be.meeting.repository.HashTagRepository;
+import com.ottogi.be.meeting.repository.MeetingMemberRepository;
 import com.ottogi.be.meeting.repository.MeetingRepository;
 import com.ottogi.be.spot.domain.Spot;
 import com.ottogi.be.spot.exception.SpotNotFoundException;
@@ -29,6 +30,7 @@ public class FindMeetingService {
     private final SpotRepository spotRepository;
     private final MeetingRepository meetingRepository;
     private final HashTagRepository hashTagRepository;
+    private final MeetingMemberRepository meetingMemberRepository;
 
     @Transactional(readOnly = true)
     public List<MeetingResponse> findMeetingList(MeetingDto meetingDto) {
@@ -95,5 +97,10 @@ public class FindMeetingService {
                 .orElseThrow(MeetingNotFoundException::new);
 
         return FindMeetingResponse.from(meeting);
+    }
+
+    @Transactional
+    public boolean isParticipate(Long dogId) {
+        return meetingMemberRepository.existsByDogId(dogId);
     }
 }
