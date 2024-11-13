@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +23,33 @@ public class FindDogService {
     private final DogRepository dogRepository;
     private final MemberRepository memberRepository;
     private final DogPersonalityRepository dogPersonalityRepository;
+
+    @Transactional(readOnly = true)
+    public List<FindDogResponse> findMyDogList(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return findDogWithPersonality(member);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FindDogResponse> findMemberDogList(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(MemberNotFoundException::new);
+
+        return findDogWithPersonality(member);
+    }
+
+    @Transactional(readOnly = true)
+    public List<FindDogResponse> findDogWithPersonality(Member member) {
+        List<Dog> dogs = dogRepository.findByMember(member);
+        List<FindDogResponse> result = new ArrayList<>();
+        for (Dog dog : dogs) {
+            List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
+            result.add(FindDogResponse.of(dog, personality));
+        }
+        return result;
+    }
 
     @Transactional(readOnly = true)
     public List<FindDogNameResponse> findDogNameList(String loginId) {
@@ -35,18 +63,6 @@ public class FindDogService {
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(DogNotFoundException::new);
         List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
-        return FindDogResponse.builder()
-                .id(dogId)
-                .name(dog.getName())
-                .birth(dog.getBirth())
-                .introduction(dog.getIntroduction())
-                .gender(dog.getGender())
-                .size(dog.getSize())
-                .isNeuter(dog.getIsNeuter())
-                .profileImage(dog.getProfileImage())
-                .age(dog.getAge())
-                .breed(dog.getBreed())
-                .personality(personality)
-                .build();
+        return FindDogResponse.of(dog, personality);
     }
 }

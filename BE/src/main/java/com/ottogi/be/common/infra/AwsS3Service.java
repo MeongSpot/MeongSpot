@@ -2,6 +2,7 @@ package com.ottogi.be.common.infra;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.ottogi.be.common.dto.UploadProfileImageDto;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,41 @@ public class AwsS3Service {
         } else {
             log.warn("File not found: {}", key);
         }
+    }
 
+    public String uploadDogProfileImage(UploadProfileImageDto dto) throws URISyntaxException, IOException {
+
+        String imagePath = null;
+        String oldProfileImage = dto.getOldProfileImage();
+        MultipartFile newProfileImage = dto.getNewProfileImage();
+
+        if (newProfileImage.isEmpty()) {
+            imagePath = oldProfileImage;
+        } else {
+            deleteFile(oldProfileImage);
+            imagePath = uploadFile(newProfileImage);
+        }
+
+        return imagePath;
+    }
+
+    public String uploadMemberProfileImage(UploadProfileImageDto dto) throws URISyntaxException, IOException {
+
+        String imagePath = null;
+        String oldProfileImage = dto.getOldProfileImage();
+        MultipartFile newProfileImage = dto.getNewProfileImage();
+
+        if (!newProfileImage.isEmpty()) {
+            if (oldProfileImage != null) {
+                deleteFile(oldProfileImage);
+            }
+            imagePath = uploadFile(newProfileImage);
+        } else {
+            if (oldProfileImage != null) {
+                deleteFile(oldProfileImage);
+            }
+        }
+
+        return imagePath;
     }
 }

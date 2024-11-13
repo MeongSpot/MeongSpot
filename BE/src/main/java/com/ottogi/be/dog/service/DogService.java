@@ -1,20 +1,16 @@
 package com.ottogi.be.dog.service;
 
+import com.ottogi.be.common.dto.UploadProfileImageDto;
 import com.ottogi.be.common.infra.AwsS3Service;
 import com.ottogi.be.dog.domain.Dog;
-import com.ottogi.be.dog.domain.DogPersonality;
-import com.ottogi.be.dog.domain.Personality;
 import com.ottogi.be.dog.dto.DogAddDto;
 import com.ottogi.be.dog.dto.DogModifyDto;
-import com.ottogi.be.dog.dto.response.FindMemberDogResponse;
-import com.ottogi.be.dog.dto.response.FindDogResponse;
+import com.ottogi.be.dog.dto.SaveDogPersonalityDto;
 import com.ottogi.be.dog.exception.DogImageUploadException;
 import com.ottogi.be.dog.exception.DogNotFoundException;
 import com.ottogi.be.dog.exception.DogOwnerMismatchException;
-import com.ottogi.be.dog.exception.DogPersonalityNotFoundException;
 import com.ottogi.be.dog.repository.DogPersonalityRepository;
 import com.ottogi.be.dog.repository.DogRepository;
-import com.ottogi.be.dog.repository.PersonalityRepository;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
@@ -24,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +28,8 @@ public class DogService {
     private final AwsS3Service awsS3Service;
     private final MemberRepository memberRepository;
     private final DogRepository dogRepository;
-    private final PersonalityRepository personalityRepository;
     private final DogPersonalityRepository dogPersonalityRepository;
+    private final SavePersonalityService savePersonalityService;
 
     @Transactional
     public void addDog(DogAddDto dogAddDto) throws IOException {
@@ -49,72 +43,8 @@ public class DogService {
         Dog dog = dogAddDto.toEntity(imagePath, member);
         dogRepository.save(dog);
 
-        List<Long> personalityList = dogAddDto.getPersonality();
-        if (personalityList == null || personalityList.isEmpty()) throw new DogPersonalityNotFoundException();
-        List<DogPersonality> pList = new ArrayList<>();
-        for (Long p : personalityList) {
-            Personality personality = personalityRepository.findById(p)
-                    .orElseThrow(DogPersonalityNotFoundException::new);
-
-            DogPersonality dogPersonality = DogPersonality.builder()
-                    .dog(dog)
-                    .personality(personality)
-                    .build();
-
-            pList.add(dogPersonality);
-        }
-        dogPersonalityRepository.saveAll(pList);
+        savePersonalityService.saveDogPersonality(new SaveDogPersonalityDto(dog, dogAddDto.getPersonality()));
         member.beOwner();
-    }
-
-    @Transactional(readOnly = true)
-    public List<FindDogResponse> findMyDogList(String loginId) {
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(MemberNotFoundException::new);
-        List<Dog> dogs = dogRepository.findByMember(member);
-        List<FindDogResponse> result = new ArrayList<>();
-        for (Dog dog : dogs) {
-            List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
-            FindDogResponse myDogList = FindDogResponse.builder()
-                    .id(dog.getId())
-                    .name(dog.getName())
-                    .birth(dog.getBirth())
-                    .introduction(dog.getIntroduction())
-                    .gender(dog.getGender())
-                    .isNeuter(dog.getIsNeuter())
-                    .profileImage(dog.getProfileImage())
-                    .age(dog.getAge())
-                    .breed(dog.getBreed())
-                    .personality(personality)
-                    .build();
-            result.add(myDogList);
-        }
-        return result;
-    }
-
-    @Transactional(readOnly = true)
-    public List<FindMemberDogResponse> findMemberDogList(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(MemberNotFoundException::new);
-        List<Dog> dogs = dogRepository.findByMember(member);
-        List<FindMemberDogResponse> result = new ArrayList<>();
-        for (Dog dog : dogs) {
-            List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
-            FindMemberDogResponse memberDogList = FindMemberDogResponse.builder()
-                    .id(dog.getId())
-                    .name(dog.getName())
-                    .birth(dog.getBirth())
-                    .introduction(dog.getIntroduction())
-                    .gender(dog.getGender())
-                    .isNeuter(dog.getIsNeuter())
-                    .profileImage(dog.getProfileImage())
-                    .age(dog.getAge())
-                    .breed(dog.getBreed())
-                    .personality(personality)
-                    .build();
-            result.add(memberDogList);
-        }
-        return result;
     }
 
     @Transactional
@@ -126,13 +56,7 @@ public class DogService {
 
         if (!dog.getMember().equals(member)) throw new DogOwnerMismatchException();
 
-        String imagePath = null;
-        if (dogModifyDto.getProfileImage().isEmpty() || dogModifyDto.getProfileImage() == null) {
-            imagePath = dog.getProfileImage();
-        } else {
-            awsS3Service.deleteFile(dog.getProfileImage());
-            imagePath = awsS3Service.uploadFile(dogModifyDto.getProfileImage());
-        }
+        String imagePath = awsS3Service.uploadDogProfileImage(new UploadProfileImageDto(dog.getProfileImage(), dogModifyDto.getProfileImage()));
 
         dog.updateInformation(
                 imagePath, dogModifyDto.getName(), dogModifyDto.getBreed(), dogModifyDto.getSize(),
@@ -141,21 +65,8 @@ public class DogService {
 
         dogPersonalityRepository.deleteByDog(dog);
 
-        List<Long> personalityList = dogModifyDto.getPersonality();
-        if (personalityList == null || personalityList.isEmpty()) throw new DogPersonalityNotFoundException();
-        List<DogPersonality> pList = new ArrayList<>();
-        for (Long p : personalityList) {
-            Personality personality = personalityRepository.findById(p)
-                    .orElseThrow(DogPersonalityNotFoundException::new);
+        savePersonalityService.saveDogPersonality(new SaveDogPersonalityDto(dog, dogModifyDto.getPersonality()));
 
-            DogPersonality dogPersonality = DogPersonality.builder()
-                    .dog(dog)
-                    .personality(personality)
-                    .build();
-
-            pList.add(dogPersonality);
-        }
-        dogPersonalityRepository.saveAll(pList);
     }
 
 }

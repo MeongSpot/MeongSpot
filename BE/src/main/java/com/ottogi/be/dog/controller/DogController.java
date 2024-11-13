@@ -57,13 +57,13 @@ public class DogController {
 
     @GetMapping
     public ResponseEntity<?> myDogList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        List<FindDogResponse> result = dogService.findMyDogList(loginMemberInfo.getLoginId());
+        List<FindDogResponse> result = findDogService.findMyDogList(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("DO104", "내 반려견 목록 조회 성공", result));
     }
 
     @GetMapping("/{memberId}")
     public ResponseEntity<?> memberDogList(@PathVariable Long memberId) {
-        List<FindMemberDogResponse> result = dogService.findMemberDogList(memberId);
+        List<FindDogResponse> result = findDogService.findMemberDogList(memberId);
         return ResponseEntity.ok(new ApiResponse<>("DO106", "사용자 반려견 목록 조회 성공", result));
     }
 
