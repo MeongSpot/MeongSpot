@@ -16,14 +16,16 @@ export interface ChatRoomResponse {
 
 // 채팅방 생성
 export interface ChatRoomCreateResponse {
-  chatRoomId: number; 
+  code: string;
+  message: string;
+  data: number;
 }
 
 export interface UseSingleChatCreateReturn {
   createChatRoom: (friendId: number) => Promise<void>;
   loading: boolean;
   error: string | null;
-  chatRoomData: number | null; 
+  chatRoomData: number | null;
 }
 
 // 채팅방 상세 조회 
