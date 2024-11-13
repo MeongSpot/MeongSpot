@@ -21,7 +21,7 @@ const WalkCompleteModal: React.FC<WalkCompleteModalProps> = ({ isOpen, onClose }
 
   return (
     <div
-      className={`fixed inset-0 z-30 bg-gray-800 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ${
+      className={`absolute inset-0 z-30 bg-gray-800 bg-opacity-50 flex justify-center items-center transition-opacity duration-300 ${
         isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       onClick={handleBackgroundClick}

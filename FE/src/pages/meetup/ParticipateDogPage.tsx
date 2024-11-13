@@ -42,8 +42,8 @@ const ParticipateDogPage = () => {
     if (fromList) {
       navigate(previousPath || -1, {
         state: {
-          animateBack: true,
           spotName,
+          fromDetail: true,
         },
       });
     } else {
@@ -87,7 +87,7 @@ const ParticipateDogPage = () => {
 
   if (isLoading) {
     return (
-      <motion.div className="fixed inset-0 z-50 bg-gray-200 ">
+      <motion.div className="absolute inset-0 z-50 bg-gray-200 ">
         <LoadingOverlay />
       </motion.div>
     );
@@ -95,17 +95,24 @@ const ParticipateDogPage = () => {
 
   if (error || !meetingDetail) {
     return (
-      <motion.div className="fixed inset-0 z-50 bg-gray-200  flex items-center justify-center">
+      <motion.div className="absolute inset-0 z-50 bg-gray-200  flex items-center justify-center">
         <div className="text-red-500">{error || 'Failed to load meeting details'}</div>
       </motion.div>
     );
   }
 
   return (
-    <motion.div {...containerAnimation} className="fixed inset-0 z-50 bg-gray-100 ">
+    <motion.div {...containerAnimation} className="absolute inset-0 z-50 bg-gray-100 ">
       <motion.div
-        {...slideAnimation}
-        className="absolute inset-x-0 bottom-0 top-0 bg-gray-200 overflow-hidden flex flex-col"
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '100%' }}
+        transition={{
+          type: 'spring',
+          stiffness: 300,
+          damping: 35,
+        }}
+        className="absolute inset-0 bottom-0 top-0 bg-gray-200 overflow-hidden flex flex-col"
       >
         <div className="flex items-center bg-deep-coral text-white p-4">
           <h1 className="text-lg font-bold flex-1 text-center">
