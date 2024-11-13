@@ -51,14 +51,6 @@ const UserProfile: React.FC = () => {
     return null;
   }
 
-  if (isLoading) {
-    return <LoadingOverlay message="로딩 중..." />;
-  }
-
-  if (!userData || !userDogs) {
-    return null;
-  }
-
   return (
     <div className="pb-16">
       <div className="w-full p-4 grid grid-cols-3 items-center">
