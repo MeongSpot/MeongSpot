@@ -12,7 +12,7 @@ const useDeleteChatRoom = () => {
     setError(null);
 
     try {
-      const response = await axiosInstance.delete(`/api/chat/rooms/friend/${chatRoomId}`);
+      const response = await axiosInstance.delete(`/api/chat/rooms/${chatRoomId}`);
       const data = response.data
 
       console.log('채팅방 삭제 성공:', chatRoomId);

@@ -35,7 +35,7 @@ const useFetchSingleChatRooms = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  return { chatRooms, loading, error };
+  return { chatRooms, loading, error, setChatRooms };
 };
 
 export default useFetchSingleChatRooms;
