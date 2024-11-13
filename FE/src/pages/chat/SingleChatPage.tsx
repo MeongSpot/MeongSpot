@@ -29,7 +29,7 @@ const SingleChatPage = () => {
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView();
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
