@@ -13,7 +13,7 @@ export interface Notification {
 export interface NotificationResponse {
   code: string;
   message: string;
-  body: Notification[];
+  data: Notification[];
 }
 
 // 알림 삭제

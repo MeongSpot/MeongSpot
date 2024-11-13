@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import MascotDog from '@/components/common/Logo/Mascot';
-import { IoChevronBack } from 'react-icons/io5';
+import { IoChevronBack, IoTrashOutline } from 'react-icons/io5';
 import { Notification } from '@/types/alarm';
 import FriendAcceptModal from '@/components/mypage/FriendAcceptModal';
 import useFetchAlarm from '@/hooks/alarm/useFetchAlarm';
+import useDeleteAlram from '@/hooks/alarm/useDeleteAlram';
 
 const AlarmPage = () => {
   const navigate = useNavigate();
   const { notifications = [], loading, error } = useFetchAlarm(); // 기본값을 빈 배열로 설정
+  const { deleteNotification, loading: deleteLoading, error: deleteError } = useDeleteAlram();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
 
@@ -23,6 +25,11 @@ const AlarmPage = () => {
     if (friendId) navigate(`/profile/${friendId}`);
   };
 
+  const handleDeleteNotification = async (notificationId: number) => {
+    await deleteNotification(notificationId);
+    // 추가적인 UI 업데이트가 필요하다면 여기서 처리 가능
+  };
+  
   return (
     <div className="">
       <div className="p-4">
@@ -58,6 +65,15 @@ const AlarmPage = () => {
                   <p className="text-xs text-zinc-500">{notification.createdAt}</p>
                 </div>
               </div>
+
+              <IoTrashOutline
+                onClick={(e) => {
+                  e.stopPropagation(); // 클릭 시 알림 클릭 이벤트가 실행되지 않도록 막기
+                  handleDeleteNotification(notification.notificationId);
+                }}
+                size={24}
+                className="text-red-500 cursor-pointer"
+              />
             </div>
           ))}
         </div>

@@ -16,7 +16,7 @@ function useDeleteAlram() {
             const response = await axiosInstance.delete<DeleteNotificationResponse>(
                 `/api/notifications`,
                 {
-                    params: { notificationsId: notificationId },
+                    params: { notificationId: notificationId },
                     headers: {
                         'Content-Type': 'application/json',
                     },
