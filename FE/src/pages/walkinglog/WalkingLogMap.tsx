@@ -62,8 +62,13 @@ const WalkingLogMap = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    setIsVisible(true);
+    // 컴포넌트가 마운트된 후 100ms 지연 후에 isVisible을 true로 설정
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 50);
     getWalkingLogDetail(Number(id));
+
+    return () => clearTimeout(timer);
   }, [id]);
 
   useEffect(() => {
@@ -102,7 +107,7 @@ const WalkingLogMap = () => {
     setIsVisible(false); // 닫기 애니메이션 시작
     setTimeout(() => {
       navigate(`/walkinglog/${id}`);
-    }, 100); // 애니메이션 시간과 동일하게 설정
+    }, 150); // 애니메이션 시간과 동일하게 설정
   };
 
   if (!walkingLogDetail) {

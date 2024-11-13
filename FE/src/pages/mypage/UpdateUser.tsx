@@ -89,7 +89,7 @@ const UpdateUser: React.FC = () => {
                     <img
                       src={profileImage || '/icons/imageAddIcon.png'}
                       alt="프로필 이미지"
-                      className="cursor-pointer w-full h-full object-cover rounded-full"
+                      className={`cursor-pointer w-full h-full object-cover rounded-full ${profileImage ? 'border' : ''}`}
                     />
                   </label>
                   <input

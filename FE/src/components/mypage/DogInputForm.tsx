@@ -51,7 +51,7 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full auth-content pb-16">
+    <div className="flex flex-col h-full auth-content pb-10">
       <div className="space-y-6">
         {/* 이름 Input */}
         <div className="w-full">
@@ -90,17 +90,6 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
           </GenderButton>
         </div>
 
-        {/* 나이 입력 Input */}
-        {/* <div>
-          <DogBoxInput
-            label="나이"
-            name="age"
-            value={formData.age}
-            onChange={handleChange}
-            className="py-3"
-            type={'number'}
-          />
-        </div> */}
         {/* 생년월일 입력 */}
         <div className="w-full">
           <DogBirthdayInput formData={formData} setFormData={setFormData} />

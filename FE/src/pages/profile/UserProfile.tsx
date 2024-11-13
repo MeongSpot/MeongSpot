@@ -99,7 +99,7 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 items-center space-x-2">
+          <div className="grid grid-cols-2 items-center gap-4">
             {userData.isFriend === false ? (
               <button className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 신청</p>

@@ -10,9 +10,10 @@ const MyPage = lazy(() => import('@/pages/mypage/MyPage'));
 const UserProfile = lazy(() => import('@/pages/profile/UserProfile'));
 const UpdateUser = lazy(() => import('@/pages/mypage/UpdateUser'));
 const Settings = lazy(() => import('@/pages/mypage/Settings'));
-const DogDetail = lazy(() => import('@/pages/mypage/DogDetail'));
-const AddDog = lazy(() => import('@/pages/mypage/AddDog'));
-const SelectBreed = lazy(() => import('@/pages/mypage/SelectBreed'));
+const DogDetail = lazy(() => import('@/pages/dog/DogDetail'));
+const AddDog = lazy(() => import('@/pages/dog/AddDog'));
+const UpdateDog = lazy(() => import('@/pages/dog/UpdateDog'));
+const SelectBreed = lazy(() => import('@/pages/dog/SelectBreed'));
 const FriendsList = lazy(() => import('@/pages/mypage/FriendsList'));
 const SearchUser = lazy(() => import('@/pages/mypage/SearchUser'));
 const WalkingLogList = lazy(() => import('@/pages/walkinglog/WalkingLogList'));
@@ -128,6 +129,14 @@ const router = createBrowserRouter([
         element: (
           <AuthGuard>
             <AddDog />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: 'dog/:id/update',
+        element: (
+          <AuthGuard>
+            <UpdateDog />
           </AuthGuard>
         ),
       },
