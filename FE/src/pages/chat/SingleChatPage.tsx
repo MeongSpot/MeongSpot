@@ -48,6 +48,13 @@ const SingleChatPage = () => {
   }, [loading, isLastPage]);
 
   useEffect(() => {
+    if (page === 0) {
+      // 0페이지에서 처음 메시지 로드 시 바로 최하단으로 스크롤
+      scrollToBottom();
+    }
+  }, [page]);  // 페이지가 변경될 때마다 최하단으로 스크롤 이동
+  
+  useEffect(() => {
     if (fetchedMessages.length > 0) {
       setLocalMessages((prevMessages) => {
         // 이전 페이지의 메시지와 중복되지 않도록 체크
