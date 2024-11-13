@@ -246,7 +246,13 @@ const MeetingMap = () => {
           isOpen={isModalOpen}
           onClose={handleCloseModal}
           spot={selectedSpot}
-          onNavigateToAll={() => navigate(`/allMeetUpRoom/${selectedSpot?.id}`)}
+          onNavigateToAll={() =>
+            navigate(`/allmeetuproom/${selectedSpot?.id}`, {
+              state: {
+                spotName: selectedSpot?.content,
+              },
+            })
+          }
         />
       )}
 

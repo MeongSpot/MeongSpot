@@ -1,4 +1,3 @@
-
 // WalkStartModal.tsx
 import React, { useEffect, useCallback } from 'react';
 import { useDog } from '@/hooks/dog/useDog';

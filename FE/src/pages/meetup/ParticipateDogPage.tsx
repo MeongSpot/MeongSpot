@@ -71,7 +71,7 @@ const ParticipateDogPage = () => {
       className="flex flex-col h-screen bg-gray-100"
     >
       <div className="flex items-center bg-deep-coral text-white p-4">
-        <button onClick={handleBack} className="mr-3">
+        <button onClick={handleBack} className="fixed mr-3">
           <IoChevronBack size={24} />
         </button>
         <h1 className="text-lg font-bold flex-1 text-center">참여 강아지</h1>
