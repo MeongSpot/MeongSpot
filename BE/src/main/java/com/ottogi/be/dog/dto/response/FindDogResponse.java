@@ -1,6 +1,7 @@
 package com.ottogi.be.dog.dto.response;
 
 import com.ottogi.be.dog.domain.enums.Gender;
+import com.ottogi.be.dog.domain.enums.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +20,7 @@ public class FindDogResponse {
     private LocalDate birth;
     private String introduction;
     private Gender gender;
+    private Size size;
     private Boolean isNeuter;
     private String profileImage;
     private int age;

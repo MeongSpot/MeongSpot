@@ -1,6 +1,7 @@
 package com.ottogi.be.meeting.repository;
 
 import com.ottogi.be.dog.domain.Dog;
+import com.ottogi.be.dog.dto.response.FindDogProfileImage;
 import com.ottogi.be.meeting.domain.Meeting;
 import com.ottogi.be.meeting.domain.MeetingMember;
 import com.ottogi.be.meeting.dto.MeetingMemberCountDto;
@@ -15,12 +16,12 @@ import java.util.List;
 public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Long> {
 
     @Query("""
-            SELECT d.profileImage
+            SELECT NEW com.ottogi.be.dog.dto.response.FindDogProfileImage(d.id, d.profileImage)
             FROM MeetingMember mm
             JOIN Dog d ON d.id = mm.dog.id
             WHERE mm.meeting.id = :meetingId
             """)
-    List<String> findDogImageByMeetingId(Long meetingId);
+    List<FindDogProfileImage> findDogImageByMeetingId(Long meetingId);
 
     @Query("""
             SELECT mm.dog

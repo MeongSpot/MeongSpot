@@ -3,6 +3,7 @@ package com.ottogi.be.dog.service;
 import com.ottogi.be.dog.domain.Dog;
 import com.ottogi.be.dog.dto.MeetingDogDto;
 import com.ottogi.be.dog.dto.MeetingDogPersonalityDto;
+import com.ottogi.be.dog.dto.response.FindDogProfileImage;
 import com.ottogi.be.dog.dto.response.FindMeetingDogResponse;
 import com.ottogi.be.dog.repository.DogPersonalityRepository;
 import com.ottogi.be.meeting.repository.MeetingMemberRepository;
@@ -22,7 +23,7 @@ public class FindMeetingDogService {
     private final DogPersonalityRepository dogPersonalityRepository;
 
     @Transactional(readOnly = true)
-    public List<String> findMeetingDogImageList(Long meetingId) {
+    public List<FindDogProfileImage> findMeetingDogImageList(Long meetingId) {
         return meetingMemberRepository.findDogImageByMeetingId(meetingId);
     }
 

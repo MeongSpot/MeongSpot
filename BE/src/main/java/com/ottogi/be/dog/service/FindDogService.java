@@ -41,6 +41,7 @@ public class FindDogService {
                 .birth(dog.getBirth())
                 .introduction(dog.getIntroduction())
                 .gender(dog.getGender())
+                .size(dog.getSize())
                 .isNeuter(dog.getIsNeuter())
                 .profileImage(dog.getProfileImage())
                 .age(dog.getAge())

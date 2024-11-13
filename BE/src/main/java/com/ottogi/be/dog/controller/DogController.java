@@ -83,7 +83,7 @@ public class DogController {
 
     @GetMapping("/meeting/profileImage")
     public ResponseEntity<?> meetingDogProfileImageList(@RequestParam Long meetingId) {
-        List<String> result = findMeetingDogService.findMeetingDogImageList(meetingId);
+        List<FindDogProfileImage> result = findMeetingDogService.findMeetingDogImageList(meetingId);
         return ResponseEntity.ok(new ApiResponse<>("DO108", "모임 참여 반려견 이미지 목록 조회 성공", result));
     }
 
