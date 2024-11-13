@@ -4,6 +4,7 @@ import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import { MeetingParticipantsInfo } from '@/types/user';
 import { useDog } from '@/hooks/dog/useDog';
 import DogIcon from '/icons/DogIcon.svg';
+import { useNavigate } from 'react-router-dom';
 
 interface DogCardProps {
   member: MeetingParticipantsInfo;
@@ -11,6 +12,7 @@ interface DogCardProps {
 }
 
 const DogCard = ({ member, meetingId }: DogCardProps) => {
+  const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
   const { meetingDogs, getMeetingDogs } = useDog();
 
@@ -37,7 +39,12 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
     <div className="bg-white p-4 rounded-lg shadow mb-4 border border-gray-300 cursor-pointer" onClick={toggleDetails}>
       <div className="flex items-center mb-2">
         <div className="mr-2 w-12 h-12 rounded-full border">
-          <img src={member.profileImage || '/icons/favicon/favicon-96x96.png'} alt="" />
+          <img
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/profile/${member.memberId}`)
+            }}
+            src={member.profileImage || '/icons/favicon/favicon-96x96.png'} alt="" />
         </div>
         <div className="flex-1">
           <div className="flex justify-between items-center">
@@ -54,11 +61,11 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
 
       <div
         className={`transition-[max-height,opacity] duration-300 ease-in-out ${
-          showDetails ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'
+          showDetails ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
         }`}
         style={{ overflow: 'hidden' }}
       >
-        <div className="mt-4 flex items-center space-x-1">
+        <div className="mt-4 pb-2 flex items-center space-x-1">
           <img className="w-4 h-4" src={DogIcon} alt="" />
           <p className="">
             <span className="font-semibold text-deep-coral">{member.nickname}</span>
@@ -66,28 +73,27 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
           </p>
         </div>
         {meetingDogs.map((dog, index) => (
-          <div key={index} className="mt-4 flex flex-col mb-2 space-y-3">
+          <div key={index} className="bg-[#fff4e8] p-3 rounded-xl flex flex-col space-y-3">
             <div className="flex items-center">
-              <div className="w-12 h-12 mr-2 rounded-full border">
+              <div className="w-10 h-10 mr-2 rounded-full border">
                 <img src={dog.profileImage} alt="" />
               </div>
-              <span className="font-semibold text-lg">{dog.name}</span>
+              <span className="font-semibold text-md">{dog.name}</span>
               <div className="ml-auto flex space-x-2 items-center">
-                <span className=" text-zinc-600">{dog.breed}</span>
+                <span className="text-sm text-zinc-600">{dog.breed}</span>
                 <div className="border-r border-zinc-400 h-4"></div>
-                <p className=" text-zinc-600">{dog.age}살</p>
+                <p className="text-sm text-zinc-600">{dog.age}살</p>
               </div>
               <div className="flex flex-wrap mt-2"></div>
             </div>
 
             <div className="mx-2">
               {dog.personality.map((tag, index) => (
-                <span key={index} className="bg-orange-100 text-orange-600 text-xs px-2 py-1 rounded-full mr-2 mb-2">
+                <span key={index} className="bg-peach-orange text-white text-xs font-medium px-2 py-1 rounded-full mr-2 mb-2">
                   {tag}
                 </span>
               ))}
             </div>
-            <hr />
           </div>
         ))}
       </div>
