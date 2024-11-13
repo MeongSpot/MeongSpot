@@ -1,7 +1,10 @@
+import { useState, useEffect } from 'react';
 import { div } from 'framer-motion/client';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import MascotDog from '@/components/common/Logo/Mascot';
 import { FriendListInfo } from '@/types/friend';
+import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
+import { useNavigate } from 'react-router-dom';
 
 interface Friend {
   id: number;
@@ -16,6 +19,23 @@ interface FriendsListCardProps {
 }
 
 const FriendsListCard = ({ data, handleClick }: FriendsListCardProps) => {
+  const { createChatRoom, chatRoomData } = useSingleChatCreate();
+  const navigate = useNavigate();
+  const [selectedFriend, setSelectedFriend] = useState<{ id: number; nickname: string } | null>(null);
+
+  const handleChatClick = (friendId: number, friendName: string) => {
+    setSelectedFriend({ id: friendId, nickname: friendName });
+    createChatRoom(friendId);
+  };
+
+  // chatRoomData 업데이트 시 네비게이트 실행
+  useEffect(() => {
+    if (chatRoomData && selectedFriend) {
+      navigate(`/chat/single/${chatRoomData}`, { state: { roomId: chatRoomData, friendName: selectedFriend.nickname } });
+      setSelectedFriend(null); // 상태 초기화
+    }
+  }, [chatRoomData, navigate, selectedFriend]);
+
   return (
     <div className="">
       {data.length > 0 ? (
@@ -57,7 +77,14 @@ const FriendsListCard = ({ data, handleClick }: FriendsListCardProps) => {
               </div>
 
               {/* 채팅 아이콘 */}
-              <IoChatbubbleEllipsesOutline className="text-zinc-600 mr-1" size={25} />
+              <IoChatbubbleEllipsesOutline
+                className="text-zinc-600 mr-1 cursor-pointer"
+                size={25}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleChatClick(friend.id, friend.nickname);
+                }}
+              />
             </div>
           </div>
         ))

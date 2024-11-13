@@ -1,5 +1,3 @@
-// GroupChatPage 컴포넌트
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
 import { FiMenu } from 'react-icons/fi';
