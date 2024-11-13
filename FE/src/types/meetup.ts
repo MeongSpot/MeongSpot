@@ -117,8 +117,8 @@ export interface MeetingDetailInfo {
   participants: number;
   maxParticipants: number;
   meetingAt: string;
-  detailLocation: string;
-  information: string;
+  detailLocation?: string;
+  information?: string;
 }
 
 export interface MeetingDetailResponse {
