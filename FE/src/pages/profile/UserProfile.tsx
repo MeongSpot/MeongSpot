@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import MyDogInfoCard from '@/components/mypage/MyDogInfoCard';
 import { IoChevronBack } from 'react-icons/io5';
@@ -10,12 +10,24 @@ import { Pagination } from 'swiper/modules';
 import { useProfile } from '@/hooks/profile/useProfile';
 import { useDog } from '@/hooks/dog/useDog';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
+import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
+import { useFriend } from '@/hooks/friend/useFriend';
 
 const UserProfile: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { userData, isLoading, getUserProfile } = useProfile();
   const { userDogs, getUserDogs } = useDog();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const { deleteFriend } = useFriend();
+
+  const handleDeleteFriend = useCallback(
+    (friendId: number) => {
+      deleteFriend(friendId);
+    },
+    [deleteFriend],
+  );
 
   useEffect(() => {
     getUserProfile(Number(id));
@@ -57,13 +69,6 @@ const UserProfile: React.FC = () => {
               </div>
               <p className="font-bold text-lg">{userData.nickname}</p>
             </div>
-            <div>
-              {userData.isFriend === false && (
-                <button className="p-2 px-3 bg-peach-orange rounded-3xl">
-                  <p className="text-white text-sm">친구 신청</p>
-                </button>
-              )}
-            </div>
           </div>
 
           <div className="pb-2 px-1 grid grid-cols-2">
@@ -75,6 +80,22 @@ const UserProfile: React.FC = () => {
               <p className="text-sm font-semibold">나이</p>
               <p className="text-sm text-zinc-700">{userData.age ? `${userData.age}세` : '정보 없음'}</p>
             </div>
+          </div>
+
+          <div className="grid grid-cols-2 items-center space-x-2">
+            {userData.isFriend === false ? (
+              <button className="p-3 h-11 bg-deep-coral rounded-3xl">
+                <p className="text-white text-sm font-semibold">친구 신청</p>
+              </button>
+            ) : (
+              <button className="p-3 h-11 bg-deep-coral rounded-3xl">
+                <p className="text-white text-sm font-semibold">친구 삭제</p>
+              </button>
+            )}
+            <button className="flex justify-center items-center space-x-3 p-3 h-11 bg-zinc-600 rounded-3xl">
+              <IoChatbubbleEllipsesOutline className="text-white font-bold" size={25} />
+              <p className="text-white text-sm font-semibold">1:1 채팅</p>
+            </button>
           </div>
         </div>
       </div>
@@ -108,6 +129,14 @@ const UserProfile: React.FC = () => {
       </div>
 
       <div className="bg-zinc-100 w-full h-3"></div>
+
+      {isDeleteModalOpen && (
+        <FriendsDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={() => handleDeleteFriend(Number(id))}
+        />
+      )}
     </div>
   );
 };

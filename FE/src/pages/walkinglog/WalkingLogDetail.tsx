@@ -1,17 +1,47 @@
 import { IoChevronBack } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
 import { useWalkingLog } from '@/hooks/walkinglog/useWalkingLog';
-import { useEffect } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import { Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
+import type { LatLng, MapContextType, SpotImageType } from '@/types/map';
+import type { SpotInfo } from '@/types/meetup';
 
 const WalkingLogDetail = () => {
   const navigate = useNavigate();
   const { getWalkingLogDetail, walkingLogDetail } = useWalkingLog();
   const { id } = useParams();
 
+  const [mapLevel, setMapLevel] = useState(5);
+  const { currentPosition, isTracking, onMapMove, searchResult, isCompassMode, heading, isMobile } =
+    useOutletContext<MapContextType>();
+  const [center, setCenter] = useState<LatLng>(currentPosition);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   useEffect(() => {
     getWalkingLogDetail(Number(id));
   }, []);
+
+  useEffect(() => {
+    // currentPosition이 설정된 후에 center를 업데이트
+    if (currentPosition) {
+      setCenter(currentPosition);
+      setIsInitialLoad(false);
+    }
+  }, [currentPosition]);
+
+  // 초기 맵 생성
+  const handleMapCreate = useCallback(
+    (map: kakao.maps.Map) => {
+      if (!map || !currentPosition) return;
+
+      map.setLevel(4);
+      map.setCenter(new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
+      setMapLevel(4);
+      setCenter(currentPosition);
+    },
+    [currentPosition],
+  );
 
   // 날짜 포맷 함수
   const formatDate = (dateString: string) => {
@@ -26,7 +56,7 @@ const WalkingLogDetail = () => {
     return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
   };
 
-  if (!walkingLogDetail) {
+  if (!walkingLogDetail || !center) {
     return <LoadingOverlay message="로딩 중..." />;
   }
 
@@ -78,7 +108,16 @@ const WalkingLogDetail = () => {
         </div>
 
         <div className="w-[90%] h-64 border rounded-lg">
-          <img src="" alt="" />
+          {center && (
+            <Map
+              center={center}
+              style={{ width: '100%', height: '100%' }}
+              level={mapLevel}
+              zoomable={!isTracking}
+              draggable={!isTracking}
+              onCreate={handleMapCreate}
+            ></Map>
+          )}
         </div>
       </div>
     </div>
