@@ -58,8 +58,10 @@ const AllMeetUpRoomPage = () => {
   const handleCardClick = (roomId: number) => {
     navigate(`/participatedog/${roomId}`, {
       state: {
-        animateBack: true,
         spotId: spotId, // spotId를 state로 전달
+        spotName: spotName, // 현재 페이지가 가지고 있는 spotName을 전달
+        fromList: true,
+        previousPath: location.pathname,
       },
     });
   };
@@ -86,13 +88,13 @@ const AllMeetUpRoomPage = () => {
   return (
     <AnimatePresence>
       <motion.div
-        className="p-4"
+        className=""
         initial={{ x: animateBack ? -300 : 0, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: animateBack ? 300 : 0, opacity: 0 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className="sticky top-0 flex items-center justify-between mb-4 border-b p-4 bg-white">
           <button className="mr-3 text-gray-600" onClick={() => navigate('/meeting', { state: { animateBack: true } })}>
             <IoChevronBack size={24} />
           </button>
@@ -101,15 +103,14 @@ const AllMeetUpRoomPage = () => {
           </h1>
           <BiPlus onClick={handlePlusClick} className="text-xl cursor-pointer" />
         </div>
-        <hr className="my-4 -mx-4 w-screen" />
 
         {showLoading ? (
           <LoadingOverlay message="모임을 불러오는 중입니다..." />
         ) : error ? (
           <div className="text-center py-4 text-red-500">{error}</div>
         ) : (
-          <>
-            <div className="flex justify-between items-center mb-4">
+          <div className="px-4">
+            <div className="sticky top-20 flex justify-between items-center mb-4">
               <span className="text-gray-600">총 {meetings.length}개</span>
               <RoomSortButton sortBy={uiSortBy} onSortChange={handleSortChange} />
             </div>
@@ -124,7 +125,7 @@ const AllMeetUpRoomPage = () => {
                 ))}
               </div>
             ) : (
-              <div className="min-h-screen flex flex-col items-center justify-center mt-[-10vh]">
+              <div className="flex flex-col items-center justify-center mt-[20vh]">
                 <div className="flex flex-col justify-center items-center h-64 text-gray-500">
                   <div className="rounded-full bg-gray-200 p-4 mb-4">
                     <MascotDog className="w-16 h-16 grayscale" />
@@ -134,7 +135,7 @@ const AllMeetUpRoomPage = () => {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
       </motion.div>
     </AnimatePresence>

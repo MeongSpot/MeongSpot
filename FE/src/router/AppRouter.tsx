@@ -237,7 +237,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'participatedog/:id',
+        path: 'participatedog/:roomId',
         element: (
           <AuthGuard>
             <ParticipateDogPage />

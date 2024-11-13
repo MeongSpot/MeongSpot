@@ -6,6 +6,7 @@ const App = () => {
   const location = useLocation();
   const { id } = useParams<{ id: string }>();
   const { spotId } = useParams<{ spotId: string }>();
+  const { roomId } = useParams<{ roomId: string }>();
   const [showNav, setShowNav] = useState(true);
   const createRoomPattern = /^\/allmeetuproom\/\d+\/create$/; // 정규식 추가
   const hideNav =
@@ -26,7 +27,7 @@ const App = () => {
     ].includes(location.pathname) ||
     createRoomPattern.test(location.pathname) || // 정규식 체크 추가
     (location.pathname.startsWith('/chat/') && id) ||
-    (location.pathname.startsWith('/participatedog/') && id) ||
+    (location.pathname.startsWith('/participatedog/') && roomId) ||
     (location.pathname.startsWith('/allmeetuproom/') && spotId) ||
     (location.pathname.startsWith('/dog/') && id) ||
     (location.pathname.startsWith('/walkinglog/:id') && id) ||

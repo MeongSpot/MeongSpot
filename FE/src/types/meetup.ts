@@ -1,4 +1,4 @@
-// types/meeting.ts
+// types/meetup.ts
 import { LatLng } from '@/types/map';
 
 export interface MeetingHashtag {
@@ -50,8 +50,13 @@ export interface UseMeetingReturn {
   spotName: string;
   isLoading: boolean;
   error: string | null;
+  meetingDetail: MeetingDetailInfo | null;
+  hashtags: string[];
+  dogImages: string[];
   fetchTopMeetings: (spotId: number) => Promise<void>;
   fetchMeetings: (spotId: number, order: OrderType) => Promise<void>;
+  createMeeting: (data: CreateMeetingRequest) => Promise<void>;
+  fetchMeetingDetail: (meetingId: string) => Promise<void>;
 }
 
 export interface MeetupEvent {
@@ -105,4 +110,31 @@ export interface CreateMeetingResponse {
   code: string;
   message: string;
   data: null;
+}
+
+export interface MeetingDetailInfo {
+  title: string;
+  participants: number;
+  maxParticipants: number;
+  meetingAt: string;
+  detailLocation: string;
+  information: string;
+}
+
+export interface MeetingDetailResponse {
+  code: string;
+  message: string;
+  data: MeetingDetailInfo;
+}
+
+export interface HashtagResponse {
+  code: string;
+  message: string;
+  data: string[];
+}
+
+export interface DogImagesResponse {
+  code: string;
+  message: string;
+  data: string[];
 }

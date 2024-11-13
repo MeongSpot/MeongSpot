@@ -1,24 +1,15 @@
-// hooks/meeting/useMeeting.ts
 import { useState, useCallback } from 'react';
-import type { Meeting, OrderType, CreateMeetingRequest } from '@/types/meetup';
+import type { Meeting, OrderType, CreateMeetingRequest, MeetingDetailInfo, UseMeetingReturn } from '@/types/meetup';
 import { meetingService } from '@/services/meetingService';
-
-// 리턴 타입을 확장하여 새로운 createMeeting 함수를 포함
-interface UseMeetingReturn {
-  meetings: Meeting[];
-  spotName: string;
-  isLoading: boolean;
-  error: string | null;
-  fetchTopMeetings: (spotId: number) => Promise<void>;
-  fetchMeetings: (spotId: number, order: OrderType) => Promise<void>;
-  createMeeting: (data: CreateMeetingRequest) => Promise<void>;
-}
 
 export const useMeeting = (): UseMeetingReturn => {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [spotName, setSpotName] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [meetingDetail, setMeetingDetail] = useState<MeetingDetailInfo | null>(null);
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [dogImages, setDogImages] = useState<string[]>([]);
 
   const fetchTopMeetings = useCallback(async (spotId: number) => {
     setIsLoading(true);
@@ -60,13 +51,36 @@ export const useMeeting = (): UseMeetingReturn => {
     }
   }, []);
 
+  const fetchMeetingDetail = useCallback(async (meetingId: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const [info, tags, images] = await Promise.all([
+        meetingService.fetchMeetingInfo(meetingId),
+        meetingService.fetchHashtags(meetingId),
+        meetingService.fetchDogImages(meetingId),
+      ]);
+      setMeetingDetail(info);
+      setHashtags(tags);
+      setDogImages(images);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   return {
     meetings,
     spotName,
     isLoading,
     error,
+    meetingDetail,
+    hashtags,
+    dogImages,
     fetchTopMeetings,
     fetchMeetings,
     createMeeting,
+    fetchMeetingDetail,
   };
 };
