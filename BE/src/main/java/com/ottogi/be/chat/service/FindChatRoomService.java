@@ -2,7 +2,6 @@ package com.ottogi.be.chat.service;
 
 import com.ottogi.be.chat.domain.ChatMember;
 import com.ottogi.be.chat.domain.ChatMessage;
-import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
 import com.ottogi.be.chat.dto.PersonalChatInfoDto;
@@ -62,30 +61,24 @@ public class FindChatRoomService {
 
     @Transactional
     public FindChatRoomResponse findChatRoom(FindChatRoomDto dto, Pageable pageable) {
-        ChatRoom chatRoom = chatRoomRepository.findById(dto.getChatRoomId())
-                .orElseThrow(ChatRoomNotFoundException::new);
 
         Member member = memberRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(MemberNotFoundException::new);
 
-        ChatMember chatMember = chatMemberRepository.findByChatRoomIdAndMyId(chatRoom.getId(), member.getId())
+        ChatMember chatMember = chatMemberRepository.findByChatRoomIdAndMyId(dto.getChatRoomId(), member.getId())
                 .orElseThrow(ChatRoomNotFoundException::new);
 
         chatMember.updateReadAt();
 
         LocalDateTime leftAt = chatMember.getLeftAt();
 
-        List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomIdOrderBySentAtDesc(chatRoom.getId(), pageable);
+        List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomIdOrderBySentAtDesc(dto.getChatRoomId(), pageable);
 
         List<Long> senderIds = chatMessages.stream()
-                .map(ChatMessage::getSenderId)
-                .distinct()
-                .collect(Collectors.toList());
+                .map(ChatMessage::getSenderId).distinct().collect(Collectors.toList());
 
-        Map<Long, Member> membersMap = memberRepository.findAllById(senderIds)
-                .stream()
+        Map<Long, Member> membersMap = memberRepository.findAllById(senderIds).stream()
                 .collect(Collectors.toMap(Member::getId, Function.identity()));
-
 
         List<ChatMessageDto> chatMessageDtoList = chatMessages.stream()
                 .filter(chatMessage -> leftAt == null || chatMessage.getSentAt().isAfter(leftAt))

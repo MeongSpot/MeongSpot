@@ -3,6 +3,8 @@ package com.ottogi.be.chat.repository;
 import com.ottogi.be.chat.domain.ChatMember;
 import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.chat.dto.PersonalChatInfoDto;
+import com.ottogi.be.member.domain.Member;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,4 +39,12 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
         WHERE cm.member.id = :memberId AND cm.chatRoom.chatRoomType = 'PERSONAL'
     """)
     List<PersonalChatInfoDto> findAllPersonalChatRoomByMemberId(@Param("memberId") Long memberId);
+
+    @Query("""
+        SELECT cm
+        FROM ChatMember cm
+        JOIN FETCH cm.member
+        WHERE cm.chatRoom.id = :chatRoomId
+    """)
+    List<ChatMember> findMemberByChatRoomId(@Param("chatRoomId") Long chatRoomId);
 }
