@@ -16,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -60,7 +61,7 @@ public class NotificationController {
     }
     @PostMapping("/invitation/response")
     public ResponseEntity<?> friendInvitationRespond(@RequestBody FriendInviteNotificationRequest request,
-                                                   @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+                                                   @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws ExecutionException, InterruptedException {
         respondFriendInvitationService.respondFriendInvitation(request.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("NO100","그룹 초대 응답 성공",null));
     }

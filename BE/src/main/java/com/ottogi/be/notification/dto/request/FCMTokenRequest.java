@@ -10,7 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 public class FCMTokenRequest {
     private String token;
-
     public FCMTokenDto toDto(String loginId){
         return FCMTokenDto.builder()
                 .token(this.token)

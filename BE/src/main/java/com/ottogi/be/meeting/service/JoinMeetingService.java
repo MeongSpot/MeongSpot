@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +33,10 @@ public class JoinMeetingService {
     private final DogRepository dogRepository;
     private final MeetingMemberRepository meetingMemberRepository;
     private final JoinChatRoomService joinChatRoomService;
+    private final SendJoinNotificationService sendJoinNotificationService;
 
     @Transactional
-    public void joinMeeting(JoinMeetingDto joinMeetingDto) {
+    public void joinMeeting(JoinMeetingDto joinMeetingDto) throws ExecutionException, InterruptedException {
         Member member = memberRepository.findByLoginId(joinMeetingDto.getLoginId())
                 .orElseThrow(MemberNotFoundException::new);
         Meeting meeting = meetingRepository.findById(joinMeetingDto.getMeetingId())
@@ -62,5 +64,9 @@ public class JoinMeetingService {
         meetingMemberRepository.saveAll(list);
 
         joinChatRoomService.joinMeetingChatRoom(new JoinMeetingChatRoomDto(member, meeting.getChatRoom()));
+
+        sendJoinNotificationService.sendMeetingJoinNotification(meeting,member);
+
     }
+
 }

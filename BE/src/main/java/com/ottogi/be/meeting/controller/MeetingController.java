@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class MeetingController {
     @PostMapping("/{meetingId}")
     public ResponseEntity<?> meetingJoin(@PathVariable Long meetingId,
                                          @Valid @RequestBody JoinMeetingRequest joinMeetingRequest,
-                                         @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+                                         @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws ExecutionException, InterruptedException {
         joinMeetingService.joinMeeting(JoinMeetingDto.toDto(meetingId, joinMeetingRequest, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("MT101", "모임 참여 성공", null));
     }
