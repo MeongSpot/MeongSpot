@@ -28,7 +28,7 @@ const SingleChatPage = () => {
   const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView();
   };
 
   const handleScrollToTopLoad = useCallback(() => {
@@ -153,7 +153,7 @@ const SingleChatPage = () => {
                 {!isSender && (
                   <div onClick={() => navigate(`/profile/${msg.senderId}`)}>
                     <img
-                      src={msg.profileImage || ''}
+                      src={msg.profileImage || '/icons/favicon/favicon-96x96.png'}
                       alt="Profile"
                       className="w-8 h-8 rounded-full object-cover mx-2"
                     />

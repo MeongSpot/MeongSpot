@@ -1,31 +1,28 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UseSingleChatCreateReturn, ChatRoomCreateResponse } from '@/types/singleChat';
+import axiosInstance from '@/services/axiosInstance';
 
 const useSingleChatCreate = (): UseSingleChatCreateReturn => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [chatRoomData, setChatRoomData] = useState<number | null>(null);
 
-  const createChatRoom = async (friendId: number) => {
+  const createChatRoom = async (interlocutorId: number) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await fetch('/api/chat/rooms/friend', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ friendId }),
+      const response = await axiosInstance.post<ChatRoomCreateResponse>('/api/chat/rooms', {
+        interlocutorId,
       });
 
-      if (!response.ok) {
-        throw new Error('채팅방 생성에 실패했습니다.');
+      if (response.data.code !== 'CH101') {
+        throw new Error(response.data.message || '채팅방 생성에 실패했습니다.');
       }
 
-      const data: ChatRoomCreateResponse = await response.json();
-
-      setChatRoomData(data.chatRoomId);
+      // 상태 업데이트
+      setChatRoomData(response.data.data);
+      console.log('chatRoomId:', response.data.data);
     } catch (err) {
       setError(err instanceof Error ? err.message : '채팅방 생성에 실패했습니다.');
     } finally {
