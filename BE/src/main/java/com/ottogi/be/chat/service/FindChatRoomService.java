@@ -3,12 +3,10 @@ package com.ottogi.be.chat.service;
 import com.ottogi.be.chat.domain.ChatMember;
 import com.ottogi.be.chat.domain.ChatMessage;
 import com.ottogi.be.chat.domain.ChatRoom;
-import com.ottogi.be.chat.domain.enums.ChatRoomType;
 import com.ottogi.be.chat.dto.ChatMessageDto;
 import com.ottogi.be.chat.dto.FindChatRoomDto;
 import com.ottogi.be.chat.dto.response.FindChatRoomResponse;
 import com.ottogi.be.chat.dto.response.ChatRoomResponse;
-import com.ottogi.be.chat.event.EnterMeetingChatRoomEvent;
 import com.ottogi.be.chat.exception.ChatRoomNotFoundException;
 import com.ottogi.be.chat.repository.ChatMemberRepository;
 import com.ottogi.be.chat.repository.ChatMessageRepository;
@@ -93,10 +91,6 @@ public class FindChatRoomService {
 
         ChatMember chatMember = chatMemberRepository.findByChatRoomIdAndMyId(chatRoom.getId(), member.getId())
                 .orElseThrow(ChatRoomNotFoundException::new);
-
-        if (chatRoom.getChatRoomType() == ChatRoomType.MEETING && chatMember.getReadAt() == null) {
-            eventPublisher.publishEvent(new EnterMeetingChatRoomEvent(chatRoom.getId(), member.getNickname()));
-        }
 
         chatMember.updateReadAt();
 

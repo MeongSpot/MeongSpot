@@ -1,8 +1,7 @@
 package com.ottogi.be.meeting.service;
 
-import com.ottogi.be.chat.domain.ChatMember;
-import com.ottogi.be.chat.domain.ChatRoom;
-import com.ottogi.be.chat.repository.ChatMemberRepository;
+import com.ottogi.be.chat.dto.JoinMeetingChatRoomDto;
+import com.ottogi.be.chat.service.JoinChatRoomService;
 import com.ottogi.be.dog.domain.Dog;
 import com.ottogi.be.dog.exception.DogOwnerMismatchException;
 import com.ottogi.be.dog.repository.DogRepository;
@@ -32,7 +31,7 @@ public class JoinMeetingService {
     private final MeetingRepository meetingRepository;
     private final DogRepository dogRepository;
     private final MeetingMemberRepository meetingMemberRepository;
-    private final ChatMemberRepository chatMemberRepository;
+    private final JoinChatRoomService joinChatRoomService;
 
     @Transactional
     public void joinMeeting(JoinMeetingDto joinMeetingDto) {
@@ -62,11 +61,6 @@ public class JoinMeetingService {
         }
         meetingMemberRepository.saveAll(list);
 
-        ChatRoom chatRoom = meeting.getChatRoom();
-        ChatMember chatMember = ChatMember.builder()
-                .member(member)
-                .chatRoom(chatRoom)
-                .build();
-        chatMemberRepository.save(chatMember);
+        joinChatRoomService.joinMeetingChatRoom(new JoinMeetingChatRoomDto(member, meeting.getChatRoom()));
     }
 }
