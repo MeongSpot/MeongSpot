@@ -13,6 +13,7 @@ import LoadingOverlay from '@/components/common/LoadingOverlay';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
 import { useFriend } from '@/hooks/friend/useFriend';
+import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
 
 const UserProfile: React.FC = () => {
   const { id } = useParams();
@@ -21,6 +22,7 @@ const UserProfile: React.FC = () => {
   const { userDogs, getUserDogs } = useDog();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { deleteFriend } = useFriend();
+  const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
 
   const handleDeleteFriend = useCallback(
     (friendId: number) => {
@@ -33,6 +35,21 @@ const UserProfile: React.FC = () => {
     getUserProfile(Number(id));
     getUserDogs(Number(id));
   }, [id]);
+
+  useEffect(() => {
+    if (chatRoomData) {
+      navigate(`/chat/single/${chatRoomData}`, { state: { roomId: chatRoomData, friendName: userData?.nickname } });
+    }
+    console.log({ state: { roomId: chatRoomData, friendName: userData?.nickname } })
+  }, [chatRoomData, navigate, userData]);
+
+  if (isLoading || chatLoading) {
+    return <LoadingOverlay message="로딩 중..." />;
+  }
+
+  if (!userData || !userDogs) {
+    return null;
+  }
 
   if (isLoading) {
     return <LoadingOverlay message="로딩 중..." />;
@@ -92,7 +109,10 @@ const UserProfile: React.FC = () => {
                 <p className="text-white text-sm font-semibold">친구 삭제</p>
               </button>
             )}
-            <button className="flex justify-center items-center space-x-3 p-3 h-11 bg-zinc-600 rounded-3xl">
+            <button
+              onClick={() => createChatRoom(Number(id))}
+              className="flex justify-center items-center space-x-3 p-3 h-11 bg-zinc-600 rounded-3xl"
+            >
               <IoChatbubbleEllipsesOutline className="text-white font-bold" size={25} />
               <p className="text-white text-sm font-semibold">1:1 채팅</p>
             </button>

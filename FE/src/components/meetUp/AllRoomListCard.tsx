@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaUserFriends } from 'react-icons/fa';
 
 interface Event {
@@ -14,24 +15,27 @@ interface Event {
 
 interface EventCardProps {
   event: Event;
-  onClick: (roomId: number) => void;
 }
 
-const AllRoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
+const AllRoomListCard: React.FC<EventCardProps> = ({ event }) => {
   const [visibleTags, setVisibleTags] = useState<string[]>([]);
   const [remainingCount, setRemainingCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   const renderDateTime = () => {
     const dateTime = `${event.date} ${event.time}`;
     return event.location ? `${dateTime} | ${event.location}` : dateTime;
   };
 
+  const goToChatRoom = (roomId: number) => {
+    navigate(`/chat/room/${roomId}`);
+  };
+
   useEffect(() => {
     const calculateVisibleTags = () => {
       if (!containerRef.current || !event.tags?.length) return;
 
-      // 임시 요소를 만들어 태그 하나의 너비를 측정
       const tempTag = document.createElement('span');
       tempTag.className = 'text-xs text-deep-coral bg-cream-bg px-2 py-1 rounded-full';
       tempTag.style.position = 'absolute';
@@ -39,13 +43,12 @@ const AllRoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
       tempTag.innerHTML = event.tags[0];
       document.body.appendChild(tempTag);
 
-      const tagWidth = tempTag.offsetWidth + 8; // gap 고려
+      const tagWidth = tempTag.offsetWidth + 8;
       document.body.removeChild(tempTag);
 
       const containerWidth = containerRef.current.offsetWidth;
-      const countBadgeWidth = 45; // +N 배지의 너비
+      const countBadgeWidth = 45;
 
-      // 한 줄에 들어갈 수 있는 태그 수 계산 (배지 공간 확보)
       const maxTags = Math.floor((containerWidth - countBadgeWidth) / tagWidth);
 
       setVisibleTags(event.tags.slice(0, maxTags));
@@ -60,7 +63,7 @@ const AllRoomListCard: React.FC<EventCardProps> = ({ event, onClick }) => {
 
   return (
     <div
-      onClick={() => onClick(event.id)}
+      onClick={() => goToChatRoom(event.id)}
       className="bg-white p-4 rounded-lg shadow cursor-pointer min-h-[120px] flex flex-col"
     >
       <div className="flex items-center justify-between">
