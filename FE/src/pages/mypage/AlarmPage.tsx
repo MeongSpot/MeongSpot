@@ -1,58 +1,18 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import MascotDog from '@/components/common/Logo/Mascot';
 import { IoChevronBack } from 'react-icons/io5';
-import { NotificationInfo } from '@/types/notification';
+import { Notification } from '@/types/alarm';
 import FriendAcceptModal from '@/components/mypage/FriendAcceptModal';
+import useFetchAlarm from '@/hooks/alarm/useFetchAlarm';
 
 const AlarmPage = () => {
   const navigate = useNavigate();
-
-  const [notificationList, setNotificationList] = useState<NotificationInfo[]>([]);
+  const { notifications = [], loading, error } = useFetchAlarm(); // 기본값을 빈 배열로 설정
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedNotification, setSelectedNotification] = useState<NotificationInfo | null>(null);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
 
-  useEffect(() => {
-    // fetchNotificationList().then((res) => {
-    //   if (res.status === 200) {
-    //     setNotificationList(res.data);
-    //   }
-    // });
-
-    // 임시 데이터
-    setNotificationList([
-      {
-        notificationId: '1',
-        type: 'SCHEDULE',
-        dogImage: null,
-        content: '우리지금멍나 모임 1시간전 입니다.',
-        createdAt: '2024.10.18',
-        timeElapsed: '이틀 전',
-        isRead: false,
-      },
-      {
-        notificationId: '2',
-        type: 'FRIEND_WALK_INFO',
-        dogImage: null,
-        content: '깜자님이 산책을 시작하였습니다.',
-        createdAt: '2024.10.20',
-        timeElapsed: '7시간 전',
-        isRead: false,
-      },
-      {
-        notificationId: '3',
-        type: 'FRIEND_INVITE',
-        dogImage: null,
-        content: '코깅님이 친구요청을 하였습니다.',
-        createdAt: '2024.10.20',
-        timeElapsed: '1시간 전',
-        isRead: false,
-        friendId: 2,
-      },
-    ]);
-  }, []);
-
-  const handleNotificationClick = (notification: NotificationInfo) => {
+  const handleNotificationClick = (notification: Notification) => {
     if (notification.type === 'FRIEND_INVITE') {
       setSelectedNotification(notification);
       setIsModalOpen(true);
@@ -73,9 +33,13 @@ const AlarmPage = () => {
       </div>
       <hr />
 
-      {notificationList.length > 0 ? (
+      {loading ? (
+        <div className="flex justify-center items-center min-h-screen">로딩 중...</div>
+      ) : error ? (
+        <div className="flex justify-center items-center min-h-screen text-red-500">{error}</div>
+      ) : notifications && notifications.length > 0 ? ( // 조건부 렌더링 추가
         <div className="p-4">
-          {notificationList.map((notification) => (
+          {notifications.map((notification) => (
             <div
               key={notification.notificationId}
               className="flex items-center justify-between py-4 border-b border-zinc-300"
@@ -85,13 +49,13 @@ const AlarmPage = () => {
                 <img
                   onClick={() => notification.type === 'FRIEND_INVITE' && handleProfileClick(notification.friendId)}
                   className="rounded-full bg-gray-200 p-2 w-12 h-12"
-                  src={notification.dogImage ?? undefined}
+                  src={notification.profileImage ?? undefined}
                   alt="반려견 프로필 사진"
                 />
 
                 <div className="space-y-2">
                   <p className="font-medium">{notification.content}</p>
-                  <p className="text-xs text-zinc-500">{notification.timeElapsed}</p>
+                  <p className="text-xs text-zinc-500">{notification.createdAt}</p>
                 </div>
               </div>
             </div>

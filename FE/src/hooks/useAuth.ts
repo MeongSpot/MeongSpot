@@ -151,12 +151,12 @@ export const useAuth = () => {
   };
 
 
-  const login = async (loginId: string, password: string) => {
+  const login = async (loginId: string, password: string, token:string) => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const response = await authService.login(loginId, password);
+      const response = await authService.login(loginId, password, token);
       const authToken = axiosInstance.defaults.headers.common['Authorization'] as string;
       
       if (response.code === 'AU100' && authToken) {

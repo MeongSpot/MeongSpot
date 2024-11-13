@@ -1,11 +1,11 @@
-import { NotificationInfo } from '@/types/notification';
+import { Notification } from '@/types/alarm';
 import { IoClose } from 'react-icons/io5';
 
 interface FriendAcceptModalProps {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedNotification: NotificationInfo | null;
-  setSelectedNotification: React.Dispatch<React.SetStateAction<NotificationInfo | null>>;
+  selectedNotification: Notification | null; // Notification 타입으로 수정
+  setSelectedNotification: React.Dispatch<React.SetStateAction<Notification | null>>;
 }
 
 const FriendAcceptModal = ({
@@ -33,6 +33,7 @@ const FriendAcceptModal = ({
               <IoClose
                 onClick={() => {
                   setIsModalOpen(false);
+                  setSelectedNotification(null);
                 }}
                 size={24}
               />
