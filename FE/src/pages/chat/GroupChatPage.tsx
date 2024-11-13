@@ -60,6 +60,13 @@ const GroupChatPage = () => {
     }
   }, [fetchedMessages, page]);
 
+  useEffect(() => {
+    if (page === 0) {
+      // 0페이지에서 처음 메시지 로드 시 바로 최하단으로 스크롤
+      scrollToBottom();
+    }
+  }, [page]);  // 페이지가 변경될 때마다 최하단으로 스크롤 이동
+  
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
       const newMessage: Chat = {
