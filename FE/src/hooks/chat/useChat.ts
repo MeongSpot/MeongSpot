@@ -4,12 +4,17 @@ import useChatStore from '@/store/chatStore';
 import { Chat } from '@/types/singleChat';
 import { debounce } from 'lodash';
 import useMarkRead from './useMarkRead';
-import { profile } from 'console';
 
-const useChat = (roomId: number, nickname: string, profileImage: string | null | undefined = '/icons/favicon/favicon-96x96.png') => {
+const useChat = (
+  roomId: number, 
+  nickname: string, 
+  profileImage: string | null | undefined = '/icons/favicon/favicon-96x96.png'
+) => {
   const addChat = useChatStore((state) => state.addChat);
   const clientRef = useRef<Client | null>(null);
   const markAsRead = useMarkRead(roomId);
+  
+  const receiveMessageCallback = useRef<(message: Chat) => void>();
 
   useEffect(() => {
     if (clientRef.current) {
@@ -30,6 +35,11 @@ const useChat = (roomId: number, nickname: string, profileImage: string | null |
             const newMessage: Chat = JSON.parse(message.body);
             addChat(roomId, newMessage);
             markAsRead();
+
+            if (receiveMessageCallback.current) {
+              receiveMessageCallback.current(newMessage);
+            }
+
             console.log(`새 메시지 수신: 방 번호 ${roomId}`, newMessage);
           }
         });
@@ -39,7 +49,7 @@ const useChat = (roomId: number, nickname: string, profileImage: string | null |
       },
       onWebSocketError: (error) => {
         console.error(`WebSocket 연결 오류: 방 번호 ${roomId}`, error);
-        setTimeout(() => client.activate(), 2000); // 오류 발생 시 5초 후 재연결 시도
+        setTimeout(() => client.activate(), 2000);
       },
       onDisconnect: () => {
         console.log(`WebSocket 연결 해제: 방 번호 ${roomId}`);
@@ -83,7 +93,12 @@ const useChat = (roomId: number, nickname: string, profileImage: string | null |
     }, 300),
     [roomId, nickname, profileImage],
   );
-  return { sendMessage };
+
+  const receiveMessage = (callback: (message: Chat) => void) => {
+    receiveMessageCallback.current = callback;
+  };
+
+  return { sendMessage, receiveMessage };
 };
 
 export default useChat;

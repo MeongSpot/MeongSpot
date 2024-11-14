@@ -21,17 +21,15 @@ const SingleChatPage = () => {
   const [showLoading, setShowLoading] = useState(true);
   const [localMessages, setLocalMessages] = useState<Chat[]>([]);
 
-  const { messages: fetchedMessages, loading, error, isLastPage, myId, nickname, profileImage} = useChatDetail(roomId, page);
-  const { sendMessage } = useChat(roomId, nickname, profileImage);
+  const { messages: fetchedMessages, loading, error, isLastPage, myId, nickname, profileImage } = useChatDetail(roomId, page);
+  const { sendMessage, receiveMessage } = useChat(roomId, nickname, profileImage);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
     setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView();
-      }
+      messagesEndRef.current?.scrollIntoView();
     }, 50);
   };
 
@@ -48,20 +46,26 @@ const SingleChatPage = () => {
       }, 100);
     }
   }, [loading, isLastPage]);
-  
+
   useEffect(() => {
     if (fetchedMessages.length > 0) {
       setLocalMessages((prevMessages) => {
-        // 이전 페이지의 메시지와 중복되지 않도록 체크
         const newMessages = fetchedMessages.filter(
           (newMsg) => !prevMessages.some((oldMsg) => oldMsg.sentAt === newMsg.sentAt)
         );
         return [...newMessages, ...prevMessages];
       });
-  
+
       if (page === 0) scrollToBottom();
     }
   }, [fetchedMessages, page]);
+
+  useEffect(() => {
+    receiveMessage((newMessage: Chat) => {
+      setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
+      scrollToBottom();
+    });
+  }, [receiveMessage]);
 
   useEffect(() => {
     const firstNonSenderMessage = localMessages.find((msg) => msg.senderId !== myId);
@@ -75,24 +79,20 @@ const SingleChatPage = () => {
     return () => clearTimeout(loadingTimeout);
   }, []);
 
-  // 새 메시지 전송
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
-      const newMessage: Chat = { // 타입 명시
+      const newMessage: Chat = {
         senderId: myId,
         message,
         sentAt: new Date().toISOString(),
-        nickname: nickname,
+        nickname: nickname || 'Anonymous',
         profileImage: profileImage,
         messageType: 'text',
       };
       sendMessage(message, myId);
-      // 새 메시지를 로컬 상태에 추가하여 즉시 반영
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      setTimeout(() => {
-        scrollToBottom(); // 100ms 후에 스크롤 이동
-      }, 100); // 필요에 따라 시간을 조정
+      scrollToBottom();
     }
   };
 
@@ -101,7 +101,6 @@ const SingleChatPage = () => {
     navigate('/chat', { state: { animateBack: true } });
   };
 
-  // 날짜 형식화
   const formatDateLabel = (dateString: string): string => {
     const date = new Date(dateString);
     const today = new Date();
@@ -111,7 +110,6 @@ const SingleChatPage = () => {
     return format(date, 'yyyy년 M월 d일');
   };
 
-  // 날짜가 다른지 비교
   const isDifferentDate = (current: string, previous: string | null): boolean => {
     if (!previous) return true;
     const currentDate = new Date(current).toDateString();
@@ -146,7 +144,6 @@ const SingleChatPage = () => {
         {(loading || showLoading) && <LoadingOverlay />}
         {error && <p className="text-red-500">{error}</p>}
 
-        {/* 로컬 상태의 메시지를 사용하여 즉시 업데이트 반영 */}
         {localMessages.map((msg, index) => {
           const isSender = msg.senderId === myId;
           const showDateLabel = isDifferentDate(msg.sentAt, localMessages[index - 1]?.sentAt);
