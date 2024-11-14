@@ -15,6 +15,7 @@ import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
 import { useFriend } from '@/hooks/friend/useFriend';
 import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
 import useAddFriend from '@/hooks/alarm/useAddFriend';
+import FriendsRequestModal from '@/components/friends/FriendsRequestModal';
 
 const UserProfile: React.FC = () => {
   const { id, where } = useParams();
@@ -41,7 +42,6 @@ const UserProfile: React.FC = () => {
     requestFriend(Number(id));
     getUserProfile(Number(id));
   }, [requestFriend, getUserProfile, id]);
-
 
   useEffect(() => {
     getUserProfile(Number(id));
@@ -161,17 +161,10 @@ const UserProfile: React.FC = () => {
 
       {/* 친구 요청 상태 모달 */}
       {isRequestFriendModalOpen && (
-        <div className="p-5 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white py-9 h-44 rounded-lg shadow-lg w-full flex flex-col items-center space-y-10">
-            <p className="font-medium">{requestFriendResponse}</p>
-            <button
-              onClick={() => setIsRequestFriendModalOpen(false)}
-              className="bg-deep-coral text-white px-4 py-2 rounded-lg"
-            >
-              확인
-            </button>
-          </div>
-        </div>
+        <FriendsRequestModal
+          requestFriendResponse={requestFriendResponse}
+          setIsRequestFriendModalOpen={setIsRequestFriendModalOpen}
+        />
       )}
 
       {isDeleteModalOpen && (
