@@ -32,7 +32,7 @@ const SingleChatPage = () => {
       if (messagesEndRef.current) {
         messagesEndRef.current.scrollIntoView();
       }
-    }, 50); // 50ms 딜레이를 추가하여 렌더링 이후 호출 보장
+    }, 50);
   };
 
   const handleScrollToTopLoad = useCallback(() => {
