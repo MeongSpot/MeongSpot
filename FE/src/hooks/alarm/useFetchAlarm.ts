@@ -29,6 +29,7 @@ function useFetchAlarm() {
 
     useEffect(() => {
         fetchNotifications();
+        console.log('알림목록', notifications)
     }, []);
 
     return { notifications, loading, error };

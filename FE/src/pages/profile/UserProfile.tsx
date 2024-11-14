@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import MyDogInfoCard from '@/components/mypage/MyDogInfoCard';
 import { IoChevronBack } from 'react-icons/io5';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -14,6 +14,7 @@ import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
 import { useFriend } from '@/hooks/friend/useFriend';
 import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
+import useAddFriend from '@/hooks/alarm/useAddFriend';
 
 const UserProfile: React.FC = () => {
   const { id } = useParams();
@@ -22,14 +23,21 @@ const UserProfile: React.FC = () => {
   const { userDogs, getUserDogs } = useDog();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { deleteFriend } = useFriend();
-  const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
+  const { createChatRoom, loading: chatLoading, chatRoomData } = useSingleChatCreate();
+  const { respondToInvitation, loading: friendLoading, error, successMessage } = useAddFriend();
 
   const handleDeleteFriend = useCallback(
     (friendId: number) => {
       deleteFriend(friendId);
     },
-    [deleteFriend],
+    [deleteFriend]
   );
+
+  const handleAddFriend = () => {
+    if (id) {
+      respondToInvitation(Number(id), true);
+    }
+  };
 
   useEffect(() => {
     getUserProfile(Number(id));
@@ -40,10 +48,9 @@ const UserProfile: React.FC = () => {
     if (chatRoomData) {
       navigate(`/chat/single/${chatRoomData}`, { state: { roomId: chatRoomData, friendName: userData?.nickname } });
     }
-    console.log({ state: { roomId: chatRoomData, friendName: userData?.nickname } })
   }, [chatRoomData, navigate, userData]);
 
-  if (isLoading || chatLoading) {
+  if (isLoading || chatLoading || friendLoading) {
     return <LoadingOverlay message="로딩 중..." />;
   }
 
@@ -93,11 +100,14 @@ const UserProfile: React.FC = () => {
 
           <div className="grid grid-cols-2 items-center space-x-2">
             {userData.isFriend === false ? (
-              <button className="p-3 h-11 bg-deep-coral rounded-3xl">
+              <button onClick={handleAddFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 신청</p>
               </button>
             ) : (
-              <button className="p-3 h-11 bg-deep-coral rounded-3xl">
+              <button
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="p-3 h-11 bg-deep-coral rounded-3xl"
+              >
                 <p className="text-white text-sm font-semibold">친구 삭제</p>
               </button>
             )}
@@ -109,6 +119,8 @@ const UserProfile: React.FC = () => {
               <p className="text-white text-sm font-semibold">1:1 채팅</p>
             </button>
           </div>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
         </div>
       </div>
 

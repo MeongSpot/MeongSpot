@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MascotDog from '@/components/common/Logo/Mascot';
 import { IoChevronBack, IoTrashOutline } from 'react-icons/io5';
 import { Notification } from '@/types/alarm';
@@ -9,8 +9,9 @@ import useDeleteAlram from '@/hooks/alarm/useDeleteAlram';
 
 const AlarmPage = () => {
   const navigate = useNavigate();
-  const { notifications = [], loading, error } = useFetchAlarm(); // 기본값을 빈 배열로 설정
+  const { notifications: initialNotifications = [], loading, error } = useFetchAlarm(); // 초기 알림 목록 가져오기
   const { deleteNotification, loading: deleteLoading, error: deleteError } = useDeleteAlram();
+  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
 
@@ -27,9 +28,16 @@ const AlarmPage = () => {
 
   const handleDeleteNotification = async (notificationId: number) => {
     await deleteNotification(notificationId);
-    // 추가적인 UI 업데이트가 필요하다면 여기서 처리 가능
+    setNotifications((prevNotifications) =>
+      prevNotifications.filter((notification) => notification.notificationId !== notificationId),
+    );
   };
-  
+
+  useEffect(() => {
+    setNotifications(initialNotifications);
+    console.log('배열',initialNotifications)
+  }, [initialNotifications]);
+
   return (
     <div className="">
       <div className="p-4">
@@ -44,7 +52,7 @@ const AlarmPage = () => {
         <div className="flex justify-center items-center min-h-screen">로딩 중...</div>
       ) : error ? (
         <div className="flex justify-center items-center min-h-screen text-red-500">{error}</div>
-      ) : notifications && notifications.length > 0 ? ( // 조건부 렌더링 추가
+      ) : notifications.length > 0 ? ( // 알림 목록이 있는 경우
         <div className="p-4">
           {notifications.map((notification) => (
             <div

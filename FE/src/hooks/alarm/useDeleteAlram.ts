@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axiosInstance from '@/services/axiosInstance';
 import { DeleteNotificationResponse } from '@/types/alarm';
 
-function useDeleteAlram() {
+function useDeleteAlarm() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -14,9 +14,8 @@ function useDeleteAlram() {
 
         try {
             const response = await axiosInstance.delete<DeleteNotificationResponse>(
-                `/api/notifications`,
+                `/api/notifications/${notificationId}`,
                 {
-                    params: { notificationId: notificationId },
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -38,4 +37,4 @@ function useDeleteAlram() {
     return { deleteNotification, loading, error, successMessage };
 }
 
-export default useDeleteAlram;
+export default useDeleteAlarm;
