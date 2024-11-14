@@ -9,7 +9,6 @@ import { useMeeting } from '@/hooks/meetup/useMeeting';
 import LoadingOverlay from '@/components/common/LoadingOverlay'; // 경로는 실제 구조에 맞게 수정해주세요
 import JoinConfirmationModal from '@/components/meetUp/JoinConfirmationModal';
 import JoinSuccessModal from '@/components/meetUp/JoinSuccessModal';
-import { meetingService } from '@/services/meetingService';
 
 const ParticipateDogPage = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -286,8 +285,14 @@ const ParticipateDogPage = () => {
             </div>
           )}
         </div>
-        <div onClick={handleJoinClick} className="p-2 bg-deep-coral">
-          <button className="w-full text-white py-2 rounded-lg font-bold">모임 가입</button>
+        <div className={`p-2 ${meetingDetail.isParticipate ? 'bg-gray-300' : 'bg-deep-coral'}`}>
+          <button
+            className="w-full text-white py-2 rounded-lg font-bold"
+            onClick={meetingDetail.isParticipate ? undefined : handleJoinClick}
+            disabled={meetingDetail.isParticipate}
+          >
+            {meetingDetail.isParticipate ? '이미 가입중인 모임입니다' : '모임 가입'}
+          </button>
         </div>
         <JoinConfirmationModal
           isOpen={showJoinModal}
