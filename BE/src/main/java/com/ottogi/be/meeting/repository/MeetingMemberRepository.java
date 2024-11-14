@@ -16,7 +16,7 @@ import java.util.List;
 public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Long> {
 
     @Query("""
-            SELECT NEW com.ottogi.be.dog.dto.response.FindDogProfileImage(d.id, d.profileImage)
+            SELECT NEW com.ottogi.be.dog.dto.response.FindDogProfileImage(d.id, d.member.id, d.profileImage)
             FROM MeetingMember mm
             JOIN Dog d ON d.id = mm.dog.id
             WHERE mm.meeting.id = :meetingId

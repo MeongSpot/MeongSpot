@@ -1,27 +1,26 @@
 package com.ottogi.be.meeting.dto.request;
 
-import com.ottogi.be.meeting.dto.JoinMeetingDto;
+import com.ottogi.be.meeting.dto.ModifyMeetingDogDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class JoinMeetingRequest {
+public class ModifyMeetingDogRequest {
+    private Long meetingId;
     @NotEmpty
     @Size(min = 1)
-    List<Long> dogIds;
+    private List<Long> dogIds;
 
-    public JoinMeetingDto toDto(Long meetingId, String loginId) {
-        return JoinMeetingDto.builder()
+    public ModifyMeetingDogDto toDto(String loginId) {
+        return ModifyMeetingDogDto.builder()
+                .loginId(loginId)
                 .meetingId(meetingId)
                 .dogIds(dogIds)
-                .loginId(loginId)
                 .build();
     }
 }

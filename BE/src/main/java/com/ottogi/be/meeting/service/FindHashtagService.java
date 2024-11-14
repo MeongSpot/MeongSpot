@@ -6,6 +6,7 @@ import com.ottogi.be.meeting.repository.HashTagRepository;
 import com.ottogi.be.meeting.repository.MeetingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class FindHashtagService {
     private final MeetingRepository meetingRepository;
     private final HashTagRepository hashTagRepository;
 
+    @Transactional(readOnly = true)
     public List<String> findHashTag(Long meetingId) {
         Meeting meeting = meetingRepository.findById(meetingId)
                 .orElseThrow(MeetingNotFoundException::new);

@@ -7,5 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FindDogProfileImage {
     private Long dogId;
+    private Long memberId;
     private String profileImage;
 }

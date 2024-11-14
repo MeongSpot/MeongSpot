@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Builder
-public class JoinMeetingDto {
+public class ModifyMeetingDogDto {
+    private String loginId;
     private Long meetingId;
     private List<Long> dogIds;
-    private String loginId;
 }

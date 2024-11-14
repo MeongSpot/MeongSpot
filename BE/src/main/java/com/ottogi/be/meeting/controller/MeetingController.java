@@ -2,12 +2,10 @@ package com.ottogi.be.meeting.controller;
 
 import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
-import com.ottogi.be.meeting.dto.CreateMeetingDto;
-import com.ottogi.be.meeting.dto.JoinMeetingDto;
-import com.ottogi.be.meeting.dto.LeaveMeetingDto;
-import com.ottogi.be.meeting.dto.MeetingDto;
+import com.ottogi.be.meeting.dto.*;
 import com.ottogi.be.meeting.dto.request.CreateMeetingRequest;
 import com.ottogi.be.meeting.dto.request.JoinMeetingRequest;
+import com.ottogi.be.meeting.dto.request.ModifyMeetingDogRequest;
 import com.ottogi.be.meeting.dto.response.FindMeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingTopResponse;
@@ -31,6 +29,7 @@ public class MeetingController {
     private final FindMeetingService findMeetingService;
     private final FindHashtagService findHashtagService;
     private final LeaveMeetingService leaveMeetingService;
+    private final ModifyMeetingDogService modifyMeetingDogService;
 
     @PostMapping
     public ResponseEntity<?> meetingAdd(@Valid @RequestBody CreateMeetingRequest createMeetingRequest,
@@ -41,9 +40,9 @@ public class MeetingController {
 
     @PostMapping("/{meetingId}")
     public ResponseEntity<?> meetingJoin(@PathVariable Long meetingId,
-                                         @Valid @RequestBody JoinMeetingRequest joinMeetingRequest,
+                                         @Valid @RequestBody JoinMeetingRequest request,
                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws ExecutionException, InterruptedException {
-        joinMeetingService.joinMeeting(JoinMeetingDto.toDto(meetingId, joinMeetingRequest, loginMemberInfo.getLoginId()));
+        joinMeetingService.joinMeeting(request.toDto(meetingId, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("MT101", "모임 참여 성공", null));
     }
 
@@ -77,6 +76,13 @@ public class MeetingController {
                                           @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
         leaveMeetingService.leaveMeeting(new LeaveMeetingDto(meetingId, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("MT106", "모임 나가기 성공", null));
+    }
+
+    @PutMapping("/dog")
+    public ResponseEntity<?> meetingDogModify(@Valid @RequestBody ModifyMeetingDogRequest request,
+                                              @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        modifyMeetingDogService.modifyMeetingDog(request.toDto(loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("MT107", "모임 참여 반려견 변경", null));
     }
 
 }
