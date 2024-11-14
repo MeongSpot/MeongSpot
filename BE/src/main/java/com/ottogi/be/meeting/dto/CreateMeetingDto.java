@@ -2,7 +2,6 @@ package com.ottogi.be.meeting.dto;
 
 import com.ottogi.be.chat.domain.ChatRoom;
 import com.ottogi.be.meeting.domain.Meeting;
-import com.ottogi.be.meeting.dto.request.CreateMeetingRequest;
 import com.ottogi.be.spot.domain.Spot;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,22 +28,6 @@ public class CreateMeetingDto {
     private List<String> hashtag;
     private int maxParticipants;
     private List<Long> dogIds;
-
-    public static CreateMeetingDto toDto(CreateMeetingRequest request, String loginId) {
-        return CreateMeetingDto.builder()
-                .spotId(request.getSpotId())
-                .loginId(loginId)
-                .title(request.getTitle())
-                .date(request.getDate())
-                .hour(request.getHour())
-                .minute(request.getMinute())
-                .detailLocation(request.getDetailLocation())
-                .information(request.getInformation())
-                .hashtag(request.getHashtag())
-                .maxParticipants(request.getMaxParticipants())
-                .dogIds(request.getDogs())
-                .build();
-    }
 
     public Meeting toEntity(Spot spot, ChatRoom chatRoom, LocalDateTime date) {
         return Meeting.builder()

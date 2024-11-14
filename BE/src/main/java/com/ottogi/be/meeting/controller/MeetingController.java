@@ -33,9 +33,9 @@ public class MeetingController {
     private final ModifyMeetingDogService modifyMeetingDogService;
 
     @PostMapping
-    public ResponseEntity<?> meetingAdd(@Valid @RequestBody CreateMeetingRequest createMeetingRequest,
+    public ResponseEntity<?> meetingAdd(@Valid @RequestBody CreateMeetingRequest request,
                                         @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
-        createMeetingService.addMeeting(CreateMeetingDto.toDto(createMeetingRequest, loginMemberInfo.getLoginId()));
+        createMeetingService.addMeeting(request.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("MT100", "모임 생성 성공", null));
     }
 

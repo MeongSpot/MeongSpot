@@ -23,7 +23,7 @@ import java.net.URISyntaxException;
 
 @Service
 @RequiredArgsConstructor
-public class DogService {
+public class RegisterDogService {
 
     private final AwsS3Service awsS3Service;
     private final MemberRepository memberRepository;

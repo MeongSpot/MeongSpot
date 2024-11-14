@@ -1,10 +1,9 @@
 package com.ottogi.be.meeting.service;
 
 import com.ottogi.be.dog.domain.Dog;
-import com.ottogi.be.dog.exception.DogOwnerMismatchException;
 import com.ottogi.be.dog.repository.DogRepository;
+import com.ottogi.be.dog.service.CheckOwnerService;
 import com.ottogi.be.meeting.domain.Meeting;
-import com.ottogi.be.meeting.domain.MeetingMember;
 import com.ottogi.be.meeting.dto.ModifyMeetingDogDto;
 import com.ottogi.be.meeting.exception.MeetingNotFoundException;
 import com.ottogi.be.meeting.exception.MemberNotInMeetingException;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +26,8 @@ public class ModifyMeetingDogService {
     private final MeetingRepository meetingRepository;
     private final MeetingMemberRepository meetingMemberRepository;
     private final DogRepository dogRepository;
+    private final CheckOwnerService checkOwnerService;
+    private final SaveMeetingMemberService saveMeetingMemberService;
 
     @Transactional
     public void modifyMeetingDog(ModifyMeetingDogDto dto) {
@@ -40,19 +40,9 @@ public class ModifyMeetingDogService {
 
         meetingMemberRepository.deleteAllByMemberAndMeeting(member, meeting);
 
-        List<Long> dogIds = dto.getDogIds();
-        if (!dogRepository.isOwner(member, dogIds, dogIds.size())) throw new DogOwnerMismatchException();
+        List<Dog> dogList = dogRepository.findAllById(dto.getDogIds());
+        checkOwnerService.checkIsOwner(member, dogList);
 
-        List<Dog> dogs = dogRepository.findAllById(dogIds);
-        List<MeetingMember> meetingMemberList = new ArrayList<>();
-        for (Dog dog : dogs) {
-            MeetingMember meetingMember = MeetingMember.builder()
-                    .meeting(meeting)
-                    .member(member)
-                    .dog(dog)
-                    .build();
-            meetingMemberList.add(meetingMember);
-        }
-        meetingMemberRepository.saveAll(meetingMemberList);
+        saveMeetingMemberService.saveMeetingMember(meeting, member, dogList);
     }
 }

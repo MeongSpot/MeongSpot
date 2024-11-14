@@ -1,16 +1,15 @@
 package com.ottogi.be.meeting.dto.request;
 
+import com.ottogi.be.meeting.dto.CreateMeetingDto;
 import com.ottogi.be.meeting.validation.annotation.Hashtag;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
 public class CreateMeetingRequest {
     @NotNull
@@ -36,6 +35,22 @@ public class CreateMeetingRequest {
     private Integer maxParticipants;
     @NotEmpty
     @Size(min = 1)
-    private List<Long> dogs;
+    private List<Long> dogIds;
     private String information;
+
+    public CreateMeetingDto toDto(String loginId) {
+        return CreateMeetingDto.builder()
+                .spotId(spotId)
+                .loginId(loginId)
+                .title(title)
+                .date(date)
+                .hour(hour)
+                .minute(minute)
+                .detailLocation(detailLocation)
+                .hashtag(hashtag)
+                .maxParticipants(maxParticipants)
+                .dogIds(dogIds)
+                .information(information)
+                .build();
+    }
 }

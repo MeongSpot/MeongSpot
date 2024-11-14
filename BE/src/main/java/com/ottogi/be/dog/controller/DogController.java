@@ -27,7 +27,7 @@ public class DogController {
 
     private final BreedService breedService;
     private final PersonalityService personalityService;
-    private final DogService dogService;
+    private final RegisterDogService registerDogService;
     private final FindDogService findDogService;
     private final FindMeetingDogService findMeetingDogService;
     private final DeleteDogService deleteDogService;
@@ -53,7 +53,7 @@ public class DogController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> dogAdd(@Valid @ModelAttribute DogAddRequest dogAddRequest,
                                     @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws IOException {
-        dogService.addDog(dogAddRequest.toDto(loginMemberInfo.getLoginId()));
+        registerDogService.addDog(dogAddRequest.toDto(loginMemberInfo.getLoginId()));
         return new ResponseEntity<>(new ApiResponse<>("DO103", "반려견 등록 성공", null), HttpStatus.CREATED);
     }
 
@@ -73,7 +73,7 @@ public class DogController {
     public ResponseEntity<?> dogModify(@Valid @ModelAttribute DogModifyRequest dogModifyRequest,
                                        @PathVariable Long dogId,
                                        @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws URISyntaxException, IOException {
-        dogService.modifyDog(dogModifyRequest.toDto(loginMemberInfo.getLoginId(), dogId));
+        registerDogService.modifyDog(dogModifyRequest.toDto(loginMemberInfo.getLoginId(), dogId));
         return ResponseEntity.ok(new ApiResponse<>("DO105", "반려견 정보 수정 성공", null));
     }
 
