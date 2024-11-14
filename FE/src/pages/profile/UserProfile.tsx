@@ -23,7 +23,7 @@ const UserProfile: React.FC = () => {
   const { userData, isLoading, getUserProfile } = useProfile();
   const { userDogs, getUserDogs } = useDog();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { deleteFriend } = useFriend();
+  const { deleteFriend, requestFriend, requestFriendResponse, isRequestFriendModalOpen, setIsRequestFriendModalOpen } = useFriend();
   const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
 
   const handleDeleteFriend = useCallback(
@@ -34,6 +34,11 @@ const UserProfile: React.FC = () => {
     },
     [deleteFriend, getUserProfile, id],
   );
+
+  const handleRequestFriend = useCallback(() => {
+    requestFriend(Number(id));
+    getUserProfile(Number(id));
+  }, [requestFriend, getUserProfile, id]);
 
   useEffect(() => {
     getUserProfile(Number(id));
@@ -108,7 +113,7 @@ const UserProfile: React.FC = () => {
 
           <div className="grid grid-cols-2 items-center gap-4">
             {userData.isFriend === false ? (
-              <button className="p-3 h-11 bg-deep-coral rounded-3xl">
+              <button onClick={handleRequestFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 신청</p>
               </button>
             ) : (
@@ -156,6 +161,21 @@ const UserProfile: React.FC = () => {
       </div>
 
       <div className="bg-zinc-100 w-full h-3"></div>
+
+      {/* 친구 요청 상태 모달 */}
+      {isRequestFriendModalOpen && (
+        <div className="p-5 fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white py-9 h-44 rounded-lg shadow-lg w-full flex flex-col items-center space-y-10">
+            <p className="font-medium">{requestFriendResponse}</p>
+            <button
+              onClick={() => setIsRequestFriendModalOpen(false)}
+              className="bg-deep-coral text-white px-4 py-2 rounded-lg"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
 
       {isDeleteModalOpen && (
         <FriendsDeleteModal

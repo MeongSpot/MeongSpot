@@ -29,4 +29,18 @@ export const friendService = {
       throw error;
     }
   },
+
+  // 친구 요청 신청
+  requestFriend: async (receiverId: number) => {
+    try {
+      const response = await axiosInstance.post(`/api/friends/invitation`, {
+        receiverId
+      });
+      if (response.data.code === 'FR101') {
+        return response.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  },
 };
