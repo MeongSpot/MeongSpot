@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import MyRoomListCard from '@/components/meetUp/MyRoomListCard';
-import RoomSortButton from '@/components/meetUp/RoomSortButton';
+import OrderSortButton from '@/components/meetUp/OrderSortButton';
 
 interface Event {
   id: number;
@@ -17,11 +17,9 @@ interface Event {
 }
 
 const MyMeetUpRoomPage = () => {
-  // sortBy 타입을 'latest' | 'oldest'로 명시
-  const [sortBy, setSortBy] = useState<'latest' | 'oldest'>('latest');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const navigate = useNavigate();
   const location = useLocation();
-  const animateBack = location.state?.animateBack ?? false;
 
   const [events, setEvents] = useState<Event[]>([
     {
@@ -48,15 +46,12 @@ const MyMeetUpRoomPage = () => {
     },
   ]);
 
-  // handleSortChange의 파라미터 타입도 명시
-  const handleSortChange = (sortType: 'latest' | 'oldest') => {
-    setSortBy(sortType as 'latest' | 'oldest');
-
+  const handleDirectionChange = (direction: 'asc' | 'desc') => {
+    setSortDirection(direction);
     const sortedEvents = [...events].sort((a, b) => {
       const dateA = new Date(`${a.date} ${a.time}`);
       const dateB = new Date(`${b.date} ${b.time}`);
-
-      return sortType === 'latest' ? dateB.getTime() - dateA.getTime() : dateA.getTime() - dateB.getTime();
+      return direction === 'asc' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
     });
 
     setEvents(sortedEvents);
@@ -72,7 +67,7 @@ const MyMeetUpRoomPage = () => {
       <hr className="my-4 -mx-4 w-screen" />
       <div className="flex justify-between items-center mb-4">
         <span className="text-gray-600">총 {events.length}개</span>
-        <RoomSortButton sortBy={sortBy} onSortChange={handleSortChange} />
+        <OrderSortButton direction={sortDirection} onDirectionChange={handleDirectionChange} />
       </div>
       <div className="space-y-4">
         {events.map((event) => (
@@ -86,9 +81,9 @@ const MyMeetUpRoomPage = () => {
     <AnimatePresence>
       {location.state?.animateBack ? (
         <motion.div
-          initial={{ x: 300, opacity: 0 }} // 항상 오른쪽에서 시작
-          animate={{ x: 0, opacity: 1 }} // 가운데로 이동
-          exit={{ x: 300, opacity: 0 }} // 왼쪽으로 퇴장
+          initial={{ x: 300, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: 300, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
         >
           {renderContent()}
