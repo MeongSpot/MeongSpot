@@ -7,18 +7,43 @@ import Mascot from '@/components/common/Logo/Mascot';
 import LogoText from '@/components/common/Logo/LogoText';
 import { useAuth } from '@/hooks/useAuth';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import { getToken } from 'firebase/messaging'; // Firebase getToken 함수 임포트
+import { messaging } from '@/firebaseConfig'; // Firebase messaging 설정 임포트
+import { authService } from '@/services/authService'; // 서비스에서 FCM 토큰 저장 로직 처리
 
 const LoginPage = () => {
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading, error } = useAuth(); // 로그인 관련 훅
+  const [fcmToken, setFcmToken] = useState<string | null>(null); // FCM 토큰 상태
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginId || !password) {
       return;
     }
-    await login(loginId, password);
+
+    try {
+      // FCM 토큰을 가져오는 작업
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_PUBLIC_VAPID_KEY, // 환경변수로 설정된 VAPID 키 사용
+      });
+
+      if (token) {
+        setFcmToken(token); // FCM 토큰을 상태에 저장
+        // 로그인 요청
+        await login(loginId, password, token);
+
+        // FCM 토큰을 서버로 저장하는 작업
+        await authService.saveFCMToken(token); // 서비스에서 FCM 토큰 저장 처리
+      } else {
+        console.error('FCM token could not be retrieved');
+        // FCM 토큰이 없으면 알림을 띄우거나, 처리할 수 있도록 조치합니다.
+      }
+    } catch (error) {
+      console.error('Error during login process', error);
+      // 오류 발생 시 적절한 처리를 추가합니다.
+    }
   };
 
   const inputClassName = 'py-4';
@@ -65,7 +90,7 @@ const LoginPage = () => {
             )}
 
             <div className="pt-2">
-              <PrimaryButton 
+              <PrimaryButton
                 type="submit"
                 className={buttonClassName}
                 disabled={isLoading}
