@@ -1,4 +1,5 @@
 import axiosInstance from '@/services/axiosInstance';
+import { AxiosError } from 'axios';
 import type {
   TopMeetingsResponse,
   MeetingListResponse,
@@ -8,6 +9,7 @@ import type {
   MeetingDetailResponse,
   HashtagResponse,
   DogImagesResponse,
+  JoinMeetingResponse,
 } from '@/types/meetup';
 
 export const meetingService = {
@@ -38,6 +40,22 @@ export const meetingService = {
         throw new Error(`Failed to fetch meetings: ${error.message}`);
       }
       throw new Error('Failed to fetch meetings');
+    }
+  },
+
+  joinMeeting: async (meetingId: string, dogIds: number[]) => {
+    try {
+      const response = await axiosInstance.post<JoinMeetingResponse>(`/api/meetings/${meetingId}`, { dogIds });
+      if (response.data.code === 'MT101') {
+        return response.data;
+      }
+      throw new Error(response.data.code);
+    } catch (error) {
+      if (error instanceof AxiosError && error.response) {
+        // 서버에서 반환한 에러 코드 사용
+        throw new Error(error.response.data.code);
+      }
+      throw error;
     }
   },
 
