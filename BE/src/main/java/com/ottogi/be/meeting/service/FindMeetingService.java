@@ -9,6 +9,9 @@ import com.ottogi.be.meeting.exception.MeetingNotFoundException;
 import com.ottogi.be.meeting.repository.HashTagRepository;
 import com.ottogi.be.meeting.repository.MeetingMemberRepository;
 import com.ottogi.be.meeting.repository.MeetingRepository;
+import com.ottogi.be.member.domain.Member;
+import com.ottogi.be.member.exception.MemberNotFoundException;
+import com.ottogi.be.member.repository.MemberRepository;
 import com.ottogi.be.spot.domain.Spot;
 import com.ottogi.be.spot.exception.SpotNotFoundException;
 import com.ottogi.be.spot.repository.SpotRepository;
@@ -31,6 +34,7 @@ public class FindMeetingService {
     private final MeetingRepository meetingRepository;
     private final HashTagRepository hashTagRepository;
     private final MeetingMemberRepository meetingMemberRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
     public List<MeetingResponse> findMeetingList(MeetingDto meetingDto) {
@@ -92,11 +96,15 @@ public class FindMeetingService {
     }
 
     @Transactional(readOnly = true)
-    public FindMeetingResponse findMeeting(Long meetingId) {
-        Meeting meeting = meetingRepository.findById(meetingId)
+    public FindMeetingResponse findMeeting(FindMeetingDto dto) {
+        Member member = memberRepository.findByLoginId(dto.getLoginId())
+                .orElseThrow(MemberNotFoundException::new);
+        Meeting meeting = meetingRepository.findById(dto.getMeetingId())
                 .orElseThrow(MeetingNotFoundException::new);
 
-        return FindMeetingResponse.from(meeting);
+        Boolean isParticipate = meetingMemberRepository.existsByMemberAndMeeting(member, meeting);
+
+        return FindMeetingResponse.of(meeting, isParticipate);
     }
 
     @Transactional

@@ -60,8 +60,9 @@ public class MeetingController {
     }
 
     @GetMapping("/{meetingId}/info")
-    public ResponseEntity<?> meetingDetails(@PathVariable Long meetingId) {
-        FindMeetingResponse result = findMeetingService.findMeeting(meetingId);
+    public ResponseEntity<?> meetingDetails(@PathVariable Long meetingId,
+                                            @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        FindMeetingResponse result = findMeetingService.findMeeting(new FindMeetingDto(meetingId, loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("MT104", "모임 상세 정보 조회 성공", result));
     }
 

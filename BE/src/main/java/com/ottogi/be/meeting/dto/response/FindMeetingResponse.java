@@ -19,8 +19,9 @@ public class FindMeetingResponse {
     private LocalDateTime meetingAt;
     private String detailLocation;
     private String information;
+    private Boolean isParticipate;
 
-    public static FindMeetingResponse from(Meeting meeting) {
+    public static FindMeetingResponse of(Meeting meeting, Boolean isParticipate) {
         return FindMeetingResponse.builder()
                 .title(meeting.getTitle())
                 .participants(meeting.getParticipants())
@@ -28,6 +29,7 @@ public class FindMeetingResponse {
                 .meetingAt(meeting.getMeetingAt())
                 .detailLocation(meeting.getDetailLocation())
                 .information(meeting.getInformation())
+                .isParticipate(isParticipate)
                 .build();
     }
 }
