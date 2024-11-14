@@ -90,7 +90,6 @@ const SingleChatPage = () => {
         messageType: 'text',
       };
       sendMessage(message, myId);
-      setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
       scrollToBottom();
     }

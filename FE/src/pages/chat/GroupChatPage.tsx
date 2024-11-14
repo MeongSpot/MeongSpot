@@ -86,7 +86,6 @@ const GroupChatPage = () => {
       };
 
       sendMessage(message, myId);
-      setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
       scrollToBottom();
     }
