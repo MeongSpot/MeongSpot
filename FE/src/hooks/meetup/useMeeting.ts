@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Meeting, OrderType, CreateMeetingRequest, MeetingDetailInfo, UseMeetingReturn } from '@/types/meetup';
+import type { Meeting, OrderType,DogImage, CreateMeetingRequest, MeetingDetailInfo, UseMeetingReturn } from '@/types/meetup';
 import { meetingService } from '@/services/meetingService';
 
 export const useMeeting = (): UseMeetingReturn => {
@@ -9,7 +9,7 @@ export const useMeeting = (): UseMeetingReturn => {
   const [error, setError] = useState<string | null>(null);
   const [meetingDetail, setMeetingDetail] = useState<MeetingDetailInfo | null>(null);
   const [hashtags, setHashtags] = useState<string[]>([]);
-  const [dogImages, setDogImages] = useState<string[]>([]);
+  const [dogImages, setDogImages] = useState<DogImage[]>([]);
 
   const fetchTopMeetings = useCallback(async (spotId: number) => {
     setIsLoading(true);
