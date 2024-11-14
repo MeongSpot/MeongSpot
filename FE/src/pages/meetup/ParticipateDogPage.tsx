@@ -74,28 +74,54 @@ const ParticipateDogPage = () => {
   }, [navigate]);
 
   const handleBack = useCallback(() => {
-    if (fromList) {
-      navigate(previousPath || -1, {
-        state: {
-          spotName,
-          fromDetail: true,
-        },
-      });
-    } else {
-      navigate(-1);
+    // MeetUpDogListPage에서 돌아온 경우
+    if (location.state?.fromDogList) {
+      if (fromModal) {
+        navigate('/meeting', { state: { animateBack: true } });
+      } else if (fromList) {
+        navigate(previousPath || -1, {
+          state: {
+            spotName,
+            fromDetail: true,
+          },
+        });
+      }
     }
-  }, [navigate, fromList, previousPath, spotName]);
+    // 일반적인 뒤로가기
+    else {
+      if (fromList) {
+        navigate(previousPath || -1, {
+          state: {
+            spotName,
+            fromDetail: true,
+          },
+        });
+      } else if (fromModal) {
+        navigate('/meeting', { state: { animateBack: true } });
+      } else {
+        navigate(-1);
+      }
+    }
+  }, [navigate, fromList, fromModal, previousPath, spotName, location.state]);
 
   const detailClick = useCallback(() => {
-    navigate(`/meetupdoglist/${roomId}`, { state: { animateBack: false } });
-  }, [navigate, roomId]);
+    navigate(`/meetupdoglist/${roomId}`, {
+      state: {
+        animateBack: false,
+        fromList, // 현재 페이지의 fromList 전달
+        fromModal, // fromModal 상태도 전달
+        previousPath, // 현재 페이지의 previousPath 전달
+        spotName, // 현재 페이지의 spotName 전달
+      },
+    });
+  }, [navigate, roomId, fromList, fromModal, previousPath, spotName]);
 
   // 뒤로가기 애니메이션 설정
   const backAnimation = animateBack
     ? {
-        initial: { x: -300 },
+        initial: { x: 300 },
         animate: { x: 0 },
-        exit: { x: 300 },
+        exit: { x: -300 },
         transition: {
           type: 'spring',
           stiffness: 300,
