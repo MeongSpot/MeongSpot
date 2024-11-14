@@ -17,7 +17,7 @@ const ParticipateDogPage = () => {
   const fromModal = location.state?.fromModal;
   const fromList = location.state?.fromList;
   const previousPath = location.state?.previousPath;
-  const animateBack = location.state?.animateBack ?? true;
+  const animateBack = location.state?.animateBack ?? false;
   const spotName = location.state?.spotName;
   const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
   const { meetingDetail, hashtags, dogImages, isLoading, error, fetchMeetingDetail } = useMeeting();
@@ -118,9 +118,9 @@ const ParticipateDogPage = () => {
   // 뒤로가기 애니메이션 설정
   const backAnimation = animateBack
     ? {
-        initial: { x: 300 },
+        initial: { x: -300 },
         animate: { x: 0 },
-        exit: { x: -300 },
+        exit: { x: 300 },
         transition: {
           type: 'spring',
           stiffness: 300,

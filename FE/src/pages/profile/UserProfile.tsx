@@ -21,6 +21,10 @@ const UserProfile: React.FC = () => {
   const { id, where } = useParams();
   const location = useLocation();
   const meetingId = (location.state as { meetingId?: number })?.meetingId;
+  const fromList = (location.state as { fromList?: boolean })?.fromList;
+  const fromModal = (location.state as { fromModal?: boolean })?.fromModal;
+  const previousPath = (location.state as { previousPath?: string })?.previousPath;
+  const spotName = (location.state as { spotName?: string })?.spotName;
   const navigate = useNavigate();
   const { userData, isLoading, getUserProfile } = useProfile();
   const { userDogs, getUserDogs } = useDog();
@@ -68,7 +72,7 @@ const UserProfile: React.FC = () => {
         <IoChevronBack
           onClick={() => {
             if (where === 'meetingparticipants') {
-              navigate(`/meetupdoglist/${meetingId}`, { state: { animateBack: true } });
+              navigate(`/meetupdoglist/${meetingId}`, { state: { animateBack: true, fromList, fromModal, previousPath, spotName } });
             } else {
               navigate(-1);
             }

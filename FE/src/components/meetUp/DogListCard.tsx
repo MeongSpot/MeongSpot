@@ -8,9 +8,13 @@ import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
 interface DogCardProps {
   member: MeetingParticipantsInfo;
   meetingId: number;
+  fromList?: boolean;
+  fromModal?: boolean;
+  previousPath?: string;
+  spotName?: string;
 }
 
-const DogCard = ({ member, meetingId }: DogCardProps) => {
+const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotName }: DogCardProps) => {
   const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
   const { meetingDogs, getMeetingDogs } = useDog();
@@ -20,6 +24,18 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
       getMeetingDogs(meetingId, member.memberId);
     }
     setShowDetails((prev) => !prev);
+  };
+
+  const profileDetailClick = () => {
+    navigate(`/profile/${member.memberId}/meetingparticipants`, {
+      state: {
+        meetingId: meetingId,
+        fromList: fromList,
+        fromModal: fromModal,
+        previousPath: previousPath,
+        spotName: spotName,
+      },
+    });
   };
 
   // 생일을 기반으로 나이를 계산하는 함수
@@ -41,7 +57,7 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
           <img
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/profile/${member.memberId}/meetingparticipants`, { state: { meetingId : meetingId } });
+              profileDetailClick();
             }}
             src={member.profileImage || '/icons/favicon/favicon-96x96.png'}
             alt=""
