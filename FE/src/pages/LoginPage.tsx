@@ -22,29 +22,40 @@ const LoginPage = () => {
     if (!loginId || !password) {
       return;
     }
-
+  
     try {
-      // FCM 토큰을 가져오는 작업
-      const token = await getToken(messaging, {
-        vapidKey: import.meta.env.VITE_PUBLIC_VAPID_KEY, // 환경변수로 설정된 VAPID 키 사용
-      });
-
-      if (token) {
-        setFcmToken(token); // FCM 토큰을 상태에 저장
-        // 로그인 요청
-        await login(loginId, password, token);
-
-        // FCM 토큰을 서버로 저장하는 작업
-        await authService.saveFCMToken(token); // 서비스에서 FCM 토큰 저장 처리
+      let token: string | null = null;
+  
+      // 알림 권한 상태 확인 및 FCM 토큰 요청
+      if (Notification.permission === 'default') {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          token = await getToken(messaging, {
+            vapidKey: import.meta.env.VITE_PUBLIC_VAPID_KEY,
+          });
+        } else {
+          console.warn('알림 권한이 거부되었습니다. FCM 토큰 없이 로그인합니다.');
+        }
+      } else if (Notification.permission === 'granted') {
+        token = await getToken(messaging, {
+          vapidKey: import.meta.env.VITE_PUBLIC_VAPID_KEY,
+        });
       } else {
-        console.error('FCM token could not be retrieved');
-        // FCM 토큰이 없으면 알림을 띄우거나, 처리할 수 있도록 조치합니다.
+        console.warn('알림 권한이 차단되었습니다. FCM 토큰 없이 로그인합니다.');
+      }
+  
+      // 로그인 요청
+      if (token) {
+        await login(loginId, password, token); // token이 있을 때만 전달
+        await authService.saveFCMToken(token); // FCM 토큰이 있는 경우에만 서버에 저장
+      } else {
+        await login(loginId, password); // token 없이 로그인 호출
       }
     } catch (error) {
-      console.error('Error during login process', error);
-      // 오류 발생 시 적절한 처리를 추가합니다.
+      console.error('로그인 과정에서 오류 발생:', error);
     }
   };
+  
 
   const inputClassName = 'py-4';
   const buttonClassName = 'py-4';
@@ -83,18 +94,10 @@ const LoginPage = () => {
               className={inputClassName}
             />
 
-            {error && (
-              <div className="text-sm text-red-500 px-1">
-                {error}
-              </div>
-            )}
+            {error && <div className="text-sm text-red-500 px-1">{error}</div>}
 
             <div className="pt-2">
-              <PrimaryButton
-                type="submit"
-                className={buttonClassName}
-                disabled={isLoading}
-              >
+              <PrimaryButton type="submit" className={buttonClassName} disabled={isLoading}>
                 로그인
               </PrimaryButton>
             </div>

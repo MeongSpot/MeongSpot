@@ -151,7 +151,7 @@ export const useAuth = () => {
   };
 
 
-  const login = async (loginId: string, password: string, token:string) => {
+  const login = async (loginId: string, password: string, token?:string) => {
     setIsLoading(true);
     setError(null);
     
