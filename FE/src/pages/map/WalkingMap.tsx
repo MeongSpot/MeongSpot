@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Map, CustomOverlayMap, MapMarker } from 'react-kakao-maps-sdk';
+import { Map, CustomOverlayMap, MapMarker, Polyline } from 'react-kakao-maps-sdk';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import WalkStartModal from '@/components/map/WalkStartModal';
 import WalkingStatusModal from '@/components/map/WalkingStatusModal';
@@ -34,8 +34,8 @@ const SPOT_IMAGES = {
 
 const WalkingMap = () => {
   const navigate = useNavigate();
-  const { currentPosition: contextPosition, isCompassMode, heading, isMobile } = useOutletContext<ContextType>();
-  const { startWalking, endWalking, totalDistance, isWalking, currentPosition } = useWalking();
+  const { currentPosition: contextPosition, isCompassMode, heading } = useOutletContext<ContextType>();
+  const { startWalking, endWalking, totalDistance, isWalking, currentPosition, pathCoordinates } = useWalking();
 
   const [center, setCenter] = useState<LatLng>(contextPosition);
   const [mapLevel, setMapLevel] = useState(3);
@@ -111,7 +111,6 @@ const WalkingMap = () => {
     setIsCompleteModalOpen(false);
     setWalkSeconds(0);
     setSelectedDogs([]);
-    navigate('/');
   };
 
   useEffect(() => {
@@ -134,6 +133,11 @@ const WalkingMap = () => {
           zoomable={false}
           draggable={false}
         >
+          {/* 경로 표시 */}
+          {isWalking && pathCoordinates.length > 1 && (
+            <Polyline path={pathCoordinates} strokeWeight={5} strokeColor="#F25C54" strokeOpacity={0.7} />
+          )}
+
           {isCompassMode ? (
             <CustomOverlayMap position={currentPosition || contextPosition}>
               <div
@@ -142,8 +146,8 @@ const WalkingMap = () => {
                   width: '70px',
                   height: '70px',
                   position: 'absolute',
-                  left: '-35px', // width의 절반
-                  bottom: '0px', // height의 절반
+                  left: '-35px',
+                  bottom: '0px',
                 }}
               >
                 <div
@@ -163,7 +167,7 @@ const WalkingMap = () => {
         </Map>
       </div>
 
-      {/* 모달들 */}
+      {/* 모달 컴포넌트들 */}
       <WalkStartModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -14,7 +14,9 @@ const MapPage = () => {
   const navigate = useNavigate();
   const [searchKeyword, setSearchKeyword] = useState('');
   const [currentLocation, setCurrentLocation] = useState('');
-  const [currentPosition, setCurrentPosition] = useState<LatLng>({ lat: 36.0970625, lng: 128.4019375 });
+  // 기본 위치를 더 정확한 좌표로 설정
+  const [currentPosition, setCurrentPosition] = useState<LatLng>({ lat: 36.1075658, lng: 128.415778 });
+  const [locationError, setLocationError] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
   const [isCompassMode, setIsCompassMode] = useState(false);
   const [heading, setHeading] = useState<number | null>(null);
@@ -24,25 +26,53 @@ const MapPage = () => {
   // 모바일 디바이스 체크
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-  // 현재 위치 가져오기
+  // 현재 위치 가져오기 로직 개선
   const getCurrentLocation = useCallback(() => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      setLocationError(true);
+      return;
+    }
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setCurrentPosition({ lat: latitude, lng: longitude });
+    // 위치 권한 확인
+    const checkLocationPermission = async () => {
+      try {
+        const permission = await navigator.permissions.query({ name: 'geolocation' });
+        if (permission.state === 'denied') {
+          setLocationError(true);
+          return;
+        }
+      } catch (error) {
+        console.error('Permission check failed:', error);
+      }
 
-        const geocoder = new window.kakao.maps.services.Geocoder();
-        geocoder.coord2Address(longitude, latitude, (result, status) => {
-          if (status === window.kakao.maps.services.Status.OK && result[0]) {
-            setCurrentLocation(result[0].address.address_name);
-          }
-        });
-      },
-      () => setCurrentLocation('위치를 가져올 수 없습니다'),
-      { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 },
-    );
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          console.log('Location found:', { lat: latitude, lng: longitude });
+          setCurrentPosition({ lat: latitude, lng: longitude });
+          setLocationError(false);
+
+          const geocoder = new window.kakao.maps.services.Geocoder();
+          geocoder.coord2Address(longitude, latitude, (result, status) => {
+            if (status === window.kakao.maps.services.Status.OK && result[0]) {
+              setCurrentLocation(result[0].address.address_name);
+            }
+          });
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          setLocationError(true);
+          setCurrentLocation('위치를 가져올 수 없습니다');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        },
+      );
+    };
+
+    checkLocationPermission();
   }, []);
 
   // 위치 추적 시작
@@ -99,9 +129,41 @@ const MapPage = () => {
     };
   }, [isMobile]);
 
-  // 초기 위치 가져오기
+  // 초기 위치 가져오기 effect 수정
   useEffect(() => {
-    getCurrentLocation();
+    let mounted = true;
+
+    const initializeLocation = async () => {
+      try {
+        if (!navigator.geolocation) {
+          setLocationError(true);
+          return;
+        }
+
+        // 위치 권한 상태 확인
+        const permission = await navigator.permissions.query({ name: 'geolocation' });
+
+        if (permission.state === 'granted' && mounted) {
+          getCurrentLocation();
+        } else if (permission.state === 'prompt' && mounted) {
+          // 권한 요청 대기 상태일 때도 getCurrentLocation 실행
+          getCurrentLocation();
+        } else if (mounted) {
+          setLocationError(true);
+        }
+      } catch (error) {
+        console.error('Location initialization error:', error);
+        if (mounted) {
+          setLocationError(true);
+        }
+      }
+    };
+
+    initializeLocation();
+
+    return () => {
+      mounted = false;
+    };
   }, [getCurrentLocation]);
 
   // Walking 모드 체크 및 자동 트래킹 시작
