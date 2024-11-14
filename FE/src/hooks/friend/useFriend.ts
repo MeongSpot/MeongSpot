@@ -50,7 +50,6 @@ export const useFriend = () => {
       if (response.code === "FR101") {
         setRequestFriendResponse("친구 요청을 보냈습니다.");
       }
-      console.log("response", response);
     } catch (error: any) {
       if (error.response && error.response.data) {
         const { code } = error.response.data;
