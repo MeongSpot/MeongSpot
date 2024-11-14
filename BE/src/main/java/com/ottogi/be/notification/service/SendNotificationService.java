@@ -15,6 +15,7 @@ import static com.google.firebase.messaging.Notification.builder;
 @RequiredArgsConstructor
 public class SendNotificationService {
 
+    @Transactional
     public void sendNotification(String targetToken, String title, String body) throws ExecutionException, InterruptedException {
         log.info("Preparing to send notification. Title: {}, Body: {}, Target Token: {}", title, body, targetToken);  // 메세지 로그
         Message message = Message.builder()
