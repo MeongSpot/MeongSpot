@@ -29,7 +29,8 @@ const UserProfile: React.FC = () => {
   const { userData, isLoading, getUserProfile } = useProfile();
   const { userDogs, getUserDogs } = useDog();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { deleteFriend, requestFriend, requestFriendResponse, isRequestFriendModalOpen, setIsRequestFriendModalOpen } = useFriend();
+  const { deleteFriend, requestFriend, requestFriendResponse, isRequestFriendModalOpen, setIsRequestFriendModalOpen } =
+    useFriend();
   const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
   const { respondToInvitation, loading: friendLoading, error, successMessage } = useAddFriend();
 
@@ -72,7 +73,9 @@ const UserProfile: React.FC = () => {
         <IoChevronBack
           onClick={() => {
             if (where === 'meetingparticipants') {
-              navigate(`/meetupdoglist/${meetingId}`, { state: { animateBack: true, fromList, fromModal, previousPath, spotName } });
+              navigate(`/meetupdoglist/${meetingId}`, {
+                state: { animateBack: true, fromList, fromModal, previousPath, spotName },
+              });
             } else {
               navigate(-1);
             }
@@ -110,24 +113,26 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 items-center space-x-2">
-            {userData.isFriend === false ? (
-              <button onClick={handleRequestFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
-                <p className="text-white text-sm font-semibold">친구 신청</p>
+          {userData.isMe === false && (
+            <div className="grid grid-cols-2 items-center space-x-2">
+              {userData.isFriend === false ? (
+                <button onClick={handleRequestFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
+                  <p className="text-white text-sm font-semibold">친구 신청</p>
+                </button>
+              ) : (
+                <button onClick={() => setIsDeleteModalOpen(true)} className="p-3 h-11 bg-deep-coral rounded-3xl">
+                  <p className="text-white text-sm font-semibold">친구 삭제</p>
+                </button>
+              )}
+              <button
+                onClick={() => createChatRoom(Number(id))}
+                className="flex justify-center items-center space-x-3 p-3 h-11 bg-zinc-600 rounded-3xl"
+              >
+                <IoChatbubbleEllipsesOutline className="text-white font-bold" size={25} />
+                <p className="text-white text-sm font-semibold">1:1 채팅</p>
               </button>
-            ) : (
-              <button onClick={() => setIsDeleteModalOpen(true)} className="p-3 h-11 bg-deep-coral rounded-3xl">
-                <p className="text-white text-sm font-semibold">친구 삭제</p>
-              </button>
-            )}
-            <button
-              onClick={() => createChatRoom(Number(id))}
-              className="flex justify-center items-center space-x-3 p-3 h-11 bg-zinc-600 rounded-3xl"
-            >
-              <IoChatbubbleEllipsesOutline className="text-white font-bold" size={25} />
-              <p className="text-white text-sm font-semibold">1:1 채팅</p>
-            </button>
-          </div>
+            </div>
+          )}
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
         </div>
