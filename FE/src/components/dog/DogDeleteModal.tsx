@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect } from 'react';
 
 interface FriendsDeleteModalProps {
   isOpen: boolean;
@@ -7,9 +7,10 @@ interface FriendsDeleteModalProps {
 }
 
 const DogDeleteModal = ({ isOpen, onClose, onConfirm }: FriendsDeleteModalProps) => {
+
   return (
     <div
-      className={`fixed inset-0 z-30 flex justify-center items-center transition-opacity duration-300 ${
+      className={`max-h-screen fixed inset-0 bg-black bg-opacity-50 z-30 flex justify-center items-center transition-opacity duration-300 ${
         isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
     >
@@ -18,8 +19,8 @@ const DogDeleteModal = ({ isOpen, onClose, onConfirm }: FriendsDeleteModalProps)
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6 text-center">
-          <h3 className="text-lg font-bold text-gray-800">친구 삭제</h3>
-          <p className="text-gray-600 mt-2">정말로 친구를 삭제하시겠습니까?</p>
+          <h3 className="text-lg font-bold text-gray-800">반려견 삭제</h3>
+          <p className="text-gray-600 mt-2">정말로 반려견을 삭제하시겠습니까?</p>
         </div>
 
         <div className="flex border-t border-gray-300">

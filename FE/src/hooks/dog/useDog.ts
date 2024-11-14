@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dogService } from '@/services/dogService';
 import { DogList, DogName } from '@/types/dogInfo';
+import { set } from 'lodash';
 
 export const useDog = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ export const useDog = () => {
   const [myDogsName, setMyDogsName] = useState<DogName[]>([]);
   const [dogDetail, setDogDetail] = useState<DogList | null>(null);
   const [meetingDogs, setMeetingDogs] = useState<DogList[]>([]);
+  const [dogDeleteMessage, setDogDeleteMessage] = useState<string | null>(null);
 
   // 반려견 품종 목록 조회
   const getDogBreeds = async () => {
@@ -130,5 +132,25 @@ export const useDog = () => {
     }
   };
 
-  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs, updateDog, getMeetingDogs, meetingDogs};
+  // 반려견 삭제
+  const deleteDog = async (dogId: number) => {
+    setIsLoading(true);
+    try {
+      await dogService.deleteDog(dogId);
+      setDogDeleteMessage('반려견이 삭제되었습니다.');
+    } catch (error: any) {
+      if (error.response && error.response.data) {
+        const { code } = error.response.data;
+        if (code === 'DO004') {
+          setDogDeleteMessage('모임 참여 반려견');
+        }
+      } else {
+        console.error('Failed to delete dog:', error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs, updateDog, getMeetingDogs, meetingDogs, deleteDog, dogDeleteMessage };
 };

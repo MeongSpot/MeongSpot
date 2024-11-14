@@ -105,26 +105,15 @@ export const dogService = {
   },
 
   // 반려견 삭제
-  // deleteDog: async (dogId: number) => {
-  //   try {
-  //     const response = await axiosInstance.delete(`/api/dogs/${dogId}`);
-  //     if (response.data.code === 'DO106') {
-  //       return response.data;
-  //     }
-  //     if (response.data.code === 'ME003') {
-  //       throw new Error('사용자 조회 실패');
-  //     }
-  //     if (response.data.code === 'DO002') {
-  //       throw new Error('반려견 조회 실패');
-  //     }
-  //     if (response.data.code === 'DO003') {
-  //       throw new Error('반려견 주인 매칭 실패');
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to delete dog:', error);
-  //     throw error;
-  //   }
-  // },
+  deleteDog: async (dogId: number) => {
+    try {
+      const response = await axiosInstance.delete(`/api/dogs/${dogId}`);
+        return response.data;
+    } catch (error) {
+      console.error('Failed to delete dog:', error);
+      throw error;
+    }
+  },
 
   // 모임 참여 반려견 조회
   getMeetingDogs: async (meetingId: number, memberId: number) => {

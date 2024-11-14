@@ -10,17 +10,20 @@ import LoadingOverlay from '@/components/common/LoadingOverlay';
 import { PersonalityList } from '@/types/dogInfo';
 import DogDeleteModal from '@/components/dog/DogDeleteModal';
 import { is } from 'date-fns/locale';
+import DeleteConfirmModal from '@/components/dog/DeleteConfirmModal';
+import { set } from 'lodash';
 
 const UpdateDog = () => {
   const navigate = useNavigate();
   const { dogRegisterInfo, setDogRegisterInfo } = useDogInfoStore();
-  const { updateDog, isLoading, getDogDetail, dogDetail } = useDog();
+  const { updateDog, isLoading, getDogDetail, dogDetail, deleteDog, dogDeleteMessage } = useDog();
   const [isvalid, setIsValid] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const { id } = useParams();
 
   // 모달 관련 변수
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleteConfirmModalOpen, setIsDeleteConfirmModalOpen] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -115,8 +118,9 @@ const UpdateDog = () => {
   };
 
   const handleDeleteDog = useCallback((dogId: number) => {
-    // deleteDog(dogId);
+    deleteDog(dogId);
     setIsDeleteModalOpen(false);
+    setIsDeleteConfirmModalOpen(true);
   }, []);
 
   useEffect(() => {
@@ -205,6 +209,22 @@ const UpdateDog = () => {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    if (isDeleteModalOpen) {
+      document.documentElement.style.overflow = 'hidden'; // html 스크롤 막기
+      document.body.style.overflow = 'hidden'; // body 스크롤 막기
+    } else {
+      document.documentElement.style.overflow = ''; // 스크롤 복구
+      document.body.style.overflow = ''; // 스크롤 복구
+    }
+
+    // 컴포넌트 언마운트 시 스크롤 복구
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [isDeleteModalOpen]);
+
   if (isLoading) {
     return <LoadingOverlay message="로딩 중..." />;
   }
@@ -221,7 +241,12 @@ const UpdateDog = () => {
           />
         </div>
         <p className="text-center text-lg font-bold">반려견 수정</p>
-        <div className="flex justify-end items-center">
+        <div
+          onClick={() => {
+            setIsDeleteModalOpen(true);
+          }}
+          className="flex justify-end items-center"
+        >
           <p className="text-sm font-medium text-zinc-400">삭제하기</p>
         </div>
       </div>
@@ -275,6 +300,21 @@ const UpdateDog = () => {
           onConfirm={() => {
             handleDeleteDog(dogDetail.id);
           }}
+        />
+      )}
+
+      {/* 반려견 삭제 확인 모달 */}
+      {dogDetail && (
+        <DeleteConfirmModal
+          isOpen={isDeleteConfirmModalOpen}
+          onClose={() => {
+            setIsDeleteConfirmModalOpen(false);
+            navigate('/mypage');
+          }}
+          onConfirm={() => {
+            handleDeleteDog(dogDetail.id);
+          }}
+          message={dogDeleteMessage}
         />
       )}
     </div>
