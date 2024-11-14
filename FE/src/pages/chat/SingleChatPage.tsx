@@ -21,14 +21,18 @@ const SingleChatPage = () => {
   const [showLoading, setShowLoading] = useState(true);
   const [localMessages, setLocalMessages] = useState<Chat[]>([]);
 
-  const { messages: fetchedMessages, loading, error, isLastPage, myId } = useChatDetail(roomId, page);
-  const { sendMessage } = useChat(roomId);
+  const { messages: fetchedMessages, loading, error, isLastPage, myId, nickname, profileImage} = useChatDetail(roomId, page);
+  const { sendMessage } = useChat(roomId, nickname, profileImage);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView();
+      }
+    }, 50);
   };
 
   const handleScrollToTopLoad = useCallback(() => {
@@ -44,7 +48,7 @@ const SingleChatPage = () => {
       }, 100);
     }
   }, [loading, isLastPage]);
-
+  
   useEffect(() => {
     if (fetchedMessages.length > 0) {
       setLocalMessages((prevMessages) => {
@@ -58,7 +62,7 @@ const SingleChatPage = () => {
       if (page === 0) scrollToBottom();
     }
   }, [fetchedMessages, page]);
-  
+
   useEffect(() => {
     const firstNonSenderMessage = localMessages.find((msg) => msg.senderId !== myId);
     if (firstNonSenderMessage) {
@@ -71,22 +75,24 @@ const SingleChatPage = () => {
     return () => clearTimeout(loadingTimeout);
   }, []);
 
+  // 새 메시지 전송
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
       const newMessage: Chat = { // 타입 명시
         senderId: myId,
         message,
         sentAt: new Date().toISOString(),
-        nickname: targetNickname,
-        profileImage: '/icons/favicon/android-icon-96x96.png',
+        nickname: nickname,
+        profileImage: profileImage,
         messageType: 'text',
       };
       sendMessage(message, myId);
-
       // 새 메시지를 로컬 상태에 추가하여 즉시 반영
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      scrollToBottom();
+      setTimeout(() => {
+        scrollToBottom(); // 100ms 후에 스크롤 이동
+      }, 100); // 필요에 따라 시간을 조정
     }
   };
 
@@ -95,6 +101,7 @@ const SingleChatPage = () => {
     navigate('/chat', { state: { animateBack: true } });
   };
 
+  // 날짜 형식화
   const formatDateLabel = (dateString: string): string => {
     const date = new Date(dateString);
     const today = new Date();
@@ -104,6 +111,7 @@ const SingleChatPage = () => {
     return format(date, 'yyyy년 M월 d일');
   };
 
+  // 날짜가 다른지 비교
   const isDifferentDate = (current: string, previous: string | null): boolean => {
     if (!previous) return true;
     const currentDate = new Date(current).toDateString();
@@ -153,7 +161,7 @@ const SingleChatPage = () => {
                 {!isSender && (
                   <div onClick={() => navigate(`/profile/${msg.senderId}`)}>
                     <img
-                      src={msg.profileImage || ''}
+                      src={msg.profileImage || '/icons/favicon/favicon-96x96.png'}
                       alt="Profile"
                       className="w-8 h-8 rounded-full object-cover mx-2"
                     />

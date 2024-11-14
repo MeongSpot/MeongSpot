@@ -8,7 +8,7 @@ const useChatDetail = (chatRoomId: number, page: number) => {
   const [error, setError] = useState<string | null>(null);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [myId, setMyId] = useState<number | null>(null);
-  const [nickname, setNickname] = useState<string | null>(null);
+  const [nickname, setNickname] = useState<string>('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
   useEffect(() => {
