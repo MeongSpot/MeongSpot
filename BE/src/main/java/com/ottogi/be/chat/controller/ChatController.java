@@ -57,7 +57,7 @@ public class ChatController {
 
     @GetMapping("/rooms/{chatRoomId}")
     public ResponseEntity<?> chatRoomDetails(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                             @PathVariable Long chatRoomId, @PageableDefault(size = 30) Pageable pageable) {
+                                             @PathVariable Long chatRoomId, @PageableDefault(size = 100) Pageable pageable) {
         FindChatRoomDto dto = FindChatRoomDto.builder()
                 .loginId(loginMemberInfo.getLoginId())
                 .chatRoomId(chatRoomId)
