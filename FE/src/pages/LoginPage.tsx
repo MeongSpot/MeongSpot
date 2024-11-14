@@ -7,19 +7,55 @@ import Mascot from '@/components/common/Logo/Mascot';
 import LogoText from '@/components/common/Logo/LogoText';
 import { useAuth } from '@/hooks/useAuth';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import { getToken } from 'firebase/messaging'; // Firebase getToken 함수 임포트
+import { messaging } from '@/firebaseConfig'; // Firebase messaging 설정 임포트
+import { authService } from '@/services/authService'; // 서비스에서 FCM 토큰 저장 로직 처리
 
 const LoginPage = () => {
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
-  const { login, isLoading, error } = useAuth();
+  const { login, isLoading, error } = useAuth(); // 로그인 관련 훅
+  const [fcmToken, setFcmToken] = useState<string | null>(null); // FCM 토큰 상태
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!loginId || !password) {
       return;
     }
-    await login(loginId, password);
+  
+    try {
+      let token: string | null = null;
+  
+      // 알림 권한 상태 확인 및 FCM 토큰 요청
+      if (Notification.permission === 'default') {
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          token = await getToken(messaging, {
+            vapidKey: import.meta.env.VITE_PUBLIC_VAPID_KEY,
+          });
+        } else {
+          console.warn('알림 권한이 거부되었습니다. FCM 토큰 없이 로그인합니다.');
+        }
+      } else if (Notification.permission === 'granted') {
+        token = await getToken(messaging, {
+          vapidKey: import.meta.env.VITE_PUBLIC_VAPID_KEY,
+        });
+      } else {
+        console.warn('알림 권한이 차단되었습니다. FCM 토큰 없이 로그인합니다.');
+      }
+  
+      // 로그인 요청
+      if (token) {
+        await login(loginId, password, token); // token이 있을 때만 전달
+        await authService.saveFCMToken(token); // FCM 토큰이 있는 경우에만 서버에 저장
+      } else {
+        await login(loginId, password); // token 없이 로그인 호출
+      }
+    } catch (error) {
+      console.error('로그인 과정에서 오류 발생:', error);
+    }
   };
+  
 
   const inputClassName = 'py-4';
   const buttonClassName = 'py-4';
@@ -58,18 +94,10 @@ const LoginPage = () => {
               className={inputClassName}
             />
 
-            {error && (
-              <div className="text-sm text-red-500 px-1">
-                {error}
-              </div>
-            )}
+            {error && <div className="text-sm text-red-500 px-1">{error}</div>}
 
             <div className="pt-2">
-              <PrimaryButton 
-                type="submit"
-                className={buttonClassName}
-                disabled={isLoading}
-              >
+              <PrimaryButton type="submit" className={buttonClassName} disabled={isLoading}>
                 로그인
               </PrimaryButton>
             </div>

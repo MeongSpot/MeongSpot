@@ -7,16 +7,16 @@ interface SortButtonsProps {
 }
 
 const RoomSortButton: React.FC<SortButtonsProps> = ({ sortBy, onSortChange }) => (
-  <div className="flex space-x-2">
+  <div className="flex space-x-2 font-semibold">
     <button
       onClick={() => onSortChange('latest')}
-      className={`px-3 py-1 rounded-full ${sortBy === 'latest' ? 'bg-cream-bg border-deep-coral' : 'bg-white'} border `}
+      className={`px-3 py-1 rounded-full ${sortBy === 'latest' ? 'bg-cream-bg border-deep-coral text-deep-coral' : 'bg-white'} border-2 `}
     >
       최신순
     </button>
     <button
       onClick={() => onSortChange('oldest')}
-      className={`px-3 py-1 rounded-full ${sortBy === 'oldest' ? 'bg-cream-bg border-deep-coral' : 'bg-white'} border`}
+      className={`px-3 py-1 rounded-full ${sortBy === 'oldest' ? 'bg-cream-bg border-deep-coral text-deep-coral' : 'bg-white'} border-2`}
     >
       남은 시간순
     </button>

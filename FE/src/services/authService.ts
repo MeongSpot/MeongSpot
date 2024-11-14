@@ -2,6 +2,9 @@ import axiosInstance from '@/services/axiosInstance';
 import type { ValidationResponse, AuthResponse, SignupRequest } from '@/types/auth';
 import type { SignupData } from '@/types/signup';
 import axios from 'axios';
+import { getToken } from 'firebase/messaging';
+import { messaging } from '@/firebaseConfig';  // Firebase 초기화 설정
+import useAuthStore from '@/store/useAuthStore';
 
 interface LoginResponse {
   code: string;
@@ -150,7 +153,7 @@ export const authService = {
     }
   },
 
-  login: async (loginId: string, password: string): Promise<LoginResponse> => {
+  login: async (loginId: string, password: string, token?:string): Promise<LoginResponse> => {
     try {
       const response = await axiosInstance.post('/api/auth/login', {
         loginId,
@@ -163,10 +166,39 @@ export const authService = {
         axiosInstance.defaults.headers.common['Authorization'] = authToken;
       }
 
+      // 로그인 후 FCM 토큰을 가져오고 서버에 저장
+      if (token) {
+        await authService.saveFCMToken(token); // FCM 토큰을 서버에 저장
+      }
+
       return response.data;
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
+    }
+  },
+
+  // FCM 토큰 저장 메서드
+  saveFCMToken: async (token:string) => {
+    try {
+      // Firebase에서 FCM 토큰을 가져옴
+      const fcmToken = await getToken(messaging, { vapidKey: import.meta.env.VITE_PUBLIC_VAPID_KEY });
+
+      if (fcmToken) {
+        // 서버로 FCM 토큰 저장 요청
+        useAuthStore.getState().setFcmToken(fcmToken);
+        const response = await axiosInstance.post('/api/notifications/fcm', { token: fcmToken });
+
+        if (response.data.code === "NO104") {
+          console.log('FCM 토큰이 성공적으로 저장되었습니다.');
+        } else {
+          console.error('FCM 토큰 저장 실패:', response.data.message);
+        }
+      } else {
+        console.error('FCM 토큰을 가져올 수 없습니다.');
+      }
+    } catch (error) {
+      console.error('FCM 토큰 저장 중 오류 발생:', error);
     }
   },
 

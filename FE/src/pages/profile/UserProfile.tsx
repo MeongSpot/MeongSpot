@@ -14,6 +14,7 @@ import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
 import { useFriend } from '@/hooks/friend/useFriend';
 import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
+import useAddFriend from '@/hooks/alarm/useAddFriend';
 
 const UserProfile: React.FC = () => {
   const { id, where } = useParams();
@@ -24,7 +25,8 @@ const UserProfile: React.FC = () => {
   const { userDogs, getUserDogs } = useDog();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const { deleteFriend } = useFriend();
-  const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
+  const { createChatRoom, loading: chatLoading, chatRoomData } = useSingleChatCreate();
+  const { respondToInvitation, loading: friendLoading, error, successMessage } = useAddFriend();
 
   const handleDeleteFriend = useCallback(
     (friendId: number) => {
@@ -34,6 +36,12 @@ const UserProfile: React.FC = () => {
     },
     [deleteFriend, getUserProfile, id],
   );
+
+  const handleAddFriend = () => {
+    if (id) {
+      respondToInvitation(Number(id), true);
+    }
+  };
 
   useEffect(() => {
     getUserProfile(Number(id));
@@ -46,15 +54,7 @@ const UserProfile: React.FC = () => {
     }
   }, [chatRoomData, navigate, userData]);
 
-  if (isLoading || chatLoading) {
-    return <LoadingOverlay message="로딩 중..." />;
-  }
-
-  if (!userData || !userDogs) {
-    return null;
-  }
-
-  if (isLoading) {
+  if (isLoading || chatLoading || friendLoading) {
     return <LoadingOverlay message="로딩 중..." />;
   }
 
@@ -106,9 +106,9 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 items-center gap-4">
+          <div className="grid grid-cols-2 items-center space-x-2">
             {userData.isFriend === false ? (
-              <button className="p-3 h-11 bg-deep-coral rounded-3xl">
+              <button onClick={handleAddFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 신청</p>
               </button>
             ) : (
@@ -124,6 +124,8 @@ const UserProfile: React.FC = () => {
               <p className="text-white text-sm font-semibold">1:1 채팅</p>
             </button>
           </div>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
         </div>
       </div>
 
@@ -162,7 +164,6 @@ const UserProfile: React.FC = () => {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={() => handleDeleteFriend(Number(id))}
-          isProfile={true}
         />
       )}
     </div>
