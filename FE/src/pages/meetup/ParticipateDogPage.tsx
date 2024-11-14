@@ -55,6 +55,29 @@ const ParticipateDogPage = () => {
     navigate(`/meetupdoglist/${roomId}`, { state: { animateBack: false } });
   }, [navigate, roomId]);
 
+  // 뒤로가기 애니메이션 설정
+  const backAnimation = animateBack
+    ? {
+        initial: { x: -300 },
+        animate: { x: 0 },
+        exit: { x: 300 },
+        transition: {
+          type: 'spring',
+          stiffness: 300,
+          damping: 30,
+        },
+      }
+    : {
+        initial: { x: 300 },
+        animate: { x: 0 },
+        exit: { x: -300 },
+        transition: {
+          type: 'spring',
+          stiffness: 300,
+          damping: 30,
+        },
+      };
+
   // 애니메이션 설정
   const slideAnimation = fromList
     ? {
@@ -104,14 +127,7 @@ const ParticipateDogPage = () => {
   return (
     <motion.div {...containerAnimation} className="absolute inset-0 z-50 bg-gray-100">
       <motion.div
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{
-          type: 'spring',
-          stiffness: 300,
-          damping: 35,
-        }}
+        {...backAnimation}
         className="absolute inset-0 bottom-0 top-0 bg-gray-200 overflow-hidden flex flex-col"
       >
         <div className="flex items-center bg-deep-coral text-white p-4">

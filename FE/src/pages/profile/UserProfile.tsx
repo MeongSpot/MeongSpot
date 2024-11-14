@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useParams, useOutletContext } from 'react-router-dom';
+import { useNavigate, useParams, useOutletContext, useLocation } from 'react-router-dom';
 import MyDogInfoCard from '@/components/mypage/MyDogInfoCard';
 import { IoChevronBack } from 'react-icons/io5';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -16,7 +16,9 @@ import { useFriend } from '@/hooks/friend/useFriend';
 import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
 
 const UserProfile: React.FC = () => {
-  const { id } = useParams();
+  const { id, where } = useParams();
+  const location = useLocation();
+  const meetingId = (location.state as { meetingId?: number })?.meetingId;
   const navigate = useNavigate();
   const { userData, isLoading, getUserProfile } = useProfile();
   const { userDogs, getUserDogs } = useDog();
@@ -28,20 +30,20 @@ const UserProfile: React.FC = () => {
     (friendId: number) => {
       deleteFriend(friendId);
       setIsDeleteModalOpen(false);
+      getUserProfile(Number(id));
     },
-    [deleteFriend],
+    [deleteFriend, getUserProfile, id],
   );
 
   useEffect(() => {
     getUserProfile(Number(id));
     getUserDogs(Number(id));
-  }, [id, handleDeleteFriend]);
+  }, [id]);
 
   useEffect(() => {
     if (chatRoomData) {
       navigate(`/chat/single/${chatRoomData}`, { state: { roomId: chatRoomData, friendName: userData?.nickname } });
     }
-    console.log({ state: { roomId: chatRoomData, friendName: userData?.nickname } })
   }, [chatRoomData, navigate, userData]);
 
   if (isLoading || chatLoading) {
@@ -65,7 +67,11 @@ const UserProfile: React.FC = () => {
       <div className="w-full p-4 grid grid-cols-3 items-center">
         <IoChevronBack
           onClick={() => {
-            navigate(-1);
+            if (where === 'meetingparticipants') {
+              navigate(`/meetupdoglist/${meetingId}`, { state: { animateBack: true } });
+            } else {
+              navigate(-1);
+            }
           }}
           className="text-2xl text-zinc-700"
         />
@@ -106,9 +112,7 @@ const UserProfile: React.FC = () => {
                 <p className="text-white text-sm font-semibold">친구 신청</p>
               </button>
             ) : (
-                <button
-                  onClick={() => setIsDeleteModalOpen(true)}
-                  className="p-3 h-11 bg-deep-coral rounded-3xl">
+              <button onClick={() => setIsDeleteModalOpen(true)} className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 삭제</p>
               </button>
             )}
