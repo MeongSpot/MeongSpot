@@ -7,6 +7,9 @@ import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useMeeting } from '@/hooks/meetup/useMeeting';
 import LoadingOverlay from '@/components/common/LoadingOverlay'; // 경로는 실제 구조에 맞게 수정해주세요
+import JoinConfirmationModal from '@/components/meetUp/JoinConfirmationModal';
+import JoinSuccessModal from '@/components/meetUp/JoinSuccessModal';
+import { meetingService } from '@/services/meetingService';
 
 const ParticipateDogPage = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -17,6 +20,7 @@ const ParticipateDogPage = () => {
   const previousPath = location.state?.previousPath;
   const animateBack = location.state?.animateBack ?? true;
   const spotName = location.state?.spotName;
+  const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
   const { meetingDetail, hashtags, dogImages, isLoading, error, fetchMeetingDetail } = useMeeting();
   const [isExpanded, setIsExpanded] = useState(false);
   const { meetingDate, meetingTime } = useMemo(() => {
@@ -27,6 +31,8 @@ const ParticipateDogPage = () => {
     const time = format(new Date(meetingDetail.meetingAt), 'a h:mm', { locale: ko });
     return { meetingDate: date, meetingTime: time };
   }, [meetingDetail]);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   useEffect(() => {
     if (roomId) {
@@ -34,9 +40,38 @@ const ParticipateDogPage = () => {
     }
   }, [roomId, fetchMeetingDetail]);
 
+  // handleJoinClick 수정
   const handleJoinClick = useCallback(() => {
-    navigate(`/chat/group/${roomId}`, { state: { animateBack: true, spotName } });
-  }, [navigate, roomId, spotName]);
+    setShowJoinModal(true);
+  }, []);
+
+  const handleDogSelect = useCallback((dogId: number) => {
+    setSelectedDogs((prev) => (prev.includes(dogId) ? prev.filter((id) => id !== dogId) : [...prev, dogId]));
+  }, []);
+
+  // 모달 확인 핸들러 추가
+  const handleConfirmJoin = useCallback(() => {
+    setShowJoinModal(false);
+    setShowSuccessModal(true);
+  }, []);
+
+  // 성공 모달의 모임으로 가기 버튼 핸들러
+  const handleGoToChat = useCallback(() => {
+    setShowSuccessModal(false);
+    navigate(`/chat/group/${roomId}`, {
+      state: {
+        animateBack: true,
+        spotName,
+        selectedDogs,
+      },
+    });
+  }, [navigate, roomId, spotName, selectedDogs]);
+
+  // 성공 모달의 취소 버튼 핸들러
+  const handleCancelSuccess = useCallback(() => {
+    setShowSuccessModal(false);
+    navigate('/meeting');
+  }, [navigate]);
 
   const handleBack = useCallback(() => {
     if (fromList) {
@@ -138,7 +173,6 @@ const ParticipateDogPage = () => {
             <IoClose size={24} />
           </button>
         </div>
-
         <div className="p-4 flex-1 overflow-auto bg-white">
           <div className="p-4">
             <h2 className="text-2xl font-semibold">{meetingDetail.title}</h2>
@@ -209,14 +243,15 @@ const ParticipateDogPage = () => {
               </div>
               <div className="grid grid-cols-5 gap-3">
                 {dogImages.map((dogImage, index) => (
-                  <div key={dogImage.dogId} className="aspect-square">
+                  // unique한 dogId와 index를 조합하여 key 생성
+                  <div key={`dog-${dogImage.dogId}-${index}`} className="aspect-square">
                     <img
-                      src={dogImage.profileImage} // imageUrl -> profileImage로 수정
+                      src={dogImage.profileImage}
                       alt={`참여 강아지 ${index + 1}`}
                       className="w-full h-full object-cover rounded-full border border-light-orange"
                       loading="lazy"
                       onError={(e) => {
-                        e.currentTarget.src = '/default-dog-image.png';
+                        e.currentTarget.src = '/icons/favicon/favicon-96x96.png';
                       }}
                     />
                   </div>
@@ -225,10 +260,19 @@ const ParticipateDogPage = () => {
             </div>
           )}
         </div>
-
         <div onClick={handleJoinClick} className="p-2 bg-deep-coral">
           <button className="w-full text-white py-2 rounded-lg font-bold">모임 가입</button>
         </div>
+        <JoinConfirmationModal
+          isOpen={showJoinModal}
+          onClose={() => setShowJoinModal(false)}
+          onConfirm={handleConfirmJoin} // 성공 시에만 호출됨
+          meetingData={meetingDetail}
+          selectedDogs={selectedDogs}
+          onDogSelect={handleDogSelect}
+          meetingId={roomId!}
+        />
+        <JoinSuccessModal isOpen={showSuccessModal} onClose={handleCancelSuccess} onConfirm={handleGoToChat} />
       </motion.div>
     </motion.div>
   );

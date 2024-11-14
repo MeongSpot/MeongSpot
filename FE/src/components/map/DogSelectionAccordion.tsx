@@ -22,7 +22,7 @@ const DogSelectionAccordion: React.FC<DogSelectionAccordionProps> = ({ dogs, sel
         <div className="flex items-center">
           <FaDog className="text-gray-400 mr-2" size={24} />
           <div className="flex-1">
-            <h3 className="font-bold text-base">함께할 강아지 선택하기</h3>
+            <h3 className="font-bold text-base">강아지 선택하기</h3>
           </div>
           <div className="text-gray-500 ml-2">{showDetails ? <AiOutlineUp /> : <AiOutlineDown />}</div>
         </div>
