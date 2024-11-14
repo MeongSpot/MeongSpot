@@ -13,10 +13,10 @@ import LoadingOverlay from '@/components/common/LoadingOverlay';
 import { differenceInCalendarDays, format } from 'date-fns';
 
 const GroupChatPage = () => {
-  const { id: roomId } = useParams<{ id:string }>();
+  const { id: roomId } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [nickname, setNickname] = useState("");
+  const [nickname, setNickname] = useState('');
   const [page, setPage] = useState(0);
   const [localMessages, setLocalMessages] = useState<Chat[]>([]);
   const navigate = useNavigate();
@@ -24,16 +24,14 @@ const GroupChatPage = () => {
   const animateBack = location.state?.animateBack ?? true;
 
   const { messages: fetchedMessages, loading, error, myId } = useChatDetail(Number(roomId), page);
-  const { sendMessage } = useChat(Number(roomId), nickname);
+  const { sendMessage, receiveMessage } = useChat(Number(roomId), nickname);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(Number(roomId));
 
   const scrollToBottom = () => {
     setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView();
-      }
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 50);
   };
 
@@ -64,12 +62,18 @@ const GroupChatPage = () => {
   }, [fetchedMessages, page]);
 
   useEffect(() => {
+    receiveMessage((newMessage: Chat) => {
+      setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
+      scrollToBottom();
+    });
+  }, [receiveMessage]);
+
+  useEffect(() => {
     if (page === 0) {
-      // 0페이지에서 처음 메시지 로드 시 바로 최하단으로 스크롤
       scrollToBottom();
     }
-  }, [page]);  // 페이지가 변경될 때마다 최하단으로 스크롤 이동
-  
+  }, [page]);
+
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
       const newMessage: Chat = {
@@ -84,9 +88,7 @@ const GroupChatPage = () => {
       sendMessage(message, myId);
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      setTimeout(() => {
-        scrollToBottom(); // 100ms 후에 스크롤 이동
-      }, 100); // 필요에 따라 시간을 조정
+      scrollToBottom();
     }
   };
 
