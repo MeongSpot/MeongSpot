@@ -7,7 +7,6 @@ import { IoMdFemale, IoMdMale } from 'react-icons/io';
 import { useDog } from '@/hooks/dog/useDog';
 import '../../css/DogDetail.css';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
-import { is } from 'date-fns/locale';
 
 const DogDetail = () => {
   const navigate = useNavigate();

@@ -4,6 +4,7 @@ import { useDog } from '@/hooks/dog/useDog';
 import DogIcon from '/icons/DogIcon.svg';
 import { useNavigate } from 'react-router-dom';
 import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
+import { div } from 'framer-motion/client';
 
 interface DogCardProps {
   member: MeetingParticipantsInfo;
@@ -52,13 +53,14 @@ const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotNam
 
   return (
     <div className="bg-white p-4 rounded-lg shadow mb-4 border border-gray-300 cursor-pointer" onClick={toggleDetails}>
-      <div className="flex items-center mb-2">
+      <div className="flex items-center">
         <div className="mr-2 w-12 h-12 rounded-full border">
           <img
             onClick={(e) => {
               e.stopPropagation();
               profileDetailClick();
             }}
+            className="w-full h-full object-cover rounded-full"
             src={member.profileImage || '/icons/favicon/favicon-96x96.png'}
             alt=""
           />
@@ -106,14 +108,16 @@ const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotNam
               </div>
 
               <div className="mx-2">
-                {dog.personality.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="bg-peach-orange text-white text-xs font-medium px-2 py-1 rounded-full mr-2 mb-2"
-                  >
-                    {tag}
-                  </span>
-                ))}
+                <div className="flex flex-1 flex-wrap items-center">
+                  {dog.personality.map((tag, index) => (
+                    <button
+                      key={index} // key 위치 수정
+                      className="bg-peach-orange px-2 py-[0.3rem] rounded-full flex justify-center items-center mr-2 mb-2"
+                    >
+                      <span className="text-white text-xs font-medium">{tag}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           ))}
