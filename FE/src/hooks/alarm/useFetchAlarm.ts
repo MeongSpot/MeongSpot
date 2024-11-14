@@ -16,7 +16,7 @@ function useFetchAlarm() {
             console.log('API 응답:', response);
             console.log(response.data)
             if (response.data.code === "NO102") {
-                setNotifications(response.data.data);
+                setNotifications(response.data.data.reverse());
             } else {
                 setError("알림 목록 조회에 실패했습니다.");
             }
