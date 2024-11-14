@@ -2,7 +2,7 @@ import axiosInstance from '@/services/axiosInstance';
 import { StartWalkingRequest, StartWalkingResponse, WalkingLocationPayload } from '@/types/walking';
 import { LatLng } from '@/types/map';
 interface EndWalkingPayload {
-  finished_at: string;
+  finishedAt: string;
   distance: number;
 }
 
@@ -48,7 +48,7 @@ class WalkingService {
     const localTime = new Date(now.getTime() - offset);
 
     const payload: EndWalkingPayload = {
-      finished_at: localTime.toISOString(),
+      finishedAt: localTime.toISOString(),
       distance: Math.round(distance),
     };
 
