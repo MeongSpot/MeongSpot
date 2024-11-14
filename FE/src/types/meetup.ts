@@ -52,7 +52,7 @@ export interface UseMeetingReturn {
   error: string | null;
   meetingDetail: MeetingDetailInfo | null;
   hashtags: string[];
-  dogImages:  DogImage[];
+  dogImages: DogImage[];
   fetchTopMeetings: (spotId: number) => Promise<void>;
   fetchMeetings: (spotId: number, order: OrderType) => Promise<void>;
   createMeeting: (data: CreateMeetingRequest) => Promise<void>;
@@ -104,6 +104,11 @@ export interface CreateMeetingRequest {
   hashtag: string[];
   maxParticipants: number;
   dogs: number[];
+}
+export interface JoinMeetingResponse {
+  code: string;
+  message: string;
+  data: null;
 }
 
 export interface CreateMeetingResponse {

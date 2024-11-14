@@ -35,7 +35,7 @@ const App = () => {
     (location.pathname.startsWith('/meetupdoglist/') && id);
 
   return (
-    <div className="mobile-container">
+    <div className="mobile-container bg-white">
       <div className="mobile-content">
         <Outlet context={{ setShowNav }} />
       </div>
