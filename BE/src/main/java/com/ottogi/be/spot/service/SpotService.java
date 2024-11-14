@@ -1,5 +1,6 @@
 package com.ottogi.be.spot.service;
 
+import com.ottogi.be.meeting.repository.MeetingRepository;
 import com.ottogi.be.spot.domain.Spot;
 import com.ottogi.be.spot.dto.SpotDto;
 import com.ottogi.be.spot.dto.response.SpotResponse;
@@ -9,21 +10,29 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class SpotService {
     private final SpotRepository spotRepository;
+    private final MeetingRepository meetingRepository;
 
     @Transactional
     public List<SpotResponse> findWalkingSpots(SpotDto dto){
         List<Spot> spots = spotRepository.findParksWithinRadius(dto.getLat(),dto.getLng(),dto.getRadius());
-        //meetingcount조회 to-do
+        List<Long> spotIds = spots.stream().map(Spot::getId).collect(Collectors.toList());
+        Map<Long, Long> meetingCounts = spotRepository.countMeetingsBySpotsAndIsNotDone(spotIds)
+                .stream()
+                .collect(Collectors.toMap(
+                        result -> result.getSpotId(),
+                        result -> result.getMeetingCount()
+                ));
 
         return spots.stream()
                 .map(spot -> SpotResponse.builder()
-                        .meetingCnt(1)
+                        .meetingCnt(meetingCounts.getOrDefault(spot.getId(), 0L).intValue())
                         .spotId(spot.getId())
                         .lat(spot.getLat())
                         .lng(spot.getLng())

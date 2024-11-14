@@ -11,4 +11,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long> {
     List<Meeting> findAllBySpotAndMeetingAtAfterOrderByIdDesc(Spot spot, LocalDateTime now);
     List<Meeting> findAllBySpotAndMeetingAtAfterOrderByMeetingAt(Spot spot, LocalDateTime now);
     List<Meeting> findTop5BySpotAndMeetingAtAfterOrderByIdDesc(Spot spot, LocalDateTime now);
+
+    long countBySpot(Spot spot);
 }
