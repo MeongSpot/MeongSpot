@@ -25,7 +25,7 @@ const GroupChatPage = () => {
 
   // isGroupChat을 true로 설정하여 그룹 채팅에 대해 입장 메시지 적용
   const { messages: fetchedMessages, loading, error, myId } = useChatDetail(Number(roomId), page);
-  const { sendMessage } = useChat(Number(roomId), true, nickname);
+  const { sendMessage } = useChat(Number(roomId), nickname);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(Number(roomId));
