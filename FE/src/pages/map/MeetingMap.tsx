@@ -68,7 +68,6 @@ const MeetingMap = () => {
   );
 
   // 지도 이동 또는 줌 변경 완료 시
-  // 지도 이동 또는 줌 변경 완료 시
   const handleMapChanged = useCallback(() => {
     if (!mapRef.current || isInitialLoad || isMoving) return;
 
@@ -100,25 +99,36 @@ const MeetingMap = () => {
     setCenterChanged(false);
   }, [loadSpotsWithAPI, setLastPosition]);
 
-  // 스팟 검색하는 시점에 위치 저장 - 초기 맵 생성
+  // 스팟 검색하는 시점에 위치 저장 - 초기 맵 생성 로직 개선
   const handleMapCreate = useCallback(
     async (map: kakao.maps.Map) => {
       if (!map) return;
 
-      map.setLevel(4);
-      // 페이지 이동 후 돌아온 경우 lastPosition 사용, 아닌 경우 currentPosition 사용
-      const initialCenter = lastPosition || currentPosition;
-      map.setCenter(new kakao.maps.LatLng(initialCenter.lat, initialCenter.lng));
-      setMapLevel(4);
-      setCenter(initialCenter);
+      try {
+        const level = 4;
+        map.setLevel(level);
 
-      const markers = await loadSpotsWithAPI(map);
-      if (markers && !lastPosition) {
-        // 새로고침이나 첫 진입인 경우에만 위치 저장
-        setLastPosition(initialCenter);
+        // 초기 중심점 설정
+        const initialCenter = lastPosition || currentPosition;
+        console.log('Map initialization with center:', initialCenter);
+
+        // 지도 중심점 설정
+        map.setCenter(new kakao.maps.LatLng(initialCenter.lat, initialCenter.lng));
+        setMapLevel(level);
+        setCenter(initialCenter);
+
+        // 약간의 지연 후 스팟 로드 (지도가 완전히 로드된 후)
+        setTimeout(async () => {
+          const markers = await loadSpotsWithAPI(map);
+          if (markers && !lastPosition) {
+            setLastPosition(initialCenter);
+          }
+          setShowToast(!markers?.length);
+          setIsInitialLoad(false);
+        }, 100);
+      } catch (error) {
+        setIsInitialLoad(false);
       }
-      setShowToast(!markers?.length);
-      setIsInitialLoad(false);
     },
     [currentPosition, lastPosition, loadSpotsWithAPI, setLastPosition],
   );

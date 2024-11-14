@@ -1,36 +1,36 @@
-// services/walkingService.ts
 import axiosInstance from '@/services/axiosInstance';
 import { StartWalkingRequest, StartWalkingResponse, WalkingLocationPayload } from '@/types/walking';
+import { LatLng } from '@/types/map';
+interface EndWalkingPayload {
+  finished_at: string;
+  distance: number;
+}
 
 class WalkingService {
   private socket: WebSocket | null = null;
   private readonly SOCKET_URL = 'wss://meongspot.kro.kr/socket/gps/ws/location';
-  private retryCount = 0;
   private readonly MAX_RETRIES = 3;
+  private retryCount = 0;
   private reconnectTimeout: NodeJS.Timeout | null = null;
   private isConnecting = false;
-  private isStarting = false; // API 호출 중복 방지를 위한 플래그
+  private isStarting = false;
   private startTimeout: NodeJS.Timeout | null = null;
+  private pathCoordinates: LatLng[] = [];
+  private lastSentLocation: LatLng | null = null;
 
   async startWalking(dogIds: number[]): Promise<StartWalkingResponse> {
     if (this.isStarting) {
-      console.log('Walking start request already in progress');
       throw new Error('이미 산책 시작 요청이 진행 중입니다.');
     }
 
     try {
       this.isStarting = true;
+      if (this.startTimeout) clearTimeout(this.startTimeout);
 
-      // 이전 타임아웃이 있다면 클리어
-      if (this.startTimeout) {
-        clearTimeout(this.startTimeout);
-      }
+      const response = await axiosInstance.post<StartWalkingResponse>('/api/walking-log/start', { dogIds });
 
-      const response = await axiosInstance.post<StartWalkingResponse>('/api/walking-log/start', {
-        dogIds,
-      });
-
-      // 성공 후 1초 뒤에 플래그 초기화
+      this.pathCoordinates = [];
+      this.lastSentLocation = null;
       this.startTimeout = setTimeout(() => {
         this.isStarting = false;
       }, 1000);
@@ -42,8 +42,19 @@ class WalkingService {
     }
   }
 
-  async endWalking(): Promise<StartWalkingResponse> {
-    const response = await axiosInstance.post<StartWalkingResponse>('/api/walking-log/end');
+  async endWalking(distance: number): Promise<StartWalkingResponse> {
+    const now = new Date();
+    const offset = now.getTimezoneOffset() * 60000;
+    const localTime = new Date(now.getTime() - offset);
+
+    const payload: EndWalkingPayload = {
+      finished_at: localTime.toISOString(),
+      distance: Math.round(distance),
+    };
+
+    const response = await axiosInstance.post<StartWalkingResponse>('/api/walking-log/end', payload);
+    this.pathCoordinates = [];
+    this.lastSentLocation = null;
     return response.data;
   }
 
@@ -113,48 +124,56 @@ class WalkingService {
     }
   }
 
+  sendLocation(location: WalkingLocationPayload): void {
+    const shouldSend = this.shouldSendLocation(location);
+    if (!shouldSend) return;
+
+    if (this.socket?.readyState === WebSocket.OPEN) {
+      try {
+        this.socket.send(JSON.stringify(location));
+        this.lastSentLocation = { lat: location.lat, lng: location.lng };
+      } catch (error) {
+        if (!this.isConnected() && !this.isConnecting && this.retryCount < this.MAX_RETRIES) {
+          this.connectWebSocket();
+        }
+      }
+    } else if (!this.isConnecting && this.retryCount < this.MAX_RETRIES) {
+      this.connectWebSocket();
+    }
+  }
+
+  public calculateDistance(point1: LatLng, point2: LatLng): number {
+    const R = 6371e3;
+    const φ1 = (point1.lat * Math.PI) / 180;
+    const φ2 = (point2.lat * Math.PI) / 180;
+    const Δφ = ((point2.lat - point1.lat) * Math.PI) / 180;
+    const Δλ = ((point2.lng - point1.lng) * Math.PI) / 180;
+
+    const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  private shouldSendLocation(location: WalkingLocationPayload): boolean {
+    if (!this.lastSentLocation) return true;
+
+    const distance = this.calculateDistance(this.lastSentLocation, { lat: location.lat, lng: location.lng });
+    return distance >= 2;
+  }
+
   getSocketStatus(): string {
     if (!this.socket) return '연결되지 않음';
-
-    switch (this.socket.readyState) {
-      case WebSocket.CONNECTING:
-        return '연결 중...';
-      case WebSocket.OPEN:
-        return '연결됨';
-      case WebSocket.CLOSING:
-        return '연결 종료 중...';
-      case WebSocket.CLOSED:
-        return '연결 종료됨';
-      default:
-        return '알 수 없음';
-    }
+    const states = ['연결 중...', '연결됨', '연결 종료 중...', '연결 종료됨'];
+    return states[this.socket.readyState] || '알 수 없음';
   }
 
   isConnected(): boolean {
     return this.socket?.readyState === WebSocket.OPEN;
   }
 
-  sendLocation(location: WalkingLocationPayload): void {
-    if (this.socket?.readyState === WebSocket.OPEN) {
-      try {
-        const message = JSON.stringify(location);
-        console.log('Sending location:', message);
-        this.socket.send(message);
-      } catch (error) {
-        console.error('Failed to send location:', error);
-        // 연결이 끊어졌을 때만 재연결 시도
-        if (!this.isConnected() && !this.isConnecting && this.retryCount < this.MAX_RETRIES) {
-          this.connectWebSocket();
-        }
-      }
-    } else if (!this.isConnecting) {
-      // 연결 시도 중이 아닐 때만 새로운 연결 시도
-      const status = this.getSocketStatus();
-      console.error('Walking WebSocket is not connected. Status:', status);
-      if (this.retryCount < this.MAX_RETRIES) {
-        this.connectWebSocket();
-      }
-    }
+  getPathCoordinates(): LatLng[] {
+    return this.pathCoordinates;
   }
 
   disconnect(): void {
@@ -167,6 +186,8 @@ class WalkingService {
       this.socket = null;
     }
     this.retryCount = 0;
+    this.pathCoordinates = [];
+    this.lastSentLocation = null;
   }
 }
 

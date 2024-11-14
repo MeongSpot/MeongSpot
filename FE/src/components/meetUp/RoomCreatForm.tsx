@@ -32,7 +32,7 @@ const RoomCreatForm = () => {
     startTime?: string;
     location?: string;
     description?: string;
-    dogs?: string;
+    dogIds?: string;
   }>({});
 
   const navigate = useNavigate();
@@ -83,21 +83,14 @@ const RoomCreatForm = () => {
   const MAX_TAG_LENGTH = 15;
 
   const handleTagAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      // 태그 갯수 먼저 체크
       if (tags.length >= MAX_TAGS) {
         return;
       }
 
-      const newTag = e.currentTarget.value.trim().replace(/\s/g, '_');
-
-      // 그 다음 길이와 유효성 체크
-      if (newTag.length > MAX_TAG_LENGTH) {
-        return;
-      }
-
-      if (newTag && !tags.includes(newTag)) {
+      const newTag = e.currentTarget.value.trim();
+      if (newTag && !tags.includes(newTag) && newTag.length <= MAX_TAG_LENGTH) {
         setTags([...tags, newTag]);
         e.currentTarget.value = '';
       }
@@ -114,7 +107,7 @@ const RoomCreatForm = () => {
     } else {
       setSelectedDogs([...selectedDogs, dogId]);
     }
-    setErrors((prev) => ({ ...prev, dogs: undefined }));
+    setErrors((prev) => ({ ...prev, dogIds: undefined }));
   };
 
   const handleTimeModalOpen = () => {
@@ -134,7 +127,7 @@ const RoomCreatForm = () => {
       title: !title.trim() ? '모임 제목을 입력해주세요' : undefined,
       date: !date ? '모임 날짜를 선택해주세요' : undefined,
       startTime: !startTime ? '모임 시간을 선택해주세요' : undefined,
-      dogs: selectedDogs.length === 0 ? '참여할 강아지를 선택해주세요' : undefined,
+      dogIds: selectedDogs.length === 0 ? '참여할 강아지를 선택해주세요' : undefined,
     };
 
     setErrors(newErrors);
@@ -153,14 +146,17 @@ const RoomCreatForm = () => {
 
   const createClick = async () => {
     if (!validateForm() || !placeId || !date) return;
-
     if (isLoading) return;
 
     try {
       const [hour, minute] = startTime.split(':').map(Number);
-      const formattedDate = date.toISOString().split('T')[0];
 
-      // 기본 필수 데이터
+      // 날짜를 UTC가 아닌 로컬 시간대로 처리
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const formattedDate = `${year}-${month}-${day}`;
+
       const meetingData: any = {
         spotId: Number(placeId),
         title,
@@ -168,7 +164,7 @@ const RoomCreatForm = () => {
         hour,
         minute,
         maxParticipants,
-        dogs: selectedDogs,
+        dogIds: selectedDogs,
       };
 
       // 선택적 데이터 추가
@@ -185,7 +181,7 @@ const RoomCreatForm = () => {
       await createMeeting(meetingData);
 
       showToast('모임이 성공적으로 생성되었습니다');
-      navigate(`/allmeetuproom/${placeId}`);
+      navigate('/mymeetuproom');
     } catch (error) {
       showToast('모임 생성에 실패했습니다');
     }
@@ -194,7 +190,7 @@ const RoomCreatForm = () => {
   return (
     <div>
       <Toast message={toastMessage} isVisible={isToastVisible} onHide={() => setIsToastVisible(false)} />
-      <div className='px-4'>
+      <div className="px-4">
         <FormField label="산책 모임 제목" required currentLength={title.length} maxLength={30}>
           <input
             name="title"
@@ -348,10 +344,10 @@ const RoomCreatForm = () => {
           <div className="space-y-2">
             <div className="relative">
               <select
-                name="dogs"
+                name="dogIds"
                 onChange={(e) => handleDogSelect(Number(e.target.value))}
                 className={`w-full p-3 pr-10 border rounded-lg appearance-none focus:outline-none ${
-                  errors.dogs ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-deep-coral'
+                  errors.dogIds ? 'border-red-500 focus:border-red-500' : 'border-gray-200 focus:border-deep-coral'
                 }`}
                 value=""
               >
@@ -366,7 +362,7 @@ const RoomCreatForm = () => {
                 <AiOutlineDown className="text-gray-400" />
               </div>
             </div>
-            {errors.dogs && <FormErrorMessage message={errors.dogs} />}
+            {errors.dogIds && <FormErrorMessage message={errors.dogIds} />}
             <div className="flex flex-wrap gap-2">
               {selectedDogs.map((dogId) => {
                 const dog = myDogsName.find((d) => d.id === dogId);

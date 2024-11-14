@@ -103,7 +103,7 @@ export interface CreateMeetingRequest {
   information: string;
   hashtag: string[];
   maxParticipants: number;
-  dogs: number[];
+  dogIds: number[];
 }
 export interface JoinMeetingResponse {
   code: string;
