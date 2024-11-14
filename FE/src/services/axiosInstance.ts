@@ -139,13 +139,13 @@ axiosInstance.interceptors.response.use(
 
     // 리프레시 토큰 인증 실패 (401 & AU005)일 때만 로그아웃
     if (error.response.status === 401 && errorResponse?.code === 'AU005') {
-      // useAuthStore.setState({
-      //   token: null,
-      //   loginId: null,
-      //   isAuthenticated: false,
-      // });
-      // localStorage.removeItem('auth-store');
-      // window.location.href = '/login';
+      useAuthStore.setState({
+        token: null,
+        loginId: null,
+        isAuthenticated: false,
+      });
+      localStorage.removeItem('auth-store');
+      window.location.href = '/login';
       return Promise.reject(error);
     }
 
