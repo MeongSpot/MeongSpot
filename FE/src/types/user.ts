@@ -19,6 +19,7 @@ export interface UserProfileInfo {
   nickname: string;
   gender: string;
   age: number;
+  isMe: boolean;
   isFriend: boolean;
 }
 
