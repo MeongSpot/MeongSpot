@@ -30,7 +30,7 @@ const useFetchSingleChatRooms = () => {
     };
 
     fetchChatRooms();
-    const intervalId = setInterval(fetchChatRooms, 5000);
+    const intervalId = setInterval(fetchChatRooms, 2000);
 
     return () => clearInterval(intervalId);
   }, []);
