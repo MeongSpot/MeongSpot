@@ -163,32 +163,25 @@ const MapPage = () => {
   );
 
   const handleTrackingToggle = useCallback(() => {
-    if (!isMobile) {
-      // PC에서는 현재 위치 추적만 토글
+    // walking 모드일 때만 모바일에서 나침반 모드 제공
+    if (isWalkingMode && isMobile) {
+      console.log('Walking Mode & Mobile:', { isTracking, isCompassMode });
       if (!isTracking) {
+        // 트래킹 시작
         setIsTracking(true);
+        setIsCompassMode(false);
         getCurrentLocation();
+      } else if (!isCompassMode) {
+        // 나침반 모드 시작
+        setIsCompassMode(true);
+        console.log('Compass Mode Activated');
       } else {
+        // 모든 모드 끄기
         setIsTracking(false);
+        setIsCompassMode(false);
       }
-      return;
     }
-
-    // 모바일일 경우에만 나침반 모드까지 제공
-    if (!isTracking) {
-      // 트래킹 시작
-      setIsTracking(true);
-      setIsCompassMode(false);
-      getCurrentLocation();
-    } else if (!isCompassMode) {
-      // 나침반 모드 시작
-      setIsCompassMode(true);
-    } else {
-      // 모든 모드 끄기
-      setIsTracking(false);
-      setIsCompassMode(false);
-    }
-  }, [isTracking, isCompassMode, getCurrentLocation, isMobile]);
+  }, [isTracking, isCompassMode, getCurrentLocation, isMobile, isWalkingMode]);
 
   return (
     <div className="w-full h-screen flex flex-col relative">
@@ -216,7 +209,7 @@ const MapPage = () => {
             }`}
             onClick={handleTrackingToggle}
           >
-            {isMobile && isCompassMode ? (
+            {isWalkingMode && isMobile && isCompassMode ? (
               <RiCompass3Line className="text-2xl animate-pulse" />
             ) : (
               <RiFocus3Line className="text-2xl" />
@@ -232,7 +225,7 @@ const MapPage = () => {
             currentLocation,
             currentPosition,
             isTracking,
-            isCompassMode,
+            isCompassMode, // 이 값이 제대로 전달되는지 확인
             heading,
             onMapMove: () => {
               if (!isWalkingMode) {

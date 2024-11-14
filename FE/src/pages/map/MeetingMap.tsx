@@ -12,6 +12,9 @@ import SpotModal from '@/components/map/SpotModal';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import presentSpotUrl from '/icons/PresentSpot.svg?url';
 import spotUrl from '/icons/Spot.svg?url';
+import useMapStore from '@/store/useMapStore';
+import NearbySpotModal from '@/components/map/NearbySpotModal';
+import { MdLocationOn } from 'react-icons/md';
 
 const SPOT_IMAGES: Record<'present' | 'spot', SpotImageType> = {
   present: {
@@ -27,19 +30,32 @@ const SPOT_IMAGES: Record<'present' | 'spot', SpotImageType> = {
 const MeetingMap = () => {
   const navigate = useNavigate();
   const mapRef = useRef<kakao.maps.Map>(null);
-  const { currentPosition, isTracking, onMapMove, searchResult, isCompassMode, heading, isMobile } =
-    useOutletContext<MapContextType>();
-
-  const [center, setCenter] = useState<LatLng>(currentPosition);
+  const { currentPosition, isTracking, onMapMove, searchResult, isMobile } = useOutletContext<MapContextType>();
+  const {
+    lastPosition,
+    selectedSpot: storedSpot,
+    isModalOpen: storedIsModalOpen,
+    setLastPosition,
+    setModalOpen,
+    setSelectedSpot,
+  } = useMapStore();
+  const [center, setCenter] = useState<LatLng>(() => {
+    // 페이지 이동 후 돌아온 경우 (lastPosition이 있는 경우)
+    if (lastPosition) {
+      return lastPosition;
+    }
+    // 새로고침이나 첫 진입인 경우
+    return currentPosition;
+  });
   const [mapLevel, setMapLevel] = useState(5);
   const [centerChanged, setCenterChanged] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [selectedSpot, setSelectedSpot] = useState<SpotInfo | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedSpot, setLocalSelectedSpot] = useState<SpotInfo | null>(storedSpot);
+  const [isModalOpen, setIsModalOpen] = useState(storedIsModalOpen);
+  const [isModalVisible, setIsModalVisible] = useState(storedIsModalOpen);
   const [isMoving, setIsMoving] = useState(false);
-
+  const [showNearbyModal, setShowNearbyModal] = useState(false);
   const { spots, isLoading, markerKey, loadSpotsWithAPI, findSpotInfo } = useSpot({ currentPosition });
 
   const visibleMarkers = useMemo(
@@ -52,8 +68,9 @@ const MeetingMap = () => {
   );
 
   // 지도 이동 또는 줌 변경 완료 시
+  // 지도 이동 또는 줌 변경 완료 시
   const handleMapChanged = useCallback(() => {
-    if (!mapRef.current || isInitialLoad || isMoving || isCompassMode) return; // isCompassMode 조건 추가
+    if (!mapRef.current || isInitialLoad || isMoving) return;
 
     const newCenter = {
       lat: mapRef.current.getCenter().getLat(),
@@ -63,58 +80,72 @@ const MeetingMap = () => {
     setCenter(newCenter);
     onMapMove();
 
-    // 중심점 이동 거리 또는 줌 레벨 변경 시 재검색 버튼 표시
     const distance = spotService.getDistance(newCenter, currentPosition);
     const levelChanged = mapRef.current.getLevel() !== mapLevel;
-
     setCenterChanged(distance > 100 || levelChanged);
-  }, [currentPosition, isInitialLoad, onMapMove, isMoving, mapLevel, isCompassMode]); // isCompassMode 의존성 추가
+  }, [currentPosition, isInitialLoad, onMapMove, isMoving, mapLevel]);
 
   // 재검색 버튼 클릭 시
   const handleResearch = useCallback(async () => {
     if (!mapRef.current) return;
+    const newCenter = {
+      lat: mapRef.current.getCenter().getLat(),
+      lng: mapRef.current.getCenter().getLng(),
+    };
     const markers = await loadSpotsWithAPI(mapRef.current);
+    if (markers) {
+      setLastPosition(newCenter); // 재검색 시 위치 저장
+    }
     setShowToast(!markers?.length);
     setCenterChanged(false);
-  }, [loadSpotsWithAPI]);
+  }, [loadSpotsWithAPI, setLastPosition]);
 
-  // 위치 추적 모드일 때 지도 중심점 업데이트
-  useEffect(() => {
-    if (isTracking && !isMoving) {
-      setCenter(currentPosition);
-    }
-  }, [isTracking, currentPosition, isMoving]);
-
-  // 초기 맵 생성
+  // 스팟 검색하는 시점에 위치 저장 - 초기 맵 생성
   const handleMapCreate = useCallback(
     async (map: kakao.maps.Map) => {
       if (!map) return;
 
       map.setLevel(4);
-      map.setCenter(new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
+      // 페이지 이동 후 돌아온 경우 lastPosition 사용, 아닌 경우 currentPosition 사용
+      const initialCenter = lastPosition || currentPosition;
+      map.setCenter(new kakao.maps.LatLng(initialCenter.lat, initialCenter.lng));
       setMapLevel(4);
-      setCenter(currentPosition);
+      setCenter(initialCenter);
 
       const markers = await loadSpotsWithAPI(map);
+      if (markers && !lastPosition) {
+        // 새로고침이나 첫 진입인 경우에만 위치 저장
+        setLastPosition(initialCenter);
+      }
       setShowToast(!markers?.length);
       setIsInitialLoad(false);
     },
-    [currentPosition, loadSpotsWithAPI],
+    [currentPosition, lastPosition, loadSpotsWithAPI, setLastPosition],
   );
 
-  const handleSpotClick = useCallback((spotInfo: SpotInfo) => {
-    setSelectedSpot(spotInfo);
-    setIsModalVisible(true);
-    setTimeout(() => setIsModalOpen(true), 10);
-  }, []);
+  // modal 관련 핸들러 수정
+  const handleSpotClick = useCallback(
+    (spotInfo: SpotInfo) => {
+      setLocalSelectedSpot(spotInfo);
+      setSelectedSpot(spotInfo); // store에 저장
+      setIsModalVisible(true);
+      setTimeout(() => {
+        setIsModalOpen(true);
+        setModalOpen(true); // store에 저장
+      }, 10);
+    },
+    [setSelectedSpot, setModalOpen],
+  );
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
+    setModalOpen(false); // store에서도 닫기
     setTimeout(() => {
-      setSelectedSpot(null);
+      setLocalSelectedSpot(null);
+      setSelectedSpot(null); // store에서도 제거
       setIsModalVisible(false);
     }, 500);
-  }, []);
+  }, [setSelectedSpot, setModalOpen]);
 
   // 검색 결과 처리
   useEffect(() => {
@@ -152,15 +183,18 @@ const MeetingMap = () => {
       mapRef.current?.setCenter(new kakao.maps.LatLng(lat, lng));
       mapRef.current?.setLevel(Math.round(currentLevel));
 
+      // 검색 결과 처리의 마지막 부분 수정
       if (progress < 1) {
         requestAnimationFrame(animate);
       } else {
-        // 애니메이션 완료 후 처리
         setIsMoving(false);
         setMapLevel(targetLevel);
         setCenter(searchResult);
 
         loadSpotsWithAPI(mapRef.current!).then((markers) => {
+          if (markers) {
+            setLastPosition(searchResult); // 검색어로 검색 시 위치 저장
+          }
           setShowToast(!markers?.length);
         });
         setCenterChanged(false);
@@ -176,13 +210,7 @@ const MeetingMap = () => {
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      <div
-        className="w-full h-full"
-        style={{
-          transform: isMobile && isCompassMode && heading !== null ? `rotate(${-heading}deg)` : 'none',
-          transition: 'transform 0.3s ease-out',
-        }}
-      >
+      <div className="w-full h-full">
         <Map
           ref={mapRef}
           center={center}
@@ -239,6 +267,16 @@ const MeetingMap = () => {
             })}
           </MarkerClusterer>
         </Map>
+        <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 z-10">
+          <button
+            onClick={() => setShowNearbyModal(true)}
+            className="flex items-center gap-2 bg-white text-deep-coral font-semibold py-3 px-5 rounded-xl shadow-lg hover:bg-gray-50 transition-colors"
+          >
+            {/* <MdLocationOn /> */}내 주변 멍스팟 추천
+          </button>
+        </div>
+
+        <NearbySpotModal isOpen={showNearbyModal} onClose={() => setShowNearbyModal(false)} />
       </div>
 
       {isModalVisible && (

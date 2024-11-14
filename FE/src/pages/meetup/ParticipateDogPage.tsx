@@ -192,10 +192,10 @@ const ParticipateDogPage = () => {
                 </button>
               </div>
               <div className="grid grid-cols-5 gap-3">
-                {dogImages.map((imageUrl, index) => (
-                  <div key={index} className="aspect-square">
+                {dogImages.map((dogImage, index) => (
+                  <div key={dogImage.dogId} className="aspect-square">
                     <img
-                      src={imageUrl}
+                      src={dogImage.profileImage} // imageUrl -> profileImage로 수정
                       alt={`참여 강아지 ${index + 1}`}
                       className="w-full h-full object-cover rounded-full border border-light-orange"
                       loading="lazy"

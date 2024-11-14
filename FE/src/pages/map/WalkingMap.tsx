@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
-import { Map, MapMarker } from 'react-kakao-maps-sdk';
+import { Map, CustomOverlayMap, MapMarker } from 'react-kakao-maps-sdk';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import WalkStartModal from '@/components/map/WalkStartModal';
 import WalkingStatusModal from '@/components/map/WalkingStatusModal';
@@ -9,6 +9,7 @@ import WalkEndModal from '@/components/map/WalkEndModal';
 import WalkCompleteModal from '@/components/map/WalkCompleteModal';
 import { useWalking } from '@/hooks/map/useWalking';
 import type { LatLng } from '@/types/map';
+import compassSpotUrl from '/icons/CompassSpot.svg?url';
 
 type ContextType = {
   currentPosition: LatLng;
@@ -20,13 +21,16 @@ type ContextType = {
   isMobile: boolean; // 추가
 };
 
-const PRESENT_SPOT_IMAGE = {
-  src: '/icons/PresentSpot.svg',
-  size: {
-    width: 70,
-    height: 70,
+const SPOT_IMAGES = {
+  present: {
+    src: '/icons/PresentSpot.svg',
+    size: { width: 70, height: 70 },
   },
-};
+  compass: {
+    src: compassSpotUrl,
+    size: { width: 70, height: 70 },
+  },
+} as const;
 
 const WalkingMap = () => {
   const navigate = useNavigate();
@@ -72,7 +76,7 @@ const WalkingMap = () => {
         setShowWalkingStatus(true);
       }
     } catch (error) {
-      console.error('Failed to start walking:', error);
+      // console.error('Failed to start walking:', error);
       setIsModalOpen(true);
       setShowCountdown(false);
     } finally {
@@ -110,16 +114,19 @@ const WalkingMap = () => {
     navigate('/');
   };
 
+  useEffect(() => {
+    // console.log('Compass Mode Changed:', isCompassMode);
+    if (isCompassMode) {
+      // 약간의 지연 후 상태 업데이트
+      setTimeout(() => {
+        setCenter({ ...center }); // 지도 리렌더링 강제
+      }, 100);
+    }
+  }, [isCompassMode]);
+
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* 지도 컨테이너 */}
-      <div
-        className="w-full h-full"
-        style={{
-          transform: isMobile && isCompassMode && heading !== null ? `rotate(${-heading}deg)` : 'none',
-          transition: 'transform 0.3s ease-out',
-        }}
-      >
+      <div className="w-full h-full">
         <Map
           center={center}
           style={{ width: '100%', height: '100%' }}
@@ -127,7 +134,32 @@ const WalkingMap = () => {
           zoomable={false}
           draggable={false}
         >
-          <MapMarker position={currentPosition || contextPosition} image={PRESENT_SPOT_IMAGE} />
+          {isCompassMode ? (
+            <CustomOverlayMap position={currentPosition || contextPosition}>
+              <div
+                className="relative"
+                style={{
+                  width: '70px',
+                  height: '70px',
+                  position: 'absolute',
+                  left: '-35px', // width의 절반
+                  bottom: '0px', // height의 절반
+                }}
+              >
+                <div
+                  className="w-full h-full"
+                  style={{
+                    transform: heading !== null ? `rotate(${heading}deg)` : 'none',
+                    transition: 'transform 0.3s ease-out',
+                  }}
+                >
+                  <img src={compassSpotUrl} alt="나침반" className="w-full h-full" />
+                </div>
+              </div>
+            </CustomOverlayMap>
+          ) : (
+            <MapMarker position={currentPosition || contextPosition} image={SPOT_IMAGES.present} />
+          )}
         </Map>
       </div>
 
