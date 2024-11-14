@@ -19,6 +19,7 @@ import { useMyPage } from '@/hooks/mypage/useMyPage';
 import { useDog } from '@/hooks/dog/useDog';
 import { useWalkingLog } from '@/hooks/walkinglog/useWalkingLog';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
+import useCheckUnreadAlarm from '@/hooks/alarm/useCheckUnreadAlarm';
 
 const MyPage: React.FC = () => {
   const { getFriends, friendsCount } = useFriend();
@@ -30,6 +31,8 @@ const MyPage: React.FC = () => {
   const { userData, getMyPageUser } = useMyPage();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  const { existUnread, loading: unreadLoading, error: unreadError } = useCheckUnreadAlarm();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +50,10 @@ const MyPage: React.FC = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    console.log('읽지 않은 알림 존재 여부:', existUnread);
+  }, [existUnread]);
+  
   useEffect(() => {
     if (monthlyWalkingLogs) {
       setTotalWalkingDistance(monthlyWalkingLogs.reduce((acc, cur) => acc + (cur.monthlyWalkDistance || 0), 0));
@@ -67,12 +74,20 @@ const MyPage: React.FC = () => {
             <div></div>
             <h1 className="text-center text-lg font-bold">마이페이지</h1>
             <div className="w-full flex justify-end items-center space-x-4">
-              <IoNotificationsOutline
-                onClick={() => {
-                  navigate('/notification');
-                }}
-                className="text-2xl text-zinc-700"
-              />
+              <div className="relative">
+                <IoNotificationsOutline
+                  onClick={() => {
+                    navigate('/notification');
+                  }}
+                  className="text-2xl text-zinc-700"
+                />
+                {/* 읽지 않은 알림이 있으면 배지 표시 */}
+                {existUnread && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                    {existUnread ? 'N' : ''}
+                  </span>
+                )}
+              </div>
               <SlSettings
                 onClick={() => {
                   navigate('/settings');

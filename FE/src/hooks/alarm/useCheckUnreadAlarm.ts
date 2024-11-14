@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axiosInstance from '@/services/axiosInstance';
 import { CheckUnreadNotificationsResponse } from '@/types/alarm';
 
-function useCheckUnreadNotifications() {
+function useCheckUnreadAlarm() {
     const [existUnread, setExistUnread] = useState<boolean>(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -16,6 +16,7 @@ function useCheckUnreadNotifications() {
                 `/api/notifications/read`
             );
 
+            console.log('API 응답:', response);
             if (response.data.code === "NO103") {
                 setExistUnread(response.data.body.existUnread); // 읽지 않은 알림 여부 설정
             } else {
@@ -35,4 +36,4 @@ function useCheckUnreadNotifications() {
     return { existUnread, loading, error };
 }
 
-export default useCheckUnreadNotifications;
+export default useCheckUnreadAlarm;
