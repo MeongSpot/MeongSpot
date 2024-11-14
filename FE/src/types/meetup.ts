@@ -52,7 +52,7 @@ export interface UseMeetingReturn {
   error: string | null;
   meetingDetail: MeetingDetailInfo | null;
   hashtags: string[];
-  dogImages: string[];
+  dogImages:  DogImage[];
   fetchTopMeetings: (spotId: number) => Promise<void>;
   fetchMeetings: (spotId: number, order: OrderType) => Promise<void>;
   createMeeting: (data: CreateMeetingRequest) => Promise<void>;
@@ -133,8 +133,14 @@ export interface HashtagResponse {
   data: string[];
 }
 
+// 타입 정의도 업데이트
+export interface DogImage {
+  dogId: number;
+  profileImage: string;
+}
+
 export interface DogImagesResponse {
   code: string;
   message: string;
-  data: string[];
+  data: DogImage[];
 }
