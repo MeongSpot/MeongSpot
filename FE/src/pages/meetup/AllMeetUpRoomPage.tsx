@@ -90,9 +90,9 @@ const AllMeetUpRoomPage = () => {
   // 애니메이션 설정을 위한 변수
   const pageAnimation = fromDetail
     ? {
-        initial: { y: '-100%' },
-        animate: { y: 0 },
-        exit: { y: '100%' },
+        initial: { x: animateBack ? -300 : 0 },
+        animate: { x: 0 },
+        exit: { x: animateBack ? 300 : 0 },
       }
     : {
         initial: { x: animateBack ? -300 : 0 },
