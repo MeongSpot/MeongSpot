@@ -38,8 +38,8 @@ public class RespondFriendInvitationService {
         NotificationFriendInvite notificationInvite = friendInviteRepository.findById(dto.getNotificationId())
                 .orElseThrow(FriendInvitationNotFoundException::new);
 
-        Member sender = notificationInvite.getSender(); //친구 초대 보낸 사람
-        Member receiver = notificationInvite.getReceiver(); //친구 초대 받는 사람
+        Member sender = notificationInvite.getSender();
+        Member receiver = notificationInvite.getReceiver();
 
         if (dto.getAccept() != null && dto.getAccept()){
             if (friendRepository.existsBySenderAndReceiver(sender, receiver) ||
@@ -54,30 +54,29 @@ public class RespondFriendInvitationService {
                     .build();
 
             friendRepository.save(friend);
+            Notification notification = Notification.builder()
+                    .sender(receiver)
+                    .receiver(sender)
+                    .content(receiver.getNickname() + "이 친구요청을 수락하였습니다.")
+                    .type(Type.FRIEND_ACCEPT)
+                    .isDeleted(false)
+                    .isRead(false)
+                    .build();
+            notificationRepository.save(notification);
+
+            String fcmToken = (String) redisService.getHashData(RedisKeyConstants.TOKEN+sender.getLoginId(), RedisFieldConstants.FCM);
+            if(fcmToken != null){
+                String message = receiver.getNickname() + "이 친구요청을 수락하였습니다.";
+                sendNotificationService.sendNotification(fcmToken, "친구 초대 응답", message);
+            }else{
+                log.warn("사용자 {}의 FCM 토큰이 없습니다.", sender.getNickname());
+            }
         } else {
             notificationInvite.reject();
         }
         friendInviteRepository.save(notificationInvite);
         notificationInvite.delete();
 
-
-        Notification notification = Notification.builder()
-                .sender(receiver)
-                .receiver(sender)
-                .content(receiver.getNickname() + "이 친구요청을 수락하였습니다.")
-                .type(Type.FRIEND_ACCEPT)
-                .isDeleted(false)
-                .isRead(false)
-                .build();
-        notificationRepository.save(notification);
-
-        String fcmToken = (String) redisService.getHashData(RedisKeyConstants.TOKEN+sender.getLoginId(), RedisFieldConstants.FCM);
-        if(fcmToken != null){
-            String message = receiver.getNickname() + "이 친구요청을 수락하였습니다.";
-            sendNotificationService.sendNotification(fcmToken, "친구 초대 응답", message);
-        }else{
-            log.warn("사용자 {}의 FCM 토큰이 없습니다.", sender.getNickname());
-        }
     }
 
 
