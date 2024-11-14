@@ -91,9 +91,9 @@ const SingleChatPage = () => {
       // 새 메시지를 로컬 상태에 추가하여 즉시 반영
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      setTimeout(() => {
-        scrollToBottom(); // 100ms 후에 스크롤 이동
-      }, 100); // 필요에 따라 시간을 조정
+      // setTimeout(() => {
+      //   scrollToBottom(); // 100ms 후에 스크롤 이동
+      // }, 100); // 필요에 따라 시간을 조정
     }
   };
 
