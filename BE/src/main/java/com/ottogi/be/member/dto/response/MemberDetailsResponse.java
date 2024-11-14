@@ -18,8 +18,9 @@ public class MemberDetailsResponse {
     private Gender gender;
     private int age;
     private Boolean isFriend;
+    private Boolean isMe;
 
-    public static MemberDetailsResponse toDto(Member member, boolean isFriend, int age) {
+    public static MemberDetailsResponse of(Member member, Boolean isFriend, Boolean isMe, int age) {
         return MemberDetailsResponse.builder()
                 .id(member.getId())
                 .profileImage(member.getProfileImage())
@@ -27,6 +28,7 @@ public class MemberDetailsResponse {
                 .gender(member.getGender())
                 .age(age)
                 .isFriend(isFriend)
+                .isMe(isMe)
                 .build();
     }
 }

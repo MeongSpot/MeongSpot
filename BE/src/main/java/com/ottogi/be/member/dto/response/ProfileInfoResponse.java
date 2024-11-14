@@ -18,7 +18,7 @@ public class ProfileInfoResponse {
     private Gender gender;
     private int age;
 
-    public static ProfileInfoResponse toDto(Member member, int age) {
+    public static ProfileInfoResponse of(Member member, int age) {
         return ProfileInfoResponse.builder()
                 .profileImage(member.getProfileImage())
                 .nickname(member.getNickname())

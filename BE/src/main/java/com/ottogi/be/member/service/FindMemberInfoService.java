@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -26,9 +25,11 @@ public class FindMemberInfoService {
     public ProfileInfoResponse getProfileInfo(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
+
         LocalDate currentDate = LocalDate.now();
         int age = currentDate.getYear() - member.getBirth().getYear();
-        return ProfileInfoResponse.toDto(member, age);
+
+        return ProfileInfoResponse.of(member, age);
     }
 
     @Transactional(readOnly = true)
@@ -37,10 +38,13 @@ public class FindMemberInfoService {
                 .orElseThrow(MemberNotFoundException::new);
         Member findMember = memberRepository.findById(memberDetailsDto.getId())
                 .orElseThrow(MemberNotFoundException::new);
-        boolean isFriend = friendRepository.isFriend(me.getId(), findMember.getId());
-        if (Objects.equals(me.getId(), findMember.getId())) isFriend = true;
+
+        Boolean isMe = me.getId().equals(findMember.getId());
+        Boolean isFriend = friendRepository.isFriend(me.getId(), findMember.getId());
+
         LocalDateTime currentDate = LocalDateTime.now();
         int age = currentDate.getYear() - findMember.getBirth().getYear();
-        return MemberDetailsResponse.toDto(findMember, isFriend, age);
+
+        return MemberDetailsResponse.of(findMember, isFriend, isMe, age);
     }
 }
