@@ -31,7 +31,11 @@ const GroupChatPage = () => {
   const markRead = useMarkRead(Number(roomId));
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView();
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView();
+      }
+    }, 50);
   };
 
   const handleScrollToTopLoad = useCallback(() => {
