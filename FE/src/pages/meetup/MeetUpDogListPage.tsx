@@ -13,54 +13,11 @@ const MeetUpDogListPage = () => {
   const { meetingDetail, hashtags, dogImages, isLoading, error, fetchMeetingDetail } = useMeeting();
   const { getMeetingParticipants, meetingParticipants } = useUser();
 
-  const dogs = [
-    {
-      id: 1,
-      name: '뽀삐',
-      breed: '말티즈',
-      birthdate: '',
-      age: 0,
-      personalityTags: [],
-    },
-    {
-      id: 2,
-      name: '두부',
-      breed: '치와와',
-      birthdate: '',
-      age: 0,
-      personalityTags: [],
-    },
-    {
-      id: 3,
-      name: '감자',
-      breed: '코카스파니엘',
-      birthdate: '2019-10-11',
-      age: 7,
-      personalityTags: ['새로운 친구 만나는 걸 좋아해요', '조금 활발해요', '호기심이 많아요'],
-    },
-    {
-      id: 4,
-      name: '카토시',
-      breed: '스피츠',
-      birthdate: '',
-      age: 0,
-      personalityTags: [],
-    },
-    {
-      id: 5,
-      name: '꺼양',
-      breed: '포메라니안',
-      birthdate: '',
-      age: 0,
-      personalityTags: [],
-    },
-  ];
-
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? true;
   const handleBack = () => {
-    navigate(-1);
+    navigate(`/participatedog/${id}`, { state: { animateBack: true } });
   };
 
   // title이 15자를 초과하면 '...'을 추가하여 표시
@@ -93,9 +50,9 @@ const MeetUpDogListPage = () => {
 
   return (
     <motion.div
-      initial={{ x: 300, opacity: 0 }} // 항상 오른쪽에서 시작
-      animate={{ x: 0, opacity: 1 }} // 가운데로 이동
-      exit={{ x: 300, opacity: 0 }} // 왼쪽으로 퇴장
+      initial={animateBack ? { x: -300, opacity: 0 } : { x: 300, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={animateBack ? { x: 300, opacity: 0 } : { x: -300, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       <div className="flex items-center bg-deep-coral text-white p-4">

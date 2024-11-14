@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { FaDog } from 'react-icons/fa';
-import { AiOutlineDown, AiOutlineUp } from 'react-icons/ai';
 import { MeetingParticipantsInfo } from '@/types/user';
 import { useDog } from '@/hooks/dog/useDog';
 import DogIcon from '/icons/DogIcon.svg';
 import { useNavigate } from 'react-router-dom';
+import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
 
 interface DogCardProps {
   member: MeetingParticipantsInfo;
@@ -42,9 +41,11 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
           <img
             onClick={(e) => {
               e.stopPropagation();
-              navigate(`/profile/${member.memberId}`)
+              navigate(`/profile/${member.memberId}/meetingparticipants`, { state: { meetingId : meetingId } });
             }}
-            src={member.profileImage || '/icons/favicon/favicon-96x96.png'} alt="" />
+            src={member.profileImage || '/icons/favicon/favicon-96x96.png'}
+            alt=""
+          />
         </div>
         <div className="flex-1">
           <div className="flex justify-between items-center">
@@ -56,7 +57,7 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
             </div>
           </div>
         </div>
-        <div className="text-gray-500 ml-2">{showDetails ? <AiOutlineUp /> : <AiOutlineDown />}</div>
+        <div className="text-gray-500 text-3xl">{showDetails ? <RiArrowDropUpLine /> : <RiArrowDropDownLine />}</div>
       </div>
 
       <div
@@ -72,30 +73,35 @@ const DogCard = ({ member, meetingId }: DogCardProps) => {
             님과 함께하는 반려견
           </p>
         </div>
-        {meetingDogs.map((dog, index) => (
-          <div key={index} className="bg-[#fff4e8] p-3 rounded-xl flex flex-col space-y-3">
-            <div className="flex items-center">
-              <div className="w-10 h-10 mr-2 rounded-full border">
-                <img src={dog.profileImage} alt="" />
+        <div className="flex flex-col space-y-3">
+          {meetingDogs.map((dog, index) => (
+            <div key={index} className="bg-[#fff6ec] p-3 rounded-xl space-y-3">
+              <div className="flex items-center">
+                <div className="w-10 h-10 mr-2 rounded-full border">
+                  <img className="w-full h-full object-cover rounded-full" src={dog.profileImage} alt="" />
+                </div>
+                <span className="font-semibold text-md">{dog.name}</span>
+                <div className="ml-auto flex space-x-2 items-center">
+                  <span className="text-sm text-zinc-600">{dog.breed}</span>
+                  <div className="border-r border-zinc-400 h-4"></div>
+                  <p className="text-sm text-zinc-600">{dog.age}살</p>
+                </div>
+                <div className="flex flex-wrap mt-2"></div>
               </div>
-              <span className="font-semibold text-md">{dog.name}</span>
-              <div className="ml-auto flex space-x-2 items-center">
-                <span className="text-sm text-zinc-600">{dog.breed}</span>
-                <div className="border-r border-zinc-400 h-4"></div>
-                <p className="text-sm text-zinc-600">{dog.age}살</p>
-              </div>
-              <div className="flex flex-wrap mt-2"></div>
-            </div>
 
-            <div className="mx-2">
-              {dog.personality.map((tag, index) => (
-                <span key={index} className="bg-peach-orange text-white text-xs font-medium px-2 py-1 rounded-full mr-2 mb-2">
-                  {tag}
-                </span>
-              ))}
+              <div className="mx-2">
+                {dog.personality.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="bg-peach-orange text-white text-xs font-medium px-2 py-1 rounded-full mr-2 mb-2"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

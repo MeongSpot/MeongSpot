@@ -93,7 +93,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'profile/:id',
+        path: 'profile/:id/:where?',
         element: (
           <AuthGuard>
             <UserProfile />
