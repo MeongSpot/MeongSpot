@@ -9,6 +9,7 @@ import { useDog } from '@/hooks/dog/useDog';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import { PersonalityList } from '@/types/dogInfo';
 import DogDeleteModal from '@/components/dog/DogDeleteModal';
+import { is } from 'date-fns/locale';
 
 const UpdateDog = () => {
   const navigate = useNavigate();
@@ -204,10 +205,12 @@ const UpdateDog = () => {
     }
   }, [isLoading]);
 
-  return (
-    <div className={`relative transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
-      {isLoading && <LoadingOverlay message="로딩 중..." />}
+  if (isLoading) {
+    return <LoadingOverlay message="로딩 중..." />;
+  }
 
+  return (
+    <div className={`relative transition-transform duration-200 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
       <div className="p-4 grid grid-cols-3 items-center">
         <div className="">
           <IoChevronBack
