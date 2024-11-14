@@ -28,9 +28,11 @@ const SingleChatPage = () => {
   const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView();
+      }
+    }, 50); // 50ms 딜레이를 추가하여 렌더링 이후 호출 보장
   };
 
   const handleScrollToTopLoad = useCallback(() => {
@@ -46,13 +48,6 @@ const SingleChatPage = () => {
       }, 100);
     }
   }, [loading, isLastPage]);
-
-  useEffect(() => {
-    if (page === 0) {
-      // 0페이지에서 처음 메시지 로드 시 바로 최하단으로 스크롤
-      scrollToBottom();
-    }
-  }, [page]);  // 페이지가 변경될 때마다 최하단으로 스크롤 이동
   
   useEffect(() => {
     if (fetchedMessages.length > 0) {
