@@ -3,6 +3,7 @@ package com.ottogi.be.walking.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ottogi.be.auth.dto.LoginMemberInfo;
 import com.ottogi.be.common.dto.response.ApiResponse;
+import com.ottogi.be.walking.dto.request.WalkingEndRequest;
 import com.ottogi.be.walking.dto.request.WalkingStartRequest;
 import com.ottogi.be.walking.dto.response.WalkingLogDetailResponse;
 import com.ottogi.be.walking.dto.response.WalkingLogResponse;
@@ -30,8 +31,9 @@ public class WalkingController {
     }
 
     @PostMapping("/end")
-    public ResponseEntity<?> walkingEnd(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws JsonProcessingException {
-        walkingEndService.endWalking(loginMemberInfo.getLoginId());
+    public ResponseEntity<?> walkingEnd(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
+                                        @RequestBody WalkingEndRequest request) throws JsonProcessingException {
+        walkingEndService.endWalking(loginMemberInfo.getLoginId(),request);
         return ResponseEntity.ok(new ApiResponse<>("WK102", "산책 종료 성공",null));
     }
 
@@ -48,4 +50,9 @@ public class WalkingController {
         return ResponseEntity.ok(new ApiResponse<>("WK104", "산책 기록 상세조회 성공", result));
     }
 
+    @PostMapping("/check")
+    public ResponseEntity<?> walkingCheck(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws JsonProcessingException {
+        walkingLogService.checkRedisLog(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("WK105","비정상 산책 기록 체크 성공",null));
+    }
 }

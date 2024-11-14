@@ -9,6 +9,7 @@ import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
 import com.ottogi.be.walking.domain.WalkingLog;
+import com.ottogi.be.walking.dto.request.WalkingEndRequest;
 import com.ottogi.be.walking.repository.WalkingLogRepository;
 import com.ottogi.be.walking.repository.WalkingRedisRepository;
 import com.ottogi.be.walking.util.PolylineUtils;
@@ -34,10 +35,8 @@ public class WalkingEndService {
     private final DogRepository dogRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Transactional
-    public void endWalking(String loginId) throws JsonProcessingException {
+    public void endWalking(String loginId, WalkingEndRequest request) throws JsonProcessingException {
         Member member = memberRepository.findByLoginId(loginId).orElseThrow(MemberNotFoundException::new);
-        Long userId = member.getId();
-
 
         List<Object> gpsCoordinates = walkingRedisRepository.getGpsData(loginId);
         List<PointDto> latLngList = parseGpsCoordinates(gpsCoordinates);
@@ -49,12 +48,6 @@ public class WalkingEndService {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
 
-        Long endTimeEpoch = Instant.now().getEpochSecond();
-        LocalDateTime endDateTime = Instant.ofEpochSecond(endTimeEpoch)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-
-        double distance = calculateDistance(latLngList);
         String trail = PolylineUtils.encodePolyline(latLngList.stream()
                 .map(dto -> new PointDto(dto.getLat(), dto.getLng()))
                 .collect(Collectors.toList()));
@@ -67,8 +60,8 @@ public class WalkingEndService {
                     .member(member)
                     .dog(dog)
                     .createdAt(startDateTime)
-                    .finishedAt(endDateTime)
-                    .distance(distance)
+                    .finishedAt(request.getFinishedAt())
+                    .distance(request.getDistance())
                     .trail(trail)
                     .build();
             walkingLogRepository.save(walkingLog);

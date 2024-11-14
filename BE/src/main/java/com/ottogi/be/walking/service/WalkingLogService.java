@@ -1,5 +1,6 @@
 package com.ottogi.be.walking.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 import com.ottogi.be.member.repository.MemberRepository;
@@ -7,12 +8,15 @@ import com.ottogi.be.walking.domain.WalkingLog;
 import com.ottogi.be.walking.dto.MonthlyWalkingLogDto;
 import com.ottogi.be.walking.dto.PointDto;
 import com.ottogi.be.walking.dto.WalkingLogDto;
+import com.ottogi.be.walking.dto.request.WalkingEndRequest;
 import com.ottogi.be.walking.dto.response.WalkingLogDetailResponse;
 import com.ottogi.be.walking.dto.response.WalkingLogResponse;
 import com.ottogi.be.walking.exception.WalkingLogNotFoundException;
 import com.ottogi.be.walking.repository.WalkingLogRepository;
 
+import com.ottogi.be.walking.repository.WalkingRedisRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +32,8 @@ public class WalkingLogService {
 
     private final MemberRepository memberRepository;
     private final WalkingLogRepository walkingLogRepository;
-
+    private final WalkingEndService walkingEndService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Transactional(readOnly = true)
     public WalkingLogResponse findWalkingLog(String loginId){
@@ -58,6 +63,16 @@ public class WalkingLogService {
                 walkingLog.getDistance(),
                 decodedTrail
         );
+    }
+
+    @Transactional
+    public void checkRedisLog(String loginId) throws JsonProcessingException {
+        String key = "walking:" + loginId + ":startTime";
+        Object value = redisTemplate.opsForValue().get(key);
+        if (value != null) {
+            WalkingEndRequest walkingEndRequest = new WalkingEndRequest(0, LocalDateTime.now());
+            walkingEndService.endWalking(loginId, walkingEndRequest);
+        }
     }
 
 
