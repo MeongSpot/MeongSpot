@@ -94,7 +94,7 @@ public class FindChatRoomService {
         return new FindChatRoomResponse(member.getId(), member.getNickname(), member.getProfileImage(), new SliceImpl<>(chatMessageDtoList, pageable, hasNext));
     }
 
-    private long countUnreadMessage(Long chatRoomId, LocalDateTime readAt) {
+    public long countUnreadMessage(Long chatRoomId, LocalDateTime readAt) {
         if (readAt != null) {
             return chatMessageRepository.countByChatRoomIdAndSentAtAfter(chatRoomId, readAt);
         } else {

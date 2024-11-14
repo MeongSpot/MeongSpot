@@ -7,6 +7,7 @@ import com.ottogi.be.meeting.dto.request.CreateMeetingRequest;
 import com.ottogi.be.meeting.dto.request.JoinMeetingRequest;
 import com.ottogi.be.meeting.dto.request.ModifyMeetingDogRequest;
 import com.ottogi.be.meeting.dto.response.FindMeetingResponse;
+import com.ottogi.be.meeting.dto.response.FindMyMeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingResponse;
 import com.ottogi.be.meeting.dto.response.MeetingTopResponse;
 import com.ottogi.be.meeting.service.*;
@@ -79,11 +80,17 @@ public class MeetingController {
         return ResponseEntity.ok(new ApiResponse<>("MT106", "모임 나가기 성공", null));
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<?> myMeetingList(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
+        List<FindMyMeetingResponse> result = findMeetingService.findMyMeetingList(loginMemberInfo.getLoginId());
+        return ResponseEntity.ok(new ApiResponse<>("MT107", "나의 모임 목록 조회 성공", result));
+    }
+
     @PutMapping("/dog")
     public ResponseEntity<?> meetingDogModify(@Valid @RequestBody ModifyMeetingDogRequest request,
                                               @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) {
         modifyMeetingDogService.modifyMeetingDog(request.toDto(loginMemberInfo.getLoginId()));
-        return ResponseEntity.ok(new ApiResponse<>("MT107", "모임 참여 반려견 변경", null));
+        return ResponseEntity.ok(new ApiResponse<>("MT108", "모임 참여 반려견 변경", null));
     }
 
 }

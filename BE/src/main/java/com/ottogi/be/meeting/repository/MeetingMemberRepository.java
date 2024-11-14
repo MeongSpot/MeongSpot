@@ -4,7 +4,6 @@ import com.ottogi.be.dog.domain.Dog;
 import com.ottogi.be.dog.dto.response.FindDogProfileImage;
 import com.ottogi.be.meeting.domain.Meeting;
 import com.ottogi.be.meeting.domain.MeetingMember;
-import com.ottogi.be.meeting.dto.MeetingMemberCountDto;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.dto.response.FindMeetingMemberResponse;
 import io.lettuce.core.dynamic.annotation.Param;
@@ -30,19 +29,6 @@ public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Lo
             """)
     List<Dog> findDogsFromMeetingIdAndMemberId(Long meetingId, Long memberId);
 
-    @Query("SELECT COUNT(DISTINCT mm.member) FROM MeetingMember mm WHERE mm.meeting = :meeting")
-    int countMembersByMeeting(@Param("meeting") Meeting meeting);
-
-    @Query("""
-            SELECT NEW com.ottogi.be.meeting.dto.MeetingMemberCountDto(
-            mm.meeting.id, COUNT(DISTINCT mm.member)
-            )
-            FROM MeetingMember mm
-            WHERE mm.meeting.id IN :meetingIds
-            GROUP BY mm.meeting.id
-            """)
-    List<MeetingMemberCountDto> countMembersByMeetingIds(List<Long> meetingIds);
-
     boolean existsByMemberAndMeeting(Member member, Meeting meeting);
 
     @Query("""
@@ -63,4 +49,12 @@ public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Lo
     List<Member> findMembersForNotification(@Param("meeting") Meeting meeting, @Param("member") Member member);
 
     boolean existsByDogId(Long dogId);
+
+    @Query("""
+            SELECT DISTINCT (mm.meeting.id)
+            FROM MeetingMember mm
+            WHERE mm.member.id = :memberId
+            """)
+    List<Long> findMeetingIdsByMemberId(Long memberId);
+
 }
