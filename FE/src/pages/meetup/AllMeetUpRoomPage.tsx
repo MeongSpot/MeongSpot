@@ -102,7 +102,7 @@ const AllMeetUpRoomPage = () => {
 
   return (
     <AnimatePresence>
-      <motion.div className="" {...pageAnimation} transition={{ type: 'spring', stiffness: 300, damping: 35 }}>
+      <motion.div {...pageAnimation} transition={{ type: 'spring', stiffness: 300, damping: 35 }}>
         <div className="sticky top-0 flex items-center justify-between mb-4 border-b p-4 bg-white">
           <button className="mr-3 text-gray-600" onClick={() => navigate('/meeting', { state: { animateBack: true } })}>
             <IoChevronBack size={24} />
@@ -118,13 +118,13 @@ const AllMeetUpRoomPage = () => {
         ) : error ? (
           <div className="text-center py-4 text-red-500">{error}</div>
         ) : (
-          <div className="px-4">
-            <div className="sticky top-20 flex justify-between items-center mb-4">
+          <div className="">
+            <div className="sticky w-full top-20 flex justify-between items-center my-2 px-5 pb-3 bg-white">
               <span className="text-gray-600">총 {meetings.length}개</span>
               <RoomSortButton sortBy={uiSortBy} onSortChange={handleSortChange} />
             </div>
             {meetings.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 px-4 ">
                 {meetings.map((meeting) => (
                   <AllRoomListCard
                     key={meeting.meetingId}
