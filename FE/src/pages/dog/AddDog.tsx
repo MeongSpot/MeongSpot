@@ -150,11 +150,12 @@ const AddDog: React.FC = () => {
   }, [isLoading]);
 
   return (
-    <div className={`relative transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
+    <div className={`min-h-screen relative transition-transform duration-300 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
       {isLoading && <LoadingOverlay message="로딩 중..." />}
 
       <div className="p-4 grid grid-cols-3 items-center">
         <div></div>
+        <p className="text-center text-lg font-bold">반려견 등록</p>
         <div className="flex justify-end">
           <IoClose
             onClick={() => {
@@ -163,7 +164,6 @@ const AddDog: React.FC = () => {
             size={24}
           />
         </div>
-        <p className="text-center text-lg font-bold">반려견 등록</p>
       </div>
       <hr />
 
