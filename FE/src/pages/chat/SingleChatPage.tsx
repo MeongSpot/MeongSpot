@@ -28,11 +28,7 @@ const SingleChatPage = () => {
   const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView();
-      }
-    }, 50);
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleScrollToTopLoad = useCallback(() => {
@@ -48,7 +44,7 @@ const SingleChatPage = () => {
       }, 100);
     }
   }, [loading, isLastPage]);
-  
+
   useEffect(() => {
     if (fetchedMessages.length > 0) {
       setLocalMessages((prevMessages) => {
@@ -62,7 +58,7 @@ const SingleChatPage = () => {
       if (page === 0) scrollToBottom();
     }
   }, [fetchedMessages, page]);
-
+  
   useEffect(() => {
     const firstNonSenderMessage = localMessages.find((msg) => msg.senderId !== myId);
     if (firstNonSenderMessage) {
@@ -75,7 +71,6 @@ const SingleChatPage = () => {
     return () => clearTimeout(loadingTimeout);
   }, []);
 
-  // 새 메시지 전송
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
       const newMessage: Chat = { // 타입 명시
@@ -91,9 +86,7 @@ const SingleChatPage = () => {
       // 새 메시지를 로컬 상태에 추가하여 즉시 반영
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       setMessage('');
-      // setTimeout(() => {
-      //   scrollToBottom(); // 100ms 후에 스크롤 이동
-      // }, 100); // 필요에 따라 시간을 조정
+      scrollToBottom();
     }
   };
 
@@ -102,7 +95,6 @@ const SingleChatPage = () => {
     navigate('/chat', { state: { animateBack: true } });
   };
 
-  // 날짜 형식화
   const formatDateLabel = (dateString: string): string => {
     const date = new Date(dateString);
     const today = new Date();
@@ -112,7 +104,6 @@ const SingleChatPage = () => {
     return format(date, 'yyyy년 M월 d일');
   };
 
-  // 날짜가 다른지 비교
   const isDifferentDate = (current: string, previous: string | null): boolean => {
     if (!previous) return true;
     const currentDate = new Date(current).toDateString();
@@ -162,7 +153,7 @@ const SingleChatPage = () => {
                 {!isSender && (
                   <div onClick={() => navigate(`/profile/${msg.senderId}`)}>
                     <img
-                      src={msg.profileImage || '/icons/favicon/favicon-96x96.png'}
+                      src={msg.profileImage || ''}
                       alt="Profile"
                       className="w-8 h-8 rounded-full object-cover mx-2"
                     />
