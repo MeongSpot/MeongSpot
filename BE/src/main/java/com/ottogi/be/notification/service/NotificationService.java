@@ -3,6 +3,8 @@ package com.ottogi.be.notification.service;
 import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.repository.MemberRepository;
 import com.ottogi.be.notification.domain.Notification;
+import com.ottogi.be.notification.domain.NotificationFriendInvite;
+import com.ottogi.be.notification.domain.enums.Status;
 import com.ottogi.be.notification.dto.NotificationDto;
 import com.ottogi.be.notification.dto.response.NotificationResponse;
 import com.ottogi.be.notification.repository.NotificationRepository;
@@ -57,8 +59,15 @@ public class NotificationService {
                 .orElseThrow(MemberNotFoundException::new);
 
         isMemberNotification(notification,member);
+
+        if (notification instanceof NotificationFriendInvite notificationFriendInvite) {
+            if (notificationFriendInvite.getStatus() == Status.WAIT) {
+                notificationFriendInvite.reject();
+            }
+        }
         notification.delete();
         notificationRepository.save(notification);
+
 
     }
 
