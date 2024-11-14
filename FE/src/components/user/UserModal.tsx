@@ -1,6 +1,9 @@
+import { useCallback } from 'react';
 import { FriendListInfo } from '@/types/friend';
 import { UserSearchInfo } from '@/types/user';
 import { useNavigate } from 'react-router-dom';
+import { useFriend } from '@/hooks/friend/useFriend';
+import FriendsRequestModal from '../friends/FriendsRequestModal';
 
 interface FriendsModalProps {
   isOpen: boolean;
@@ -10,9 +13,19 @@ interface FriendsModalProps {
 
 const UserModal = ({ isOpen, onClose, user }: FriendsModalProps) => {
   const navigate = useNavigate();
+  const { requestFriend, requestFriendResponse, isRequestFriendModalOpen, setIsRequestFriendModalOpen } = useFriend();
+
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    if (isRequestFriendModalOpen) {
+      setIsRequestFriendModalOpen(false);
+    }
     onClose();
+  };
+
+  const handleRequestFriend = () => {
+    if (!user) return;
+    requestFriend(user.id);
   };
 
   if (!user) return null;
@@ -69,11 +82,18 @@ const UserModal = ({ isOpen, onClose, user }: FriendsModalProps) => {
           <hr />
 
           <div className="pt-5 py-4 space-y-5">
-            <p className="font-medium">친구 신청하기</p>
+            <p onClick={handleRequestFriend} className="font-medium">
+              친구 신청하기
+            </p>
             <p className="font-medium">차단하기</p>
           </div>
         </div>
       </div>
+
+      {/* 친구 요청 상태 모달 */}
+      {isRequestFriendModalOpen && (
+        <FriendsRequestModal requestFriendResponse={requestFriendResponse} setIsRequestFriendModalOpen={setIsRequestFriendModalOpen} isUserModal={true} />
+      )}
     </div>
   );
 };

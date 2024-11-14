@@ -15,6 +15,7 @@ import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
 import { useFriend } from '@/hooks/friend/useFriend';
 import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
 import useAddFriend from '@/hooks/alarm/useAddFriend';
+import FriendsRequestModal from '@/components/friends/FriendsRequestModal';
 
 const UserProfile: React.FC = () => {
   const { id, where } = useParams();
@@ -24,8 +25,8 @@ const UserProfile: React.FC = () => {
   const { userData, isLoading, getUserProfile } = useProfile();
   const { userDogs, getUserDogs } = useDog();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { deleteFriend } = useFriend();
-  const { createChatRoom, loading: chatLoading, chatRoomData } = useSingleChatCreate();
+  const { deleteFriend, requestFriend, requestFriendResponse, isRequestFriendModalOpen, setIsRequestFriendModalOpen } = useFriend();
+  const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
   const { respondToInvitation, loading: friendLoading, error, successMessage } = useAddFriend();
 
   const handleDeleteFriend = useCallback(
@@ -37,11 +38,10 @@ const UserProfile: React.FC = () => {
     [deleteFriend, getUserProfile, id],
   );
 
-  const handleAddFriend = () => {
-    if (id) {
-      respondToInvitation(Number(id), true);
-    }
-  };
+  const handleRequestFriend = useCallback(() => {
+    requestFriend(Number(id));
+    getUserProfile(Number(id));
+  }, [requestFriend, getUserProfile, id]);
 
   useEffect(() => {
     getUserProfile(Number(id));
@@ -108,7 +108,7 @@ const UserProfile: React.FC = () => {
 
           <div className="grid grid-cols-2 items-center space-x-2">
             {userData.isFriend === false ? (
-              <button onClick={handleAddFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
+              <button onClick={handleRequestFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
                 <p className="text-white text-sm font-semibold">친구 신청</p>
               </button>
             ) : (
@@ -158,6 +158,14 @@ const UserProfile: React.FC = () => {
       </div>
 
       <div className="bg-zinc-100 w-full h-3"></div>
+
+      {/* 친구 요청 상태 모달 */}
+      {isRequestFriendModalOpen && (
+        <FriendsRequestModal
+          requestFriendResponse={requestFriendResponse}
+          setIsRequestFriendModalOpen={setIsRequestFriendModalOpen}
+        />
+      )}
 
       {isDeleteModalOpen && (
         <FriendsDeleteModal
