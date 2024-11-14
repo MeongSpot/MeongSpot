@@ -163,23 +163,26 @@ const MapPage = () => {
   );
 
   const handleTrackingToggle = useCallback(() => {
-    // walking 모드일 때만 모바일에서 나침반 모드 제공
     if (isWalkingMode && isMobile) {
-      console.log('Walking Mode & Mobile:', { isTracking, isCompassMode });
+      // Walking 모드의 기존 로직 유지
       if (!isTracking) {
-        // 트래킹 시작
         setIsTracking(true);
         setIsCompassMode(false);
         getCurrentLocation();
       } else if (!isCompassMode) {
-        // 나침반 모드 시작
         setIsCompassMode(true);
-        console.log('Compass Mode Activated');
       } else {
-        // 모든 모드 끄기
         setIsTracking(false);
         setIsCompassMode(false);
       }
+    } else {
+      // Meeting 모드일 때는 현재 위치로 이동만 수행
+      getCurrentLocation();
+      setIsTracking(true);
+      // 잠시 후 트래킹 상태 해제
+      setTimeout(() => {
+        setIsTracking(false);
+      }, 1000);
     }
   }, [isTracking, isCompassMode, getCurrentLocation, isMobile, isWalkingMode]);
 

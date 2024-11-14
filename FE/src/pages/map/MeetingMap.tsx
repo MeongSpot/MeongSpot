@@ -208,6 +208,63 @@ const MeetingMap = () => {
     };
   }, [searchResult, loadSpotsWithAPI]);
 
+  // isTracking 상태가 변경될 때 현재 위치로 이동하는 effect 추가
+  useEffect(() => {
+    if (isTracking && mapRef.current) {
+      setIsMoving(true);
+      const targetLatLng = new kakao.maps.LatLng(currentPosition.lat, currentPosition.lng);
+
+      // 현재 중심점과 레벨
+      const startCenter = mapRef.current.getCenter();
+      const startLevel = mapRef.current.getLevel();
+
+      // 목표 레벨
+      const targetLevel = 4;
+
+      // 애니메이션 시간 (밀리초)
+      const duration = 500;
+      const startTime = Date.now();
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // easeInOutCubic 이징 함수 적용
+        const easing = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        // 현재 위치와 목표 위치 사이를 보간
+        const lat = startCenter.getLat() + (targetLatLng.getLat() - startCenter.getLat()) * easing;
+        const lng = startCenter.getLng() + (targetLatLng.getLng() - startCenter.getLng()) * easing;
+
+        // 현재 레벨과 목표 레벨 사이를 보간
+        const currentLevel = startLevel + (targetLevel - startLevel) * easing;
+
+        // 지도 위치와 레벨 업데이트
+        mapRef.current?.setCenter(new kakao.maps.LatLng(lat, lng));
+        mapRef.current?.setLevel(Math.round(currentLevel));
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setIsMoving(false);
+          setMapLevel(targetLevel);
+          setCenter(currentPosition);
+
+          // 현재 위치에서 스팟 다시 로드
+          loadSpotsWithAPI(mapRef.current!).then((markers) => {
+            if (markers) {
+              setLastPosition(currentPosition);
+            }
+            setShowToast(!markers?.length);
+          });
+          setCenterChanged(false);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }
+  }, [isTracking, currentPosition]);
+
   return (
     <div className="relative w-full h-full overflow-hidden">
       <div className="w-full h-full">

@@ -1,11 +1,11 @@
-import { NotificationInfo } from '@/types/notification';
+import { Notification } from '@/types/alarm';
 import { IoClose } from 'react-icons/io5';
 
 interface FriendAcceptModalProps {
   isModalOpen: boolean;
   setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  selectedNotification: NotificationInfo | null;
-  setSelectedNotification: React.Dispatch<React.SetStateAction<NotificationInfo | null>>;
+  selectedNotification: Notification | null;
+  setSelectedNotification: React.Dispatch<React.SetStateAction<Notification | null>>;
 }
 
 const FriendAcceptModal = ({
