@@ -81,7 +81,15 @@ const MeetUpDogListPage = () => {
           <span className="text-deep-coral"> {meetingParticipants.length}</span>
         </h2>
         {meetingParticipants.map((member) => (
-          <DogCard key={member.memberId} member={member} meetingId={Number(id)} />
+          <DogCard
+            key={member.memberId}
+            member={member}
+            meetingId={Number(id)}
+            fromList={fromList}
+            fromModal={fromModal}
+            previousPath={previousPath}
+            spotName={spotName}
+          />
         ))}
       </div>
     </motion.div>
