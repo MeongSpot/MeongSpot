@@ -124,6 +124,7 @@ export interface MeetingDetailInfo {
   meetingAt: string;
   detailLocation?: string;
   information?: string;
+  isParticipate: boolean;
 }
 
 export interface MeetingDetailResponse {
