@@ -153,7 +153,7 @@ export const authService = {
     }
   },
 
-  login: async (loginId: string, password: string, token:string): Promise<LoginResponse> => {
+  login: async (loginId: string, password: string, token?:string): Promise<LoginResponse> => {
     try {
       const response = await axiosInstance.post('/api/auth/login', {
         loginId,
@@ -167,7 +167,9 @@ export const authService = {
       }
 
       // 로그인 후 FCM 토큰을 가져오고 서버에 저장
-      await authService.saveFCMToken(token); // `authService.saveFCMToken`을 호출
+      if (token) {
+        await authService.saveFCMToken(token); // FCM 토큰을 서버에 저장
+      }
 
       return response.data;
     } catch (error) {
