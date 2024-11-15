@@ -11,6 +11,7 @@ import useMarkRead from '@/hooks/chat/useMarkRead';
 import { Chat } from '@/types/singleChat';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import { differenceInCalendarDays, format } from 'date-fns';
+import { useMyMeeting } from '@/hooks/meetup/useMyMeeting';
 
 const GroupChatPage = () => {
   const { id: roomId } = useParams<{ id: string }>();
@@ -25,10 +26,13 @@ const GroupChatPage = () => {
 
   const { messages: fetchedMessages, loading, error, myId } = useChatDetail(Number(roomId), page);
   const { sendMessage, receiveMessage } = useChat(Number(roomId), nickname);
+  const { meetings } = useMyMeeting();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(Number(roomId));
-
+  
+  const currentMeeting = meetings.find((meeting) => meeting.meetingId === Number(roomId)); 
+  
   const scrollToBottom = () => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -122,7 +126,10 @@ const GroupChatPage = () => {
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
-        <h1 className="text-lg font-bold flex-1">채팅방</h1>
+        <h1 className="text-lg font-bold flex-1">
+          {currentMeeting ? currentMeeting.title : '채팅방'}
+        </h1>
+
         <button onClick={() => setIsModalOpen(true)} className="text-white">
           <FiMenu size={24} />
         </button>
