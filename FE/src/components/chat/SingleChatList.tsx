@@ -80,18 +80,19 @@ const SingleChatList = () => {
               </div>
             </div>
 
-            {chat.unreadMessageCnt > 0 && (
-              <div className="bg-deep-coral text-white text-xs font-semibold rounded-full w-6 h-6 flex items-center justify-center">
-                {chat.unreadMessageCnt}
+            <div className="text-right flex flex-col items-end">
+              <div className="text-gray-400 text-sm whitespace-nowrap">
+                {lastMessage ? formatLastMessageTime(lastMessage.time) : ''}
               </div>
-            )}
-
-            <div className="text-gray-400 text-sm whitespace-nowrap mr-2">
-              {lastMessage ? formatLastMessageTime(lastMessage.time) : ''}
+              {chat.unreadMessageCnt > 0 && (
+                <div className="bg-deep-coral text-white text-xs font-semibold rounded-full w-6 h-6 flex items-center justify-center mt-1">
+                  {chat.unreadMessageCnt}
+                </div>
+              )}
             </div>
 
             <button
-              className="text-gray-500 z-10"
+              className="text-gray-500 z-10 ml-2"
               onClick={(e) => {
                 e.stopPropagation();
                 openModal({
@@ -106,15 +107,6 @@ const SingleChatList = () => {
           </div>
         );
       })}
-
-      {selectedChat && (
-        <ChatOptionsModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          chatName={selectedChat.name}
-          chatRoomId={selectedChat.chatRoomId}
-        />
-      )}
     </div>
   );
 };

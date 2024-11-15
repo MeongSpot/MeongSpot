@@ -21,7 +21,15 @@ const SingleChatPage = () => {
   const [showLoading, setShowLoading] = useState(true);
   const [localMessages, setLocalMessages] = useState<Chat[]>([]);
 
-  const { messages: fetchedMessages, loading, error, isLastPage, myId, nickname, profileImage } = useChatDetail(roomId, page);
+  const {
+    messages: fetchedMessages,
+    loading,
+    error,
+    isLastPage,
+    myId,
+    nickname,
+    profileImage,
+  } = useChatDetail(roomId, page);
   const { sendMessage, receiveMessage } = useChat(roomId, nickname, profileImage);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
@@ -51,7 +59,7 @@ const SingleChatPage = () => {
     if (fetchedMessages.length > 0) {
       setLocalMessages((prevMessages) => {
         const newMessages = fetchedMessages.filter(
-          (newMsg) => !prevMessages.some((oldMsg) => oldMsg.sentAt === newMsg.sentAt)
+          (newMsg) => !prevMessages.some((oldMsg) => oldMsg.sentAt === newMsg.sentAt),
         );
         return [...newMessages, ...prevMessages];
       });
@@ -187,12 +195,19 @@ const SingleChatPage = () => {
 
       <div className="flex items-center p-3 border-t bg-white">
         <div className="relative flex-1">
-          <input
-            type="text"
+          <textarea
             placeholder="메시지 입력"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full bg-gray-100 rounded-full px-4 py-2 outline-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
+            rows={1}
+            className="w-full bg-gray-100 rounded-full px-4 py-2 outline-none resize-none overflow-hidden"
+            style={{ paddingRight: '2.5rem' }}
           />
           {message && (
             <button
