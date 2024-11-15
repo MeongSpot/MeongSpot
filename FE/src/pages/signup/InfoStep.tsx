@@ -5,6 +5,8 @@ import GenderButton from '@/components/common/Button/GenderButton';
 import { SignupData, REGEX } from '@/types/signup';
 import ValidationMessage from '@/components/common/Message/ValidationMessage';
 import { useAuth } from '@/hooks/useAuth';
+import { authService } from '@/services/authService';
+import usePhoneVerificationStore from '@/store/usePhoneVerificationStore';
 
 interface InfoStepProps {
   formData: SignupData;
@@ -13,6 +15,12 @@ interface InfoStepProps {
   setIsNicknameChecked: (checked: boolean) => void;
   isPhoneVerified: boolean;
   setIsPhoneVerified: (verified: boolean) => void;
+}
+
+// 인증 제한 정보를 위한 interface
+interface VerificationLimitInfo {
+  remainingAttempts: number;
+  nextAttemptTime?: string;
 }
 
 const InfoStep = ({
@@ -39,7 +47,8 @@ const InfoStep = ({
   const [timer, setTimer] = useState<number>(180);
   const [timerActive, setTimerActive] = useState(false);
   const [isPhoneEditable, setIsPhoneEditable] = useState(true);
-
+  const [verificationLimitInfo, setVerificationLimitInfo] = useState<VerificationLimitInfo | null>(null);
+  const { attempts, canRequestVerification, incrementAttempt, timeUntilNextAttempt } = usePhoneVerificationStore();
   // 닉네임 유효성 검사
   const nicknameLength = formData.info.nickname.length >= 2 && formData.info.nickname.length <= 8;
   const nicknameContent = REGEX.NICKNAME.test(formData.info.nickname);
@@ -209,17 +218,30 @@ const InfoStep = ({
 
   // 인증하기 버튼
   const handleVerifyPhone = async () => {
+    if (!canRequestVerification()) {
+      const remainingTime = timeUntilNextAttempt();
+
+      if (attempts >= 5) {
+        const hours = Math.floor(remainingTime / (60 * 60 * 1000));
+        alert(`일일 인증 시도 횟수를 초과했습니다. ${hours}시간 후에 다시 시도해주세요.`);
+      } else {
+        const seconds = Math.ceil(remainingTime / 1000);
+        alert(`잠시 후에 다시 시도해주세요. (${seconds}초)`);
+      }
+      return;
+    }
+
     const rawPhone = formData.info.phone.replace(/-/g, '');
     const success = await sendPhoneAuthCode(rawPhone);
 
     if (success) {
+      incrementAttempt();
       setShowVerification(true);
       setTimer(180);
       setTimerActive(true);
       setIsPhoneEditable(false);
     }
   };
-
   // 인증번호 확인
   const handleConfirmVerification = async () => {
     if (!verificationCode) return;
@@ -306,8 +328,10 @@ const InfoStep = ({
             </div>
           </div>
 
-          {/* 휴대폰 번호 입력 */}
-          <div className="w-full">
+          {/* 휴대폰 번호 입력 섹션 */}
+          <div className="w-full space-y-2">
+            {' '}
+            {/* space-y-2 추가 */}
             <div className="flex gap-2 w-full">
               <div className="flex-1">
                 <BoxInput
@@ -317,31 +341,44 @@ const InfoStep = ({
                   onChange={handleInputChange}
                   onFocus={handleInputFocus}
                   className="py-4"
-                  // disabled={!isPhoneEditable}
                 />
               </div>
               <ValidateButton
                 onClick={isPhoneVerified ? handleResetVerification : handleVerifyPhone}
-                disabled={!isPhoneValid || !isPhoneAvailable || isValidating || isPhoneVerified}
+                disabled={
+                  !isPhoneValid || !isPhoneAvailable || isValidating || isPhoneVerified || !canRequestVerification()
+                }
               >
-                {isPhoneVerified ? '다시받기' : isValidating ? '전송중...' : '인증하기'}
+                {isPhoneVerified
+                  ? '다시받기'
+                  : isValidating
+                    ? '전송중...'
+                    : !canRequestVerification() && attempts >= 5
+                      ? '시도초과'
+                      : !canRequestVerification()
+                        ? '다시받기'
+                        : '다시받기'}
               </ValidateButton>
             </div>
-
             {/* 전화번호 검증 메시지 */}
             {phoneValidationMessage && (
-              <div className="mt-1">
-                <ValidationMessage
-                  message={phoneValidationMessage}
-                  isValid={isPhoneAvailable} // 사용 가능한 번호일 때 true
-                />
-              </div>
+              <ValidationMessage message={phoneValidationMessage} isValid={isPhoneAvailable} />
             )}
-
-            {/* 인증번호 입력과 인증 완료 메시지를 휴대폰 번호 입력 div 안에 포함 */}
+            {/* 인증 시도 횟수 메시지 */}
+            {!isPhoneVerified && attempts > 0 && (
+              <ValidationMessage message={`남은 인증 시도 횟수: ${5 - attempts}회`} isValid={attempts < 5} />
+            )}
+            {/* 재시도 대기 시간 메시지 */}
+            {!canRequestVerification() && attempts < 5 && (
+              <ValidationMessage
+                message={`${Math.ceil(timeUntilNextAttempt() / 1000)}초 후에 재시도 가능합니다`}
+                isValid={false}
+              />
+            )}
+            {/* 인증번호 입력 섹션 */}
             {showVerification && !isPhoneVerified && (
-              <div className="mt-2">
-                <div className="flex gap-2 w-full">
+              <div className="mt-3">
+                <div className="flex gap-2 w-full mt-5">
                   <div className="flex-1">
                     <BoxInput
                       label="인증번호"
@@ -350,8 +387,10 @@ const InfoStep = ({
                       onFocus={handleInputFocus}
                       className="py-4"
                     />
-                    <div className="ml-2 text-sm text-blue-500 mt-1">남은 시간: {formatTime(timer)}</div>
-                    {authError && <ValidationMessage message="인증번호를 확인해주세요" isValid={false} />}
+                    <div className="mt-1">
+                      <ValidationMessage message={`남은 시간: ${formatTime(timer)}`} isValid={timer > 0} />
+                      {authError && <ValidationMessage message="인증번호를 확인해주세요" isValid={false} />}
+                    </div>
                   </div>
                   <ValidateButton onClick={handleConfirmVerification} disabled={!verificationCode}>
                     확인하기
@@ -359,12 +398,8 @@ const InfoStep = ({
                 </div>
               </div>
             )}
-
-            {isPhoneVerified && (
-              <div className="mt-1">
-                <ValidationMessage message="휴대폰 인증이 완료되었습니다." isValid={true} />
-              </div>
-            )}
+            {/* 인증 완료 메시지 */}
+            {isPhoneVerified && <ValidationMessage message="휴대폰 인증이 완료되었습니다." isValid={true} />}
           </div>
 
           {/* 생년월일 입력 */}

@@ -48,7 +48,6 @@ const MapPage = () => {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
-          console.log('Location found:', { lat: latitude, lng: longitude });
           setCurrentPosition({ lat: latitude, lng: longitude });
           setLocationError(false);
 
@@ -152,7 +151,6 @@ const MapPage = () => {
           setLocationError(true);
         }
       } catch (error) {
-        console.error('Location initialization error:', error);
         if (mounted) {
           setLocationError(true);
         }
