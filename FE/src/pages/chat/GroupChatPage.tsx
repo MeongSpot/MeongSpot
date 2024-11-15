@@ -53,7 +53,7 @@ const GroupChatPage = () => {
     if (fetchedMessages.length > 0) {
       setLocalMessages((prevMessages) => {
         const newMessages = fetchedMessages.filter(
-          (newMsg) => !prevMessages.some((oldMsg) => oldMsg.sentAt === newMsg.sentAt)
+          (newMsg) => !prevMessages.some((oldMsg) => oldMsg.sentAt === newMsg.sentAt),
         );
         return [...newMessages, ...prevMessages];
       });
@@ -142,7 +142,8 @@ const GroupChatPage = () => {
 
         {localMessages.map((msg, index) => {
           const isSender = msg.senderId === myId;
-          const showDateLabel = index === 0 || formatDateLabel(msg.sentAt) !== formatDateLabel(localMessages[index - 1]?.sentAt);
+          const showDateLabel =
+            index === 0 || formatDateLabel(msg.sentAt) !== formatDateLabel(localMessages[index - 1]?.sentAt);
           return (
             <div key={`${msg.sentAt}-${index}`} className="flex flex-col mb-4">
               {showDateLabel && (
@@ -170,7 +171,8 @@ const GroupChatPage = () => {
                       className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
                       style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
                     >
-                      {msg.sentAt && new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {msg.sentAt &&
+                        new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                 </div>
@@ -183,15 +185,25 @@ const GroupChatPage = () => {
 
       <div className="flex items-center p-3 border-t bg-white">
         <div className="relative flex-1">
-          <input
-            type="text"
+          <textarea
             placeholder="메시지 입력"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full bg-gray-100 rounded-full px-4 py-2 outline-none"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // 기본 Enter 동작 방지
+                handleSendMessage(); // 메시지 전송 함수 호출
+              }
+            }}
+            rows={1}
+            className="w-full bg-gray-100 rounded-full px-4 py-2 outline-none resize-none overflow-hidden"
+            style={{ paddingRight: '2.5rem' }} // 아이콘 공간 확보
           />
           {message && (
-            <button onClick={handleSendMessage} className="absolute inset-y-0 right-3 flex items-center text-deep-coral">
+            <button
+              onClick={handleSendMessage}
+              className="absolute inset-y-0 right-3 flex items-center text-deep-coral"
+            >
               <FaPaperPlane size={20} />
             </button>
           )}
