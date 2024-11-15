@@ -14,7 +14,6 @@ import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
 import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
 import { useFriend } from '@/hooks/friend/useFriend';
 import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
-import useAddFriend from '@/hooks/alarm/useAddFriend';
 import FriendsRequestModal from '@/components/friends/FriendsRequestModal';
 
 const UserProfile: React.FC = () => {
