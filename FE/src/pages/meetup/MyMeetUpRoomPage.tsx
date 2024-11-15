@@ -21,7 +21,7 @@ const MyMeetUpRoomPage = () => {
       const dateB = new Date(b.meetingAt).getTime();
       return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
     });
-
+  
     return (
       <div className="p-4">
         <h1 className="text-center text-lg font-bold mb-4">모임</h1>
@@ -36,7 +36,7 @@ const MyMeetUpRoomPage = () => {
             </div>
             <div className="space-y-4">
               {sortedMeetings.map((meeting) => (
-                <MyRoomListCard key={meeting.meetingId} />
+                <MyRoomListCard key={meeting.meetingId} meeting={meeting} />
               ))}
             </div>
           </>
