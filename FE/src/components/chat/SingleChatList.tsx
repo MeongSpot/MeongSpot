@@ -65,7 +65,7 @@ const SingleChatList = () => {
             onClick={() => goToChatPage(chat.chatRoomId, chat.interlocutorNickname)}
           >
             <img
-              src={chat.interlocutorProfileImage}
+              src={chat.interlocutorProfileImage || '/icons/favicon/favicon-96x96.png'}
               alt={chat.interlocutorNickname}
               className="w-12 h-12 rounded-full mr-4"
             />

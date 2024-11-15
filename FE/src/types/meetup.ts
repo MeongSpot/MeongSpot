@@ -167,3 +167,9 @@ export interface MyMeetingResponse {
   message: string;
   data: MyMeeting[];
 }
+
+export interface LeaveMeetingResponse {
+  code: string;
+  message: string;
+  data: null;
+}
