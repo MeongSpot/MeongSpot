@@ -70,6 +70,7 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
           onClose={closeModal}
           chatName={meeting.title}
           chatRoomId={meeting.chatRoomId}
+          meetingId={meeting.meetingId}
         />
       )}
     </div>

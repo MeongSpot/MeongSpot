@@ -9,9 +9,10 @@ interface GroupChatOptionsModalProps {
   onClose: () => void;
   chatName: string;
   chatRoomId: number;
+  meetingId: number;
 }
 
-const ChatOptionsModal: React.FC<GroupChatOptionsModalProps> = ({ isOpen, onClose, chatName, chatRoomId }) => {
+const GroupChatOptionsModal: React.FC<GroupChatOptionsModalProps> = ({ isOpen, onClose, chatName, chatRoomId, meetingId }) => {
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
   const { leaveMeeting, loading, error, successMessage } = useLeaveMeeting();
@@ -30,7 +31,7 @@ const ChatOptionsModal: React.FC<GroupChatOptionsModalProps> = ({ isOpen, onClos
   };
 
   const handleConfirmChatOut = async () => {
-    await leaveMeeting(chatRoomId); // 채팅방 삭제 요청
+    await leaveMeeting(meetingId); // 채팅방 삭제 요청
     console.log(`${chatName} 채팅방에서 나갔습니다.`);
     setIsChatOutModalOpen(false); // ChatOutModal 닫기
     onClose(); // ChatOptionsModal 닫기
@@ -89,4 +90,4 @@ const ChatOptionsModal: React.FC<GroupChatOptionsModalProps> = ({ isOpen, onClos
   );
 };
 
-export default ChatOptionsModal;
+export default GroupChatOptionsModal;
