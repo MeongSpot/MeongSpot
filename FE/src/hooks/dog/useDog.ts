@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dogService } from '@/services/dogService';
 import { DogList, DogName } from '@/types/dogInfo';
@@ -14,6 +14,7 @@ export const useDog = () => {
   const [dogDetail, setDogDetail] = useState<DogList | null>(null);
   const [meetingDogs, setMeetingDogs] = useState<DogList[]>([]);
   const [dogDeleteMessage, setDogDeleteMessage] = useState<string | null>(null);
+  const [isFetching, setIsFetching] = useState(false);
 
   // 반려견 품종 목록 조회
   const getDogBreeds = async () => {
@@ -58,7 +59,11 @@ export const useDog = () => {
   };
 
   // 나의 반려견 이름 목록 조회
-  const getMyDogsName = async () => {
+  const getMyDogsName = useCallback(async () => {
+    // 이미 API 호출 중이면 리턴
+    if (isFetching) return;
+
+    setIsFetching(true);
     setIsLoading(true);
     try {
       const dogs = await dogService.getMyDogsName();
@@ -69,8 +74,9 @@ export const useDog = () => {
       return [];
     } finally {
       setIsLoading(false);
+      setIsFetching(false);
     }
-  };
+  }, [isFetching]);
 
   // 반려견 상세 조회
   const getDogDetail = async (dogId: number) => {
@@ -100,7 +106,7 @@ export const useDog = () => {
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   // 반려견 수정
   const updateDog = async (dogId: number, data: FormData) => {
@@ -152,5 +158,24 @@ export const useDog = () => {
     }
   };
 
-  return { dogBreeds, myDogs, registerDog, getDogBreeds, getMyDogs, isLoading, myDogsName, getMyDogsName, dogDetail, getDogDetail, userDogs, getUserDogs, updateDog, getMeetingDogs, meetingDogs, deleteDog, dogDeleteMessage };
+  return {
+    dogBreeds,
+    myDogs,
+    registerDog,
+    getDogBreeds,
+    getMyDogs,
+    isLoading,
+    myDogsName,
+    getMyDogsName,
+    dogDetail,
+    getDogDetail,
+    userDogs,
+    getUserDogs,
+    updateDog,
+    getMeetingDogs,
+    meetingDogs,
+    deleteDog,
+    dogDeleteMessage,
+    isFetching,
+  };
 };

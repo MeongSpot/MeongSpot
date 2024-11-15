@@ -14,8 +14,7 @@ export const useSpot = ({ currentPosition }: UseSpotProps) => {
 
   const loadSpotsWithAPI = useCallback(
     async (map: kakao.maps.Map) => {
-      if (!map) return;
-
+      if (!map || isLoading) return;
       setIsLoading(true);
       try {
         const center = map.getCenter();
@@ -23,7 +22,7 @@ export const useSpot = ({ currentPosition }: UseSpotProps) => {
         const { shortRadius, longRadius } = spotService.calculateMapRadius(map);
 
         // 첫 번째 시도: 짧은 반경으로 검색
-        let spotsData = await spotService.fetchSpots(position, Math.round(shortRadius*1.3));
+        let spotsData = await spotService.fetchSpots(position, Math.round(shortRadius * 1.3));
 
         // 스팟이 없으면 반경을 1.6배로 늘려서 다시 시도
         if (spotsData.length === 0) {

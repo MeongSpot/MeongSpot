@@ -45,13 +45,13 @@ const SearchUser: React.FC = () => {
     <div>
       <div>
         <div className="p-4 grid grid-cols-3 items-center">
-          <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
-          <p className="text-center text-lg font-bold">친구 찾기</p>
+          <IoChevronBack onClick={() => navigate('/friendslist')} size={24} />
+          <p className="text-center text-lg font-bold">유저 검색</p>
         </div>
         <hr />
       </div>
 
-      <div className="p-4 space-y-4">
+      <div className="mt-2 p-4 space-y-4">
         <UserSearchBar onSearch={handleSearch} />
 
         <UserListCard data={searchedUser} handleClick={handleUserClick} />

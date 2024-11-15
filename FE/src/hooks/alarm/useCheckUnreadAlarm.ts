@@ -18,8 +18,8 @@ function useCheckUnreadAlarm() {
 
             console.log('API 응답:', response);
             if (response.data.code === "NO103") {
-                setExistUnread(response.data.body.existUnread); // 읽지 않은 알림 여부 설정
-            } else {
+                const isUnread = typeof response.data.data === "boolean" ? response.data.data : false;
+                setExistUnread(isUnread);
                 setError("읽지 않은 알림 조회 실패: " + response.data.message);
             }
         } catch (error) {

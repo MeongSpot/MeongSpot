@@ -44,11 +44,13 @@ const RoomCreatForm = () => {
   const maxDate = new Date(minDate.getTime() + 14 * 24 * 60 * 60 * 1000);
 
   useEffect(() => {
-    // 이미 강아지 있다면 호출 안함
-    if (myDogsName.length === 0) {
-      getMyDogsName();
-    }
-  }, [myDogsName.length]);
+    const fetchDogs = async () => {
+      if (myDogsName.length === 0) {
+        await getMyDogsName();
+      }
+    };
+    fetchDogs();
+  }, []); // 의존성 배열 비움 - 최초 한 번만 실행
 
   const showToast = (message: string) => {
     setToastMessage(message);

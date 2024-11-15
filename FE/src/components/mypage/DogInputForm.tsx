@@ -11,17 +11,15 @@ import DogPersonalityInput from '../common/DogInput/DogPersonalityInput';
 interface DogInputFormProps {
   formData: DogInfo;
   setFormData: (info: Partial<DogInfo>) => void;
+  isRegister?: boolean;
+  dogId?: number;
 }
 
-const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
+const DogInputForm = ({ formData, setFormData, isRegister, dogId }: DogInputFormProps) => {
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-
-    if (name === 'name') {
-      const koreanRegex = /^[가-힣]*$/;
-    }
 
     setFormData({
       [name]: name === 'age' ? Number(value) : value,
@@ -56,14 +54,25 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
         {/* 이름 Input */}
         <div className="w-full">
           <div className="flex-1">
-            <DogBoxInput label="이름" name="name" value={formData.name} onChange={handleChange} className="py-3" />
+            <DogBoxInput
+              label="이름"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="py-3"
+              isRequired={true}
+            />
           </div>
         </div>
 
         {/* 견종 Input */}
         <div
           onClick={() => {
-            navigate('/selectbreed');
+            if (isRegister) {
+              navigate(`/selectbreed/register`);
+            } else {
+              navigate(`/selectbreed/update/${dogId}`);
+            }
           }}
           className="w-full relative"
         >
@@ -73,6 +82,7 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
             value={formData.breedId}
             onChange={handleChange}
             className="py-3 cursor-pointer"
+            isRequired={true}
           />
           <FaAngleRight className="absolute right-4 top-[2.8rem] text-zinc-500" />
         </div>
@@ -97,7 +107,10 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
 
         {/* 성별 선택 버튼 */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">성별</p>
+          <div className="flex items-center space-x-[0.2rem]">
+            <p className="text-sm font-medium">성별</p>
+            <p className="text-sm text-deep-coral">*</p>
+          </div>
           <div className="flex space-x-3">
             <GenderButton selected={formData.gender === 'MALE'} onClick={() => handleGenderChange('남')}>
               남
@@ -110,7 +123,10 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
 
         {/* 중성화 여부 버튼 */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">중성화 여부</p>
+          <div className="flex items-center space-x-[0.2rem]">
+            <p className="text-sm font-medium">중성화 여부</p>
+            <p className="text-sm text-deep-coral">*</p>
+          </div>
           <div className="flex space-x-3">
             <GenderButton selected={formData.isNeuter === false} onClick={() => handleNeuterChange(false)}>
               안했음
@@ -129,12 +145,16 @@ const DogInputForm = ({ formData, setFormData }: DogInputFormProps) => {
             value={formData.introduction}
             onChange={handleChange}
             className="py-3"
+            isRequired={true}
           />
         </div>
 
         {/* 반려견 성격 */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">반려견 성격</p>
+          <div className="flex items-center space-x-[0.2rem]">
+            <p className="text-sm font-medium">반려견 성격</p>
+            <p className="text-sm text-deep-coral">*</p>
+          </div>
           <DogPersonalityInput value={formData.personality} onChange={handlePersonalityChange} />
         </div>
       </div>

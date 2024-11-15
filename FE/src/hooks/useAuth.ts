@@ -6,6 +6,7 @@ import type { SignupData } from '@/types/signup';
 import useAuthStore from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '@/services/axiosInstance';
+import axios from 'axios';
 
 export const useAuth = () => {
   const [isValidating, setIsValidating] = useState(false);
@@ -150,25 +151,28 @@ export const useAuth = () => {
     }
   };
 
-
-  const login = async (loginId: string, password: string, token?:string) => {
+  const login = async (loginId: string, password: string, token?: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await authService.login(loginId, password, token);
       const authToken = axiosInstance.defaults.headers.common['Authorization'] as string;
-      
+
       if (response.code === 'AU100' && authToken) {
         storeLogin(loginId, authToken);
         navigate('/');
         return true;
       }
-      
+
       setError(response.message || '로그인에 실패했습니다.');
       return false;
     } catch (error) {
-      setError('로그인 중 오류가 발생했습니다.');
+      if (axios.isAxiosError(error) && error.response?.data?.code === 'AU000') {
+        setError('아이디 또는 비밀번호가 잘못 되었습니다.');
+      } else {
+        setError('로그인에 실패했습니다.');
+      }
       return false;
     } finally {
       setIsLoading(false);

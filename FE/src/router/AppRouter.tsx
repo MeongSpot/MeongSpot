@@ -141,7 +141,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: 'selectbreed',
+        path: 'selectbreed/:where?/:id?',
         element: (
           <AuthGuard>
             <SelectBreed />
