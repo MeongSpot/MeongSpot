@@ -27,4 +27,13 @@ public class SpotController {
         return ResponseEntity.ok(new ApiResponse<>("MP100", "산책 위치 조회 성공", result));
     }
 
+    @GetMapping("/recommend")
+    public ResponseEntity<?> getHotSpots(
+            @RequestParam("lat") BigDecimal lat,
+            @RequestParam("lng") BigDecimal lng,
+            @RequestParam("radius") int radius) {
+        List<SpotResponse> result = spotService.findHotWalkingSpots(SpotDto.builder().lat(lat).lng(lng).radius(radius).build());
+        return ResponseEntity.ok(new ApiResponse<>("MP101", "핫한 산책지 조회 성공", result));
+    }
+
 }

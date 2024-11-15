@@ -19,9 +19,10 @@ public interface SpotRepository extends JpaRepository<Spot, Long> {
                                      @Param("lng") BigDecimal lng,
                                      @Param("radius") int radius);
 
+
 //    @Query(value = """
 //        SELECT * FROM meeting_spot WHERE
-//        ST_Contains(ST_Buffer(ST_SRID(point(:lng, :lat), 4326), :radius), location)
+//        ST_Contains(ST_Buffer(ST_SRID(Point(:lng, :lat), 4326), :radius/111195), location)
 //        """, nativeQuery = true)
 //    List<Spot> findParksWithinRadius(@Param("lat") BigDecimal lat,
 //                                     @Param("lng") BigDecimal lng,
