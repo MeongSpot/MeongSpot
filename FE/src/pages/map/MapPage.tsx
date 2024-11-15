@@ -4,6 +4,7 @@ import { MdNotifications } from 'react-icons/md';
 import { RiFocus3Line, RiCompass3Line } from 'react-icons/ri';
 import { TopBar } from '@/components/map/TopBar';
 import type { LatLng } from '@/types/map';
+import useCheckUnreadAlarm from '@/hooks/alarm/useCheckUnreadAlarm';
 
 interface DeviceOrientationEventiOS extends DeviceOrientationEvent {
   webkitCompassHeading?: number;
@@ -22,6 +23,7 @@ const MapPage = () => {
   const [heading, setHeading] = useState<number | null>(null);
   const [isWalkingMode, setIsWalkingMode] = useState(location.pathname === '/walking');
   const [searchResult, setSearchResult] = useState<LatLng | null>(null);
+  const { existUnread, loading: unreadLoading, error: unreadError } = useCheckUnreadAlarm();
 
   // 모바일 디바이스 체크
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -259,8 +261,18 @@ const MapPage = () => {
 
       <div className="absolute top-20 right-4 z-50">
         <div className="flex flex-col gap-2">
-          <button className="bg-white p-3 rounded-full shadow-md">
+          <button
+            className="relative bg-white p-3 rounded-full shadow-md"
+            onClick={() => {
+              navigate('/notification');
+            }}
+          >
             <MdNotifications className="text-2xl text-gray-600" />
+            {existUnread && (
+              <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                N
+              </span>
+            )}
           </button>
           <button
             className={`p-3 rounded-full shadow-md transition-all duration-300 ${
