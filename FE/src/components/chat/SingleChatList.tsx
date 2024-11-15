@@ -65,7 +65,7 @@ const SingleChatList = () => {
             onClick={() => goToChatPage(chat.chatRoomId, chat.interlocutorNickname)}
           >
             <img
-              src={chat.interlocutorProfileImage || '/icons/favicon/favicon-96x96.png'}
+              src={chat.interlocutorProfileImage}
               alt={chat.interlocutorNickname}
               className="w-12 h-12 rounded-full mr-4"
             />
@@ -92,7 +92,7 @@ const SingleChatList = () => {
             </div>
 
             <button
-              className="text-gray-500 z-10 ml-2"
+              className="text-gray-500 z-10"
               onClick={(e) => {
                 e.stopPropagation();
                 openModal({
@@ -107,6 +107,15 @@ const SingleChatList = () => {
           </div>
         );
       })}
+
+      {selectedChat && (
+        <ChatOptionsModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          chatName={selectedChat.name}
+          chatRoomId={selectedChat.chatRoomId}
+        />
+      )}
     </div>
   );
 };

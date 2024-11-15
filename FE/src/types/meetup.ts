@@ -1,4 +1,3 @@
-// types/meetup.ts
 import { LatLng } from '@/types/map';
 
 export interface MeetingHashtag {
@@ -149,4 +148,22 @@ export interface DogImagesResponse {
   code: string;
   message: string;
   data: DogImage[];
+}
+
+export interface MyMeeting {
+  meetingId: number;
+  title: string;
+  participants: number;
+  maxParticipants: number;
+  meetingAt: string;
+  spotName: string;
+  hashtag: string[];
+  chatRoomId: number;
+  unreadMessageCnt: number;
+}
+
+export interface MyMeetingResponse {
+  code: string;
+  message: string;
+  data: MyMeeting[];
 }
