@@ -11,8 +11,13 @@ import { useMeeting } from '@/hooks/meetup/useMeeting';
 import { Toast } from '@/components/common/Message/Toast';
 import FormErrorMessage from '@/components/common/Message/FormErrorMessage';
 import FormField from './FormField';
+import { DogName } from '@/types/dogInfo';
 
-const RoomCreatForm = () => {
+interface RoomCreatFormProps {
+  initialDogs: DogName[];
+}
+
+const RoomCreatForm: React.FC<RoomCreatFormProps> = ({ initialDogs }) => {
   const [title, setTitle] = useState('');
   const [date, setDate] = useState<Date | null>(null);
   const [startTime, setStartTime] = useState('');
@@ -37,20 +42,10 @@ const RoomCreatForm = () => {
 
   const navigate = useNavigate();
   const { id: placeId } = useParams();
-  const { myDogsName, getMyDogsName } = useDog();
   const { createMeeting, isLoading } = useMeeting();
 
   const minDate = new Date();
   const maxDate = new Date(minDate.getTime() + 14 * 24 * 60 * 60 * 1000);
-
-  useEffect(() => {
-    const fetchDogs = async () => {
-      if (myDogsName.length === 0) {
-        await getMyDogsName();
-      }
-    };
-    fetchDogs();
-  }, []); // 의존성 배열 비움 - 최초 한 번만 실행
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -354,7 +349,7 @@ const RoomCreatForm = () => {
                 value=""
               >
                 <option value="">강아지를 선택해주세요</option>
-                {myDogsName.map((dog) => (
+                {initialDogs.map((dog) => (
                   <option key={dog.id} value={dog.id}>
                     {dog.name}
                   </option>
@@ -367,7 +362,7 @@ const RoomCreatForm = () => {
             {errors.dogIds && <FormErrorMessage message={errors.dogIds} />}
             <div className="flex flex-wrap gap-2">
               {selectedDogs.map((dogId) => {
-                const dog = myDogsName.find((d) => d.id === dogId);
+                const dog = initialDogs.find((d) => d.id === dogId);
                 if (!dog) return null;
                 return (
                   <span
