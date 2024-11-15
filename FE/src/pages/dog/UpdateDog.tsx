@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DogInputForm from '@/components/mypage/DogInputForm';
 import { IoChevronBack } from 'react-icons/io5';
 import { DogInfo } from '@/types/dogInfo';
@@ -20,6 +20,7 @@ const UpdateDog = () => {
   const [isvalid, setIsValid] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const { id } = useParams();
+  const { isBreedUpdate = false } = (useLocation()?.state ?? {}) as { isBreedUpdate?: boolean };
 
   // 모달 관련 변수
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -38,6 +39,43 @@ const UpdateDog = () => {
   };
 
   const handleRegister = () => {
+    const errors: string[] = [];
+    const koreanNameRegex = /^[가-힣ㄱ-ㅎㅏ-ㅣ]+$/;
+
+    // 생일이 과거 날짜인지 확인하는 함수
+    const isPastDate = () => {
+      const { year, month, day } = dogRegisterInfo.birth;
+
+      const birthDate = new Date(`${year}-${month}-${day}`);
+      const currentDate = new Date();
+
+      return birthDate <= currentDate;
+    };
+
+    // 필수 필드 검증
+    if (!dogRegisterInfo.profileImage) errors.push('반려견 이미지를 등록해주세요.');
+    if (!dogRegisterInfo.name || !koreanNameRegex.test(dogRegisterInfo.name))
+      errors.push('반려견 이름을 정확히 입력해주세요.');
+    if (!dogRegisterInfo.breedId) errors.push('반려견 견종을 선택해주세요.');
+    if (!dogRegisterInfo.size) errors.push('반려견 크기를 선택해주세요.');
+    if (!dogRegisterInfo.gender) errors.push('반려견 성별을 선택해주세요.');
+    if (!dogRegisterInfo.introduction) errors.push('반려견 소개를 입력해주세요.');
+    if (dogRegisterInfo.isNeuter === null || dogRegisterInfo.isNeuter === undefined) {
+      errors.push('반려견의 중성화 여부를 선택해주세요.');
+    }
+    if (!dogRegisterInfo.birth.year || !dogRegisterInfo.birth.month || !dogRegisterInfo.birth.day || !isPastDate()) {
+      errors.push('반려견 생일을 정확히 입력해주세요.');
+    }
+    if (dogRegisterInfo.personality.length === 0) {
+      errors.push('반려견의 성격을 선택해주세요.');
+    }
+
+    if (errors.length > 0) {
+      // 에러 메시지 표시 (alert 사용)
+      alert(errors.join('\n'));
+      return;
+    }
+
     const formData = new FormData();
 
     // 프로필 이미지 파일이 없을 경우 빈 파일로 추가
@@ -128,7 +166,7 @@ const UpdateDog = () => {
   }, [id]);
 
   useEffect(() => {
-    if (dogDetail) {
+    if (dogDetail && !isBreedUpdate) {
       // 생일을 "year", "month", "day"로 분할하여 할당
       const [year, month, day] = dogDetail.birth ? dogDetail.birth.split('-') : ['', '', ''];
 
@@ -147,7 +185,7 @@ const UpdateDog = () => {
         breedId: dogDetail.breed || '',
         size: dogDetail.size || '',
         gender: dogDetail.gender || '',
-        isNeuter: dogDetail.isNeuter || null,
+        isNeuter: dogDetail.isNeuter !== undefined ? dogDetail.isNeuter : null,
         introduction: dogDetail.introduction || '',
         personality: personalityIds,
         birth: {
@@ -158,46 +196,6 @@ const UpdateDog = () => {
       });
     }
   }, [dogDetail]);
-
-  useEffect(() => {
-    // 필수 값이 모두 채워져 있는지 확인
-    const checkValidity = () => {
-      const koreanNameRegex = /^[가-힣]{1,}$/;
-      const requiredFields = [
-        dogRegisterInfo.name,
-        dogRegisterInfo.breedId,
-        dogRegisterInfo.size,
-        dogRegisterInfo.gender,
-        dogRegisterInfo.isNeuter,
-      ];
-
-      // 생일이 과거 날짜인지 확인하는 함수
-      const isPastDate = () => {
-        if (!dogRegisterInfo.birth) return true; // 생일이 없으면 통과
-        const { year, month, day } = dogRegisterInfo.birth;
-        if (!year || !month || !day) return true; // 생일의 모든 필드가 입력되지 않았다면 통과
-
-        const birthDate = new Date(`${year}-${month}-${day}`);
-        const currentDate = new Date();
-
-        return birthDate <= currentDate;
-      };
-
-      setIsValid(
-        requiredFields.every(
-          (field) =>
-            field !== null &&
-            field !== '' &&
-            field !== undefined &&
-            koreanNameRegex.test(dogRegisterInfo.name) &&
-            dogRegisterInfo.personality.length > 0 &&
-            isPastDate(),
-        ),
-      );
-    };
-
-    checkValidity();
-  }, [dogRegisterInfo]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -271,13 +269,21 @@ const UpdateDog = () => {
               onChange={handleImageUpload}
             />
           </div>
-          <p className="text-sm text-zinc-400">반려견 이미지를 등록해주세요</p>
+          {dogRegisterInfo.profileImage ? (
+            <></>
+          ) : (
+            <p className="text-sm text-zinc-400 font-medium">
+              반려견 이미지 등록은
+              <span className="font-semibold text-zinc-600"> 필수</span>
+              입니다
+            </p>
+          )}
         </div>
       </div>
 
       {/* 반려견 정보 input */}
       <div className="mt-7 relative p-4">
-        <DogInputForm formData={dogRegisterInfo} setFormData={setDogRegisterInfo} />
+        <DogInputForm formData={dogRegisterInfo} setFormData={setDogRegisterInfo} dogId={dogDetail?.id} />
       </div>
 
       {/* 등록 버튼 */}
@@ -285,7 +291,6 @@ const UpdateDog = () => {
         onClick={() => {
           handleRegister();
         }}
-        disabled={!isvalid}
       >
         수정하기
       </FooterButton>

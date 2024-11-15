@@ -1,3 +1,4 @@
+import { is } from 'date-fns/locale';
 import React, { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
@@ -10,6 +11,7 @@ interface BoxInputProps {
   name?: string;
   disabled?: boolean;
   onFocus?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  isRequired?: boolean;
 }
 
 const BoxInput = ({
@@ -21,6 +23,7 @@ const BoxInput = ({
   className = '',
   name,
   disabled = false,
+  isRequired,
 }: BoxInputProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState(''); // 오류 메시지 상태
@@ -55,7 +58,10 @@ const BoxInput = ({
   return (
     <div className="relative mb-4 space-y-2">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium">{label}</p>
+        <div className="flex items-center space-x-[0.2rem]">
+          <p className="text-sm font-medium">{label}</p>
+          {isRequired && <p className="text-sm text-deep-coral">*</p>}
+        </div>
         {label === '이름' && typeof value === 'string' && (
           <p className="text-xs font-semibold text-gray-800">
             {value.length}
