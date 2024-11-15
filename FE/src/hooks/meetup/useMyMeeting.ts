@@ -22,11 +22,8 @@ export const useMyMeeting = () => {
     };
 
     fetchMeetings();
-
     const intervalId = setInterval(fetchMeetings, 2000);
-
     return () => clearInterval(intervalId);
   }, []);
-
   return { meetings, loading, error };
 };
