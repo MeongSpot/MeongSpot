@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useOutletContext, useLocation } from 'react-router-dom';
 import MyDogInfoCard from '@/components/mypage/MyDogInfoCard';
 import { IoChevronBack } from 'react-icons/io5';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -15,29 +15,37 @@ import FriendsDeleteModal from '@/components/friends/FriendsDeleteModal';
 import { useFriend } from '@/hooks/friend/useFriend';
 import useSingleChatCreate from '@/hooks/chat/useSingleChatCreate';
 import useAddFriend from '@/hooks/alarm/useAddFriend';
+import FriendsRequestModal from '@/components/friends/FriendsRequestModal';
 
 const UserProfile: React.FC = () => {
-  const { id } = useParams();
+  const { id, where } = useParams();
+  const location = useLocation();
+  const meetingId = (location.state as { meetingId?: number })?.meetingId;
+  const fromList = (location.state as { fromList?: boolean })?.fromList;
+  const fromModal = (location.state as { fromModal?: boolean })?.fromModal;
+  const previousPath = (location.state as { previousPath?: string })?.previousPath;
+  const spotName = (location.state as { spotName?: string })?.spotName;
   const navigate = useNavigate();
   const { userData, isLoading, getUserProfile } = useProfile();
   const { userDogs, getUserDogs } = useDog();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const { deleteFriend } = useFriend();
-  const { createChatRoom, loading: chatLoading, chatRoomData } = useSingleChatCreate();
-  const { respondToInvitation, loading: friendLoading, error, successMessage } = useAddFriend();
+  const { deleteFriend, requestFriend, requestFriendResponse, isRequestFriendModalOpen, setIsRequestFriendModalOpen } =
+    useFriend();
+  const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
 
   const handleDeleteFriend = useCallback(
     (friendId: number) => {
       deleteFriend(friendId);
+      setIsDeleteModalOpen(false);
+      getUserProfile(Number(id));
     },
-    [deleteFriend]
+    [deleteFriend, getUserProfile, id],
   );
 
-  const handleAddFriend = () => {
-    if (id) {
-      respondToInvitation(Number(id), true);
-    }
-  };
+  const handleRequestFriend = useCallback(() => {
+    requestFriend(Number(id));
+    getUserProfile(Number(id));
+  }, [requestFriend, getUserProfile, id]);
 
   useEffect(() => {
     getUserProfile(Number(id));
@@ -50,7 +58,7 @@ const UserProfile: React.FC = () => {
     }
   }, [chatRoomData, navigate, userData]);
 
-  if (isLoading || chatLoading || friendLoading) {
+  if (isLoading || chatLoading ) {
     return <LoadingOverlay message="로딩 중..." />;
   }
 
@@ -63,7 +71,13 @@ const UserProfile: React.FC = () => {
       <div className="w-full p-4 grid grid-cols-3 items-center">
         <IoChevronBack
           onClick={() => {
-            navigate(-1);
+            if (where === 'meetingparticipants') {
+              navigate(`/meetupdoglist/${meetingId}`, {
+                state: { animateBack: true, fromList, fromModal, previousPath, spotName },
+              });
+            } else {
+              navigate(-1);
+            }
           }}
           className="text-2xl text-zinc-700"
         />
@@ -98,29 +112,26 @@ const UserProfile: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 items-center space-x-2">
-            {userData.isFriend === false ? (
-              <button onClick={handleAddFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
-                <p className="text-white text-sm font-semibold">친구 신청</p>
-              </button>
-            ) : (
+          {userData.isMe === false && (
+            <div className="grid grid-cols-2 items-center space-x-2">
+              {userData.isFriend === false ? (
+                <button onClick={handleRequestFriend} className="p-3 h-11 bg-deep-coral rounded-3xl">
+                  <p className="text-white text-sm font-semibold">친구 신청</p>
+                </button>
+              ) : (
+                <button onClick={() => setIsDeleteModalOpen(true)} className="p-3 h-11 bg-deep-coral rounded-3xl">
+                  <p className="text-white text-sm font-semibold">친구 삭제</p>
+                </button>
+              )}
               <button
-                onClick={() => setIsDeleteModalOpen(true)}
-                className="p-3 h-11 bg-deep-coral rounded-3xl"
+                onClick={() => createChatRoom(Number(id))}
+                className="flex justify-center items-center space-x-3 p-3 h-11 bg-zinc-600 rounded-3xl"
               >
-                <p className="text-white text-sm font-semibold">친구 삭제</p>
+                <IoChatbubbleEllipsesOutline className="text-white font-bold" size={25} />
+                <p className="text-white text-sm font-semibold">1:1 채팅</p>
               </button>
-            )}
-            <button
-              onClick={() => createChatRoom(Number(id))}
-              className="flex justify-center items-center space-x-3 p-3 h-11 bg-zinc-600 rounded-3xl"
-            >
-              <IoChatbubbleEllipsesOutline className="text-white font-bold" size={25} />
-              <p className="text-white text-sm font-semibold">1:1 채팅</p>
-            </button>
-          </div>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          {successMessage && <p className="text-green-500 text-sm mt-2">{successMessage}</p>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -153,6 +164,14 @@ const UserProfile: React.FC = () => {
       </div>
 
       <div className="bg-zinc-100 w-full h-3"></div>
+
+      {/* 친구 요청 상태 모달 */}
+      {isRequestFriendModalOpen && (
+        <FriendsRequestModal
+          requestFriendResponse={requestFriendResponse}
+          setIsRequestFriendModalOpen={setIsRequestFriendModalOpen}
+        />
+      )}
 
       {isDeleteModalOpen && (
         <FriendsDeleteModal

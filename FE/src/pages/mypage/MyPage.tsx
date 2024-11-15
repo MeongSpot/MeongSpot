@@ -110,13 +110,9 @@ const MyPage: React.FC = () => {
                   <p className="font-semibold">{friendsCount}</p>
                 </div>
                 <button
-                  onClick={(e) => {
-                    navigate('/searchuser');
-                    e.stopPropagation();
-                  }}
                   className="p-2 px-3 bg-deep-coral rounded-3xl"
                 >
-                  <p className="text-white text-sm">친구찾기</p>
+                  <p className="text-white text-sm">친구 목록</p>
                 </button>
               </div>
             </div>
