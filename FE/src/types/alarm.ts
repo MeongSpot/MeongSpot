@@ -32,7 +32,7 @@ export interface MarkAsReadResponse {
 export interface CheckUnreadNotificationsResponse {
   code: string;
   message: string;
-  body: {
+  data: {
       existUnread: boolean;
   };
 }
