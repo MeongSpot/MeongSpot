@@ -4,6 +4,8 @@ import { meetingService } from '@/services/meetingService';
 import DogSelectionAccordion from '@/components/map/DogSelectionAccordion';
 import { motion } from 'framer-motion';
 import ErrorModal from '@/components/common/ErrorModal';
+import { useNavigate } from 'react-router-dom';
+import { IoAddCircle } from 'react-icons/io5';
 
 interface MeetingDataType {
   title: string;
@@ -33,23 +35,28 @@ const JoinConfirmationModal: React.FC<JoinConfirmationModalProps> = ({
   onDogSelect,
   meetingId,
 }) => {
+  const navigate = useNavigate(); // useNavigate 추가
   const { myDogsName, getMyDogsName, isLoading } = useDog();
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorCode, setErrorCode] = useState('');
+  const [hasCheckedDogs, setHasCheckedDogs] = useState(false);
 
   const fetchDogs = useCallback(async () => {
+    if (hasCheckedDogs) return;
     try {
       await getMyDogsName();
+      setHasCheckedDogs(true);
     } catch (error) {
       console.error('강아지 목록을 불러오는데 실패했습니다:', error);
+      setHasCheckedDogs(true);
     }
-  }, [getMyDogsName]);
+  }, [getMyDogsName, hasCheckedDogs]);
 
   useEffect(() => {
-    if (isOpen && myDogsName.length === 0) {
+    if (isOpen && !hasCheckedDogs) {
       fetchDogs();
     }
-  }, [isOpen, myDogsName.length, fetchDogs]);
+  }, [isOpen, hasCheckedDogs, fetchDogs]);
 
   const getSelectedDogsText = useCallback(() => {
     const selectedDogsList = selectedDogs
@@ -123,8 +130,19 @@ const JoinConfirmationModal: React.FC<JoinConfirmationModalProps> = ({
             </div>
 
             <div className="flex flex-col">
-              {isLoading ? (
+              {isLoading && !hasCheckedDogs ? (
                 <div className="text-center py-4">로딩 중...</div>
+              ) : myDogsName.length === 0 ? (
+                <div className="flex flex-col items-center bg-gray-200 rounded-lg justify-center py-8 space-y-4">
+                  <p className="text-gray-500 text-center mb-3">등록된 반려견이 없습니다</p>
+                  <button
+                    onClick={() => navigate('/registerdog')}
+                    className="flex items-center gap-2 bg-deep-coral text-white px-6 py-3 rounded-lg hover:bg-coral-hover transition-colors"
+                  >
+                    <IoAddCircle className="text-xl" />
+                    <span>반려견 등록하기</span>
+                  </button>
+                </div>
               ) : (
                 <>
                   <DogSelectionAccordion dogs={myDogsName} selectedDogs={selectedDogs} onDogSelect={onDogSelect} />
