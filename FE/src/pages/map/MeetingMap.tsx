@@ -110,7 +110,6 @@ const MeetingMap = () => {
 
         // 초기 중심점 설정
         const initialCenter = lastPosition || currentPosition;
-        console.log('Map initialization with center:', initialCenter);
 
         // 지도 중심점 설정
         map.setCenter(new kakao.maps.LatLng(initialCenter.lat, initialCenter.lng));
