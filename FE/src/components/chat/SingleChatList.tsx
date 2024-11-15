@@ -92,7 +92,7 @@ const SingleChatList = () => {
             </div>
 
             <button
-              className="text-gray-500 z-10 ml-2"
+              className="text-gray-500 z-10"
               onClick={(e) => {
                 e.stopPropagation();
                 openModal({
@@ -107,6 +107,15 @@ const SingleChatList = () => {
           </div>
         );
       })}
+
+      {selectedChat && (
+        <ChatOptionsModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          chatName={selectedChat.name}
+          chatRoomId={selectedChat.chatRoomId}
+        />
+      )}
     </div>
   );
 };
