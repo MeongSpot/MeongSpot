@@ -5,9 +5,11 @@ import { useNavigate } from 'react-router-dom';
 interface BreedListProps {
   data: string[];
   setData: (info: Partial<DogInfo>) => void;
+  dogId?: number;
+  where?: string;
 }
 
-const BreedList = ({ data, setData }: BreedListProps) => {
+const BreedList = ({ data, setData, dogId, where }: BreedListProps) => {
   const navigate = useNavigate();
   const [isCustomInput, setIsCustomInput] = useState(false);
   const [customBreed, setCustomBreed] = useState('');
@@ -17,7 +19,8 @@ const BreedList = ({ data, setData }: BreedListProps) => {
       setIsCustomInput(true);
     } else {
       setData({ breedId: breed });
-      navigate('/registerdog');
+      if (where === 'register') navigate('/registerdog');
+      else navigate(`/dog/${dogId}/update`, { state: { isBreedUpdate: true } });
     }
   };
 

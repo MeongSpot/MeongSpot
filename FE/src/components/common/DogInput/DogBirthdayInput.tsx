@@ -40,7 +40,10 @@ const DogBirthdayInput: React.FC<DogBirthdayInputProps> = ({ formData, setFormDa
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-medium">생년월일</p>
+      <div className="flex items-center space-x-[0.2rem]">
+        <p className="text-sm font-medium">생년월일</p>
+        <p className="text-sm text-deep-coral">*</p>
+      </div>
       <div className="flex gap-2">
         <input
           type="text"
