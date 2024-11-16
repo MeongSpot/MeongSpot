@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 public class FindChatRoomService {
 
     private final ChatMemberRepository chatMemberRepository;
-    private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final MemberRepository memberRepository;
 

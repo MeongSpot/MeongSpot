@@ -6,6 +6,7 @@ import com.ottogi.be.chat.dto.PersonalChatInfoDto;
 import com.ottogi.be.member.domain.Member;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -40,19 +41,7 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember, Long> {
     """)
     List<PersonalChatInfoDto> findAllPersonalChatRoomByMemberId(@Param("memberId") Long memberId);
 
-    @Query("""
-        SELECT cm
-        FROM ChatMember cm
-        JOIN FETCH cm.member
-        WHERE cm.chatRoom.id = :chatRoomId
-    """)
-    List<ChatMember> findMemberByChatRoomId(@Param("chatRoomId") Long chatRoomId);
-
-    @Query("""
-            SELECT cm
-            FROM ChatMember cm
-            WHERE cm.member.id = :memberId AND cm.chatRoom.chatRoomType = 'MEETING' AND cm.chatRoom.id IN :chatRoomIdList
-            ORDER BY cm.chatRoom.id ASC
-            """)
-    List<ChatMember> findAllByChatRoomIdAndMemberId(@Param("chatRoomIdList") List<Long> chatRoomIdList, @Param("memberId") Long memberId);
+    @Modifying
+    @Query("DELETE FROM ChatMember cm WHERE cm.chatRoom.id IN :chatRoomIds")
+    void deleteByChatRoomIds(@Param("chatRoomIds") List<Long> chatRoomIds);
 }

@@ -23,7 +23,7 @@ public class CreateMeetingDto {
     private int minute;
     private String detailLocation;
     private String information;
-    private List<String> hashtag;
+    private List<String> hashtags;
     private int maxParticipants;
     private List<Long> dogIds;
 

@@ -60,4 +60,10 @@ public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Lo
             """)
     List<Long> findMeetingIdsByMemberId(Long memberId);
 
+    @Modifying
+    @Query("""
+        DELETE FROM MeetingMember mm WHERE mm.meeting.id IN :meetingIds
+    """)
+    void deleteAllByMeetingIds(@Param("meetingIds") List<Long> meetingIds);
+
 }
