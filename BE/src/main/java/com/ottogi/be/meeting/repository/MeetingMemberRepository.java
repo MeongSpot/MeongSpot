@@ -8,6 +8,7 @@ import com.ottogi.be.member.domain.Member;
 import com.ottogi.be.member.dto.response.FindMeetingMemberResponse;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -39,6 +40,8 @@ public interface MeetingMemberRepository extends JpaRepository<MeetingMember, Lo
             """)
     List<FindMeetingMemberResponse> findMemberByMeetingId(Long meetingId);
 
+    @Modifying
+    @Query("DELETE FROM MeetingMember mm WHERE mm.member = :member AND mm.meeting = :meeting")
     void deleteAllByMemberAndMeeting(Member member, Meeting meeting);
 
     @Query("""

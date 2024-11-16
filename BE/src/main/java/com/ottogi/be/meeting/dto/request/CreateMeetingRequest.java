@@ -5,11 +5,13 @@ import com.ottogi.be.meeting.validation.annotation.Hashtag;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class CreateMeetingRequest {
     @NotNull
