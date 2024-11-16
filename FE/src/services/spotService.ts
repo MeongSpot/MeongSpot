@@ -1,6 +1,6 @@
 // services/spotService.ts
 import axiosInstance from '@/services/axiosInstance';
-import type { LatLng, SpotResponse } from '@/types/map';
+import type { LatLng, SpotResponse,SpotRecommendResponse } from '@/types/map';
 
 export const getDistance = (pos1: LatLng, pos2: LatLng) => {
   const R = 6371e3;
@@ -29,6 +29,23 @@ export const spotService = {
       return [];
     }
   },
+
+  // 추천 스팟 조회 함수 추가
+  fetchRecommendSpots: async (position: LatLng, radius: number) => {
+    try {
+      const response = await axiosInstance.get<SpotRecommendResponse>(
+        `/api/meeting-spot/recommend?lat=${position.lat}&lng=${position.lng}&radius=${radius}`,
+      );
+      if (response.data.code === 'MP100' || response.data.code === 'MP101') {
+        return response.data.data;
+      }
+      return [];
+    } catch (error) {
+      console.error('Error fetching recommended spots:', error);
+      return [];
+    }
+  },
+
 
   calculateMapRadius: (map: kakao.maps.Map) => {
     const mapNode = map.getNode();

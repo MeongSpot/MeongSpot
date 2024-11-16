@@ -59,3 +59,9 @@ export interface SpotImageType {
     height: number;
   };
 }
+
+export interface SpotRecommendResponse {
+  code: string;
+  message: string;
+  data: ApiSpotInfo[];
+}

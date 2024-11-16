@@ -1,4 +1,3 @@
-// components/map/SpotModal.tsx
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -39,7 +38,24 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, spot, onClose, onNavigate
     });
   };
 
+  // 유효한 모임만 필터링하는 함수
+  const getValidMeetings = () => {
+    if (!meetings) return [];
+    return meetings.filter((meeting) => {
+      // 필수 필드들이 유효한지 확인
+      return (
+        meeting.meetingId &&
+        meeting.title &&
+        meeting.meetingAt &&
+        typeof meeting.participants === 'number' &&
+        typeof meeting.maxParticipants === 'number'
+      );
+    });
+  };
+
   if (!spot) return null;
+
+  const validMeetings = getValidMeetings();
 
   return (
     <div
@@ -67,7 +83,7 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, spot, onClose, onNavigate
             <img src={DogIcon} alt="Dog Icon" className="w-5 h-5" />
             <h3 className="text-base font-bold">참여 가능한 산책 모임</h3>
           </div>
-          {meetings.length > 0 && (
+          {validMeetings.length > 0 && (
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -86,7 +102,7 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, spot, onClose, onNavigate
             <div className="text-center py-4">로딩 중...</div>
           ) : error ? (
             <div className="text-center py-4 text-red-500">{error}</div>
-          ) : meetings.length > 0 ? (
+          ) : validMeetings.length > 0 ? (
             <Swiper
               modules={[Pagination]}
               slidesPerView={1.2}
@@ -97,11 +113,11 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, spot, onClose, onNavigate
               }}
               className="meetupSwiper"
             >
-              {meetings.map((meeting) => (
+              {validMeetings.map((meeting) => (
                 <SwiperSlide
                   key={meeting.meetingId}
-                  onClick={() => handleCardClick(meeting.meetingId)} // 클릭 이벤트 추가
-                  style={{ cursor: 'pointer' }} // 커서 스타일 추가
+                  onClick={() => handleCardClick(meeting.meetingId)}
+                  style={{ cursor: 'pointer' }}
                 >
                   <MeetupCard
                     meetup={{
@@ -119,17 +135,17 @@ const SpotModal: React.FC<SpotModalProps> = ({ isOpen, spot, onClose, onNavigate
                         minute: '2-digit',
                         hour12: true,
                       }),
-                      location: meeting.detailLocation,
+                      location: meeting.detailLocation || '위치 미정', // null인 경우 기본값 처리
                       maxParticipants: meeting.maxParticipants,
                       currentParticipants: meeting.participants,
-                      tags: meeting.hashtag,
+                      tags: meeting.hashtags || [], // 빈 배열이 들어올 경우 처리
                     }}
                   />
                 </SwiperSlide>
               ))}
             </Swiper>
           ) : (
-            <div className="bg-[#F6F6F6] p-8 rounded-lg border border-gray-100 shadow-sm text-center">
+            <div className="bg-[#F6F6F6] p-8 rounded-lg border border-gray-100 shadow-sm text-center h-[9rem]">
               <p className="text-gray-600 mb-5">아직 등록된 모임이 없어요!</p>
               <button
                 className="bg-deep-coral w-full font-bold text-lg text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition-colors"
