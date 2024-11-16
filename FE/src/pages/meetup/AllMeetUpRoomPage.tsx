@@ -84,7 +84,7 @@ const AllMeetUpRoomPage = () => {
     location: meeting.detailLocation,
     maxParticipants: meeting.maxParticipants,
     currentParticipants: meeting.participants,
-    tags: meeting.hashtag,
+    tags: meeting.hashtags,
   });
 
   // 애니메이션 설정을 위한 변수

@@ -63,6 +63,7 @@ const MeetingMap = () => {
       spots.map((spot) => ({
         position: { lat: spot.lat, lng: spot.lng },
         content: spot.name,
+        meetingCnt: spot.meetingCnt, // 모임 개수 추가
       })),
     [spots],
   );
@@ -155,6 +156,72 @@ const MeetingMap = () => {
       setIsModalVisible(false);
     }, 500);
   }, [setSelectedSpot, setModalOpen]);
+
+  const handleMoveToSpot = useCallback(
+    (lat: number, lng: number, spotId: number, spotName: string) => {
+      if (!mapRef.current) return;
+
+      setIsMoving(true);
+      const targetLatLng = new kakao.maps.LatLng(lat, lng);
+
+      // 현재 중심점과 레벨
+      const startCenter = mapRef.current.getCenter();
+      const startLevel = mapRef.current.getLevel();
+
+      // 목표 레벨
+      const targetLevel = 4;
+
+      // 애니메이션 시간 (밀리초)
+      const duration = 500;
+      const startTime = Date.now();
+
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // easeInOutCubic 이징 함수 적용
+        const easing = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        // 현재 위치와 목표 위치 사이를 보간
+        const lat = startCenter.getLat() + (targetLatLng.getLat() - startCenter.getLat()) * easing;
+        const lng = startCenter.getLng() + (targetLatLng.getLng() - startCenter.getLng()) * easing;
+
+        // 현재 레벨과 목표 레벨 사이를 보간
+        const currentLevel = startLevel + (targetLevel - startLevel) * easing;
+
+        // 지도 위치와 레벨 업데이트
+        mapRef.current?.setCenter(new kakao.maps.LatLng(lat, lng));
+        mapRef.current?.setLevel(Math.round(currentLevel));
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          setIsMoving(false);
+          setMapLevel(targetLevel);
+          setCenter({ lat, lng });
+
+          loadSpotsWithAPI(mapRef.current!).then((markers) => {
+            if (markers) {
+              setLastPosition({ lat, lng });
+
+              // 애니메이션이 완료된 후 스팟 모달 열기
+              handleSpotClick({
+                id: spotId,
+                position: { lat, lng },
+                content: spotName,
+                meetups: [],
+              });
+            }
+            setShowToast(!markers?.length);
+          });
+          setCenterChanged(false);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    },
+    [handleSpotClick, loadSpotsWithAPI, setLastPosition],
+  );
 
   // 검색 결과 처리
   useEffect(() => {
@@ -274,6 +341,7 @@ const MeetingMap = () => {
     }
   }, [isTracking, currentPosition]);
 
+  // MeetingMap 컴포넌트 return문 수정
   return (
     <div className="relative w-full h-full overflow-hidden">
       <div className="w-full h-full">
@@ -317,7 +385,10 @@ const MeetingMap = () => {
                 spotInfo && (
                   <SpotMarker
                     key={`${marker.position.lat}-${marker.position.lng}`}
-                    marker={marker}
+                    marker={{
+                      ...marker,
+                      meetingCnt: spotInfo.meetingCnt,
+                    }}
                     onClick={() =>
                       handleSpotClick({
                         id: spotInfo.spotId,
@@ -338,32 +409,37 @@ const MeetingMap = () => {
             onClick={() => setShowNearbyModal(true)}
             className="flex items-center gap-2 bg-white text-deep-coral font-semibold py-3 px-5 rounded-xl shadow-lg hover:bg-gray-50 transition-colors"
           >
-            {/* <MdLocationOn /> */}내 주변 멍스팟 추천
+            <MdLocationOn />내 주변 멍스팟 추천
           </button>
         </div>
 
-        <NearbySpotModal isOpen={showNearbyModal} onClose={() => setShowNearbyModal(false)} />
-      </div>
-
-      {isModalVisible && (
-        <SpotModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          spot={selectedSpot}
-          onNavigateToAll={() =>
-            navigate(`/allmeetuproom/${selectedSpot?.id}`, {
-              state: {
-                spotName: selectedSpot?.content,
-              },
-            })
-          }
+        <NearbySpotModal
+          isOpen={showNearbyModal}
+          onClose={() => setShowNearbyModal(false)}
+          currentPosition={currentPosition}
+          onMoveToSpot={handleMoveToSpot}
         />
-      )}
 
-      {isLoading && <LoadingOverlay message="스팟을 찾고있습니다!" />}
+        {isModalVisible && (
+          <SpotModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            spot={selectedSpot}
+            onNavigateToAll={() =>
+              navigate(`/allmeetuproom/${selectedSpot?.id}`, {
+                state: {
+                  spotName: selectedSpot?.content,
+                },
+              })
+            }
+          />
+        )}
 
-      <Toast message="이 지역에는 스팟이 없습니다." isVisible={showToast} onHide={() => setShowToast(false)} />
-      {centerChanged && <ResearchButton onClick={handleResearch} />}
+        {isLoading && <LoadingOverlay message="스팟을 찾고있습니다!" />}
+
+        <Toast message="이 지역에는 스팟이 없습니다." isVisible={showToast} onHide={() => setShowToast(false)} />
+        {centerChanged && <ResearchButton onClick={handleResearch} />}
+      </div>
     </div>
   );
 };
