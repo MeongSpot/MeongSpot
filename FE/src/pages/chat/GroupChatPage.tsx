@@ -35,7 +35,7 @@ const GroupChatPage = () => {
   
   const scrollToBottom = () => {
     setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      messagesEndRef.current?.scrollIntoView();
     }, 50);
   };
 
@@ -67,28 +67,20 @@ const GroupChatPage = () => {
 
   useEffect(() => {
     receiveMessage((newMessage: Chat) => {
+      console.log('새로운 메시지 수신:', newMessage); // 메시지 디버깅용
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       scrollToBottom();
     });
   }, [receiveMessage]);
 
   useEffect(() => {
-    if (page === 0) {
+    if (page === 0 && fetchedMessages.length > 0) {
       scrollToBottom();
     }
-  }, [page]);
+  }, [page, fetchedMessages]);
 
   const handleSendMessage = () => {
     if (message.trim() && myId !== null) {
-      const newMessage: Chat = {
-        senderId: myId,
-        message,
-        sentAt: new Date().toISOString(),
-        nickname: 'me',
-        profileImage: '/icons/favicon/android-icon-96x96.png',
-        messageType: 'text',
-      };
-
       sendMessage(message, myId);
       setMessage('');
       scrollToBottom();
@@ -97,12 +89,12 @@ const GroupChatPage = () => {
 
   const handleBack = () => {
     markRead();
-    navigate('/mymeetuproom', { state: { animateBack: false } });
+    navigate('/mymeetuproom', { state: { animateBack: true } });
   };
 
   const handleViewDetails = () => {
     setIsModalOpen(false);
-    navigate(`/meetupdoglist/${roomId}`, { state: { animateBack: false } });
+    navigate(`/meetupdoglist/${roomId}`, { state: { animateBack: true } });
   };
 
   const formatDateLabel = (dateString: string): string => {
@@ -118,8 +110,8 @@ const GroupChatPage = () => {
     <motion.div
       initial={{ x: 300, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      exit={{ x: 300, opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      exit={{ x: -300, opacity: 0 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
       className="flex flex-col h-screen"
     >
       <div className="flex items-center bg-deep-coral text-white p-4">
@@ -158,32 +150,40 @@ const GroupChatPage = () => {
                   <span className="text-xs text-gray-500">{formatDateLabel(msg.sentAt)}</span>
                 </div>
               )}
-              <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
-                {!isSender && (
-                  <div onClick={() => navigate(`/profile/${msg.senderId}`)}>
-                    <img
-                      src={msg.profileImage || '/icons/favicon/favicon-96x96.png'}
-                      alt="Profile"
-                      className="w-8 h-8 rounded-full object-cover mx-2"
-                    />
-                  </div>
-                )}
-                <div className="flex flex-col max-w-xs">
-                  {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
-                  <div className={`flex items-end ${isSender ? 'flex-row-reverse' : ''}`}>
-                    <div className={`${isSender ? 'bg-cream-bg' : 'bg-gray-200'} text-gray-800 rounded-lg px-4 py-2`}>
-                      {msg.message}
+              {msg.messageType === 'NOTICE' ? (
+                <div className="flex justify-center my-2">
+                  <span className="text-sm text-blue-500 bg-blue-100 px-4 py-2 rounded-md">
+                    {msg.message}
+                  </span>
+                </div>
+              ) : (
+                <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
+                  {!isSender && (
+                    <div onClick={() => navigate(`/profile/${msg.senderId}`)}>
+                      <img
+                        src={msg.profileImage || '/icons/favicon/favicon-96x96.png'}
+                        alt="Profile"
+                        className="w-8 h-8 rounded-full object-cover mx-2"
+                      />
                     </div>
-                    <span
-                      className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
-                      style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
-                    >
-                      {msg.sentAt &&
-                        new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                  )}
+                  <div className="flex flex-col max-w-xs">
+                    {!isSender && <span className="text-xs text-gray-500 mb-1">{msg.nickname}</span>}
+                    <div className={`flex items-end ${isSender ? 'flex-row-reverse' : ''}`}>
+                      <div className={`${isSender ? 'bg-cream-bg' : 'bg-gray-200'} text-gray-800 rounded-lg px-4 py-2`}>
+                        {msg.message}
+                      </div>
+                      <span
+                        className={`text-xs text-gray-400 ml-2 ${isSender ? 'mr-2' : 'ml-2'}`}
+                        style={{ alignSelf: 'flex-end', marginBottom: '4px' }}
+                      >
+                        {msg.sentAt &&
+                          new Date(msg.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}
