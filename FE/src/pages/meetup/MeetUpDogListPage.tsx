@@ -16,22 +16,35 @@ const MeetUpDogListPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? true;
+  const fromChat = location.state?.fromChat;
+  const roomId = location.state?.roomId;
   const fromList = location.state?.fromList;
   const previousPath = location.state?.previousPath;
   const spotName = location.state?.spotName;
   const fromModal = location.state?.fromModal;
 
   const handleBack = () => {
-    navigate(`/participatedog/${id}`, {
-      state: {
-        animateBack: true,
-        fromList, // 이전 상태 유지
-        fromModal, // fromModal 상태 유지
-        previousPath, // 이전 경로 유지
-        spotName, // spotName 유지
-        fromDogList: true, // 현재 페이지에서 왔다는 표시
-      },
-    });
+    if (fromChat) {
+      // 채팅방에서 왔을 경우
+      navigate(`/chat/group/${roomId}`, {
+        state: {
+          animateBack: true,
+          meetingId: id // 다시 채팅방으로 갈 때 meetingId도 전달
+        }
+      });
+    } else {
+      // ParticipateDog 페이지에서 왔을 경우
+      navigate(`/participatedog/${id}`, {
+        state: {
+          animateBack: true,
+          fromList,
+          fromModal,
+          previousPath,
+          spotName,
+          fromDogList: true,
+        },
+      });
+    }
   };
 
   // title이 15자를 초과하면 '...'을 추가하여 표시

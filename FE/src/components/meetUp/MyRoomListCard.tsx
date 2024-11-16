@@ -28,7 +28,11 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
   return (
     <div
       key={meeting.meetingId}
-      onClick={() => navigate(`/chat/group/${meeting.chatRoomId}`)}
+      onClick={() =>
+        navigate(`/chat/group/${meeting.chatRoomId}`, {
+          state: { meetingId: meeting.meetingId }, // meetingId를 state로 전달
+        })
+      }
       className="bg-white p-4 rounded-lg shadow cursor-pointer"
     >
       <div className="flex items-center justify-between">
@@ -56,10 +60,7 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
       </div>
       <div className="flex flex-wrap mt-2 space-x-2">
         {meeting.hashtags.map((tag, index) => (
-          <span
-            key={index}
-            className="text-xs text-deep-coral bg-cream-bg px-2 py-1 rounded-full"
-          >
+          <span key={index} className="text-xs text-deep-coral bg-cream-bg px-2 py-1 rounded-full">
             {tag}
           </span>
         ))}
