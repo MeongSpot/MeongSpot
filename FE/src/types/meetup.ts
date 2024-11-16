@@ -157,7 +157,7 @@ export interface MyMeeting {
   maxParticipants: number;
   meetingAt: string;
   spotName: string;
-  hashtag: string[];
+  hashtags: string[];
   chatRoomId: number;
   unreadMessageCnt: number;
 }

@@ -23,7 +23,7 @@ const MyMeetUpRoomPage = () => {
     });
   
     return (
-      <div className="p-4">
+      <div className="p-4 pb-20">
         <h1 className="text-center text-lg font-bold mb-4">모임</h1>
         <hr className="my-4 -mx-4 w-screen" />
         {error ? (

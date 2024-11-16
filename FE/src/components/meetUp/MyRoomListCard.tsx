@@ -55,7 +55,7 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
         </span>
       </div>
       <div className="flex flex-wrap mt-2 space-x-2">
-        {meeting.hashtag.map((tag, index) => (
+        {(meeting.hashtags || []).map((tag, index) => (
           <span
             key={index}
             className="text-xs text-deep-coral bg-cream-bg px-2 py-1 rounded-full"
