@@ -62,9 +62,15 @@ const UserProfile: React.FC = () => {
 
   // dogId를 기준으로 초기 슬라이드 인덱스 설정
   useEffect(() => {
-    if (dogId && userDogs.length > 0) {
-      const index = userDogs.findIndex((dog) => dog.id === dogId);
-      setInitialSlideIndex(index >= 0 ? index : 0);
+    if (userDogs.length > 0) {
+      if (dogId) {
+        // dogId가 존재하면 해당 id에 맞는 인덱스를 찾음
+        const index = userDogs.findIndex((dog) => dog.id === dogId);
+        setInitialSlideIndex(index >= 0 ? index : 0);
+      } else {
+        // dogId가 없을 경우 첫 번째 슬라이드 설정
+        setInitialSlideIndex(0);
+      }
       setIsDogsLoaded(true); // 강아지 데이터 로드 완료
     }
   }, [dogId, userDogs]);
