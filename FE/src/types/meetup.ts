@@ -12,7 +12,7 @@ export interface Meeting {
   maxParticipants: number;
   meetingAt: string;
   detailLocation: string;
-  hashtag: string[];
+  hashtags: string[];
 }
 
 export interface TopMeetingsResponse {
@@ -100,7 +100,7 @@ export interface CreateMeetingRequest {
   minute: number;
   detailLocation: string;
   information: string;
-  hashtag: string[];
+  hashtags: string[];
   maxParticipants: number;
   dogIds: number[];
 }

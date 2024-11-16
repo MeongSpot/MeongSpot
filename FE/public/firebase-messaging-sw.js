@@ -17,9 +17,17 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(payload => {
   console.log('백그라운드 메시지 수신:', payload);
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
+
+  // const notificationTitle = payload.notification.title;
+  // const notificationOptions = {
+  //   body: payload.notification.body,
+  //   icon: '/icons/favicon/favicon-196x196.png',
+  //   data: { url: '/' }, // 클릭 시 이동할 URL을 데이터에 포함
+  // };
+
+    const notificationTitle = payload.data.title || 'Default Title';
+    const notificationOptions = {
+    body: payload.data.body || 'Default Body',
     icon: '/icons/favicon/favicon-196x196.png',
     data: { url: '/' }, // 클릭 시 이동할 URL을 데이터에 포함
   };

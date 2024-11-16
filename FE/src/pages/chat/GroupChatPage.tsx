@@ -67,6 +67,7 @@ const GroupChatPage = () => {
 
   useEffect(() => {
     receiveMessage((newMessage: Chat) => {
+      console.log('새로운 메시지 수신:', newMessage); // 메시지 디버깅용
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       scrollToBottom();
     });

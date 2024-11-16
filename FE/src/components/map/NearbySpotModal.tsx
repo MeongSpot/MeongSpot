@@ -1,43 +1,85 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination } from 'swiper/modules';
 import { MdLocationOn } from 'react-icons/md';
+import { spotService } from '@/services/spotService';
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { div } from 'framer-motion/client';
 import NearbySpotCard from './NearbySpotCard';
+import type { ApiSpotInfo } from '@/types/map';
+
 interface NearbySpotModalProps {
   isOpen: boolean;
   onClose: () => void;
+  currentPosition: { lat: number; lng: number };
+  onMoveToSpot: (lat: number, lng: number, spotId: number, spotName: string) => void; // 여기 수정
 }
 
-//현재위치 gps 가져와서 추천 받기
+interface EnhancedSpotInfo extends ApiSpotInfo {
+  address: string;
+  distance: string;
+}
 
-const dummySpots = [
-  {
-    id: 1,
-    name: '동락공원',
-    distance: '1.9km',
-    address: '경북 구미시 3공단1로 191 (진평동)',
-    meetupCount: 6,
-  },
-  {
-    id: 2,
-    name: '선산공원',
-    distance: '2.3km',
-    address: '경북 구미시 송정대로 67 (송정동)',
-    meetupCount: 4,
-  },
-  {
-    id: 3,
-    name: '금오산',
-    distance: '3.1km',
-    address: '경북 구미시 남통동 산1',
-    meetupCount: 8,
-  },
-];
+const SEARCH_RADIUS = 3000;
 
-const NearbySpotModal: React.FC<NearbySpotModalProps> = ({ isOpen, onClose }) => {
+const NearbySpotModal: React.FC<NearbySpotModalProps> = ({ isOpen, onClose, currentPosition, onMoveToSpot }) => {
+  const [spots, setSpots] = useState<EnhancedSpotInfo[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchNearbySpots = async () => {
+      if (!isOpen) return;
+
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const spotsData = await spotService.fetchRecommendSpots(currentPosition, SEARCH_RADIUS);
+
+        const enhancedSpotsPromises = spotsData.map(async (spot) => {
+          const geocoder = new window.kakao.maps.services.Geocoder();
+
+          const getAddressPromise = new Promise<string>((resolve) => {
+            geocoder.coord2Address(spot.lng, spot.lat, (result, status) => {
+              if (status === window.kakao.maps.services.Status.OK && result[0]) {
+                resolve(result[0].address.address_name);
+              } else {
+                resolve('주소 정보 없음');
+              }
+            });
+          });
+
+          const address = await getAddressPromise;
+
+          const distance = spotService.getDistance(currentPosition, { lat: spot.lat, lng: spot.lng });
+          const formattedDistance = distance < 1000 ? `${Math.round(distance)}m` : `${(distance / 1000).toFixed(1)}km`;
+
+          return {
+            ...spot,
+            address,
+            distance: formattedDistance,
+          };
+        });
+
+        const enhancedSpots = await Promise.all(enhancedSpotsPromises);
+        setSpots(enhancedSpots);
+      } catch (err) {
+        setError('스팟 정보를 불러오는데 실패했습니다.');
+        console.error('Error fetching nearby spots:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchNearbySpots();
+  }, [isOpen, currentPosition]);
+
+  const handleMoveToSpot = (lat: number, lng: number, spotId: number, spotName: string) => {
+    onMoveToSpot(lat, lng, spotId, spotName);
+    onClose();
+  };
+
   return (
     <div
       className={`absolute inset-0 z-20 bg-gray-800 bg-opacity-50 flex justify-center items-end transition-all duration-300 mb-16 ${
@@ -65,22 +107,41 @@ const NearbySpotModal: React.FC<NearbySpotModalProps> = ({ isOpen, onClose }) =>
         </div>
 
         <div className="px-4 pb-6">
-          <Swiper
-            modules={[Pagination]}
-            slidesPerView={1.2}
-            spaceBetween={16}
-            pagination={{
-              clickable: true,
-              el: '.meetup-swiper-pagination',
-            }}
-            className="meetupSwiper"
-          >
-            {dummySpots.map((spot) => (
-              <SwiperSlide key={spot.id}>
-                <NearbySpotCard spot={spot} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {isLoading ? (
+            <div className="text-center py-8">로딩 중...</div>
+          ) : error ? (
+            <div className="text-center text-red-500 py-8">{error}</div>
+          ) : spots.length > 0 ? (
+            <Swiper
+              modules={[Pagination]}
+              slidesPerView={1.2}
+              spaceBetween={16}
+              pagination={{
+                clickable: true,
+                el: '.meetup-swiper-pagination',
+              }}
+              className="meetupSwiper"
+            >
+              {spots.map((spot) => (
+                <SwiperSlide key={spot.spotId}>
+                  <NearbySpotCard
+                    spot={{
+                      id: spot.spotId,
+                      name: spot.name,
+                      distance: spot.distance,
+                      address: spot.address,
+                      meetupCount: spot.meetingCnt,
+                      lat: spot.lat,
+                      lng: spot.lng,
+                    }}
+                    onMove={() => handleMoveToSpot(spot.lat, spot.lng, spot.spotId, spot.name)}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="text-center py-8 text-gray-500">{SEARCH_RADIUS / 1000}km 이내에 멍스팟이 없습니다!</div>
+          )}
         </div>
       </div>
     </div>
