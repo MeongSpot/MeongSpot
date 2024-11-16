@@ -38,21 +38,15 @@ const AllMeetUpRoomPage = () => {
     };
   }, [isLoading]);
 
+  // API 호출 관리
   useEffect(() => {
     if (spotId) {
-      fetchMeetings(Number(spotId), sortBy);
+      fetchMeetings(Number(spotId), sortBy); // API 한 번 호출
     }
-  }, [spotId, sortBy, fetchMeetings]);
-
-  useEffect(() => {
-    if (spotId) {
-      fetchMeetings(Number(spotId), sortBy);
-    }
-  }, [spotId, sortBy, fetchMeetings]);
+  }, [spotId, sortBy]); // fetchMeetings는 의존성 배열에서 제거
 
   // sortType 매핑 함수 추가
   const handleSortChange = (sortType: string) => {
-    // 'latest' -> 'recent', 'oldest' -> 'remain' 매핑
     const orderType = sortType === 'latest' ? 'recent' : 'remain';
     setSortBy(orderType);
   };
@@ -60,8 +54,8 @@ const AllMeetUpRoomPage = () => {
   const handleCardClick = (roomId: number) => {
     navigate(`/participatedog/${roomId}`, {
       state: {
-        spotId: spotId, // spotId를 state로 전달
-        spotName: spotName, // 현재 페이지가 가지고 있는 spotName을 전달
+        spotId: spotId,
+        spotName: spotName,
         fromList: true,
         previousPath: location.pathname,
       },
@@ -71,7 +65,7 @@ const AllMeetUpRoomPage = () => {
   const handlePlusClick = () => {
     navigate(`/allmeetuproom/${spotId}/create`, {
       state: {
-        spotName: spotName, // 현재 페이지가 가지고 있는 spotName을 전달
+        spotName: spotName,
       },
     });
   };
@@ -87,7 +81,7 @@ const AllMeetUpRoomPage = () => {
     tags: meeting.hashtags,
   });
 
-  // 애니메이션 설정을 위한 변수
+  // 애니메이션 설정
   const pageAnimation = fromDetail
     ? {
         initial: { x: animateBack ? -300 : 0 },
@@ -103,14 +97,23 @@ const AllMeetUpRoomPage = () => {
   return (
     <AnimatePresence>
       <motion.div {...pageAnimation} transition={{ type: 'spring', stiffness: 300, damping: 35 }}>
-        <div className="sticky top-0 flex items-center justify-between mb-4 border-b p-4 bg-white">
-          <button className="mr-3 text-gray-600" onClick={() => navigate('/meeting', { state: { animateBack: true } })}>
-            <IoChevronBack size={24} />
-          </button>
-          <h1 className="text-lg font-bold">
-            {spotName ? <span className="text-deep-coral">{spotName}</span> : '모임'}
-          </h1>
-          <BiPlus onClick={handlePlusClick} className="text-xl cursor-pointer" />
+        <div className="sticky top-0 bg-white">
+          <div className="flex items-center justify-between pb-4 border-b p-4 ">
+            <button
+              className="mr-3 text-gray-600"
+              onClick={() => navigate('/meeting', { state: { animateBack: true } })}
+            >
+              <IoChevronBack size={24} />
+            </button>
+            <h1 className="text-lg font-bold">
+              {spotName ? <span className="text-deep-coral">{spotName}</span> : '모임'}
+            </h1>
+            <BiPlus onClick={handlePlusClick} className="text-xl cursor-pointer" />
+          </div>
+          <div className="w-full flex justify-between items-center py-3 px-5 pb-3">
+            <span className="text-gray-600">총 {meetings.length}개</span>
+            <RoomSortButton sortBy={uiSortBy} onSortChange={handleSortChange} />
+          </div>
         </div>
 
         {showLoading ? (
@@ -118,11 +121,7 @@ const AllMeetUpRoomPage = () => {
         ) : error ? (
           <div className="text-center py-4 text-red-500">{error}</div>
         ) : (
-          <div className="">
-            <div className="sticky w-full top-20 flex justify-between items-center my-2 px-5 pb-3 bg-white">
-              <span className="text-gray-600">총 {meetings.length}개</span>
-              <RoomSortButton sortBy={uiSortBy} onSortChange={handleSortChange} />
-            </div>
+          <div>
             {meetings.length > 0 ? (
               <div className="space-y-4 px-4 ">
                 {meetings.map((meeting) => (

@@ -120,4 +120,22 @@ export const meetingService = {
       throw new Error('Failed to fetch dog images');
     }
   },
+
+  updateMeetingDogs: async (meetingId: number, dogIds: number[]) => {
+    try {
+      const response = await axiosInstance.put(`/api/meetings/dog`, {
+        meetingId,
+        dogIds,
+      });
+      if (response.data.code === 'MT108') {
+        return response.data;
+      }
+      throw new Error(response.data.code);
+    } catch (error) {
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('Failed to update meeting dogs');
+    }
+  },
 };

@@ -12,10 +12,17 @@ import { Chat } from '@/types/singleChat';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
 import { differenceInCalendarDays, format } from 'date-fns';
 import { useMyMeeting } from '@/hooks/meetup/useMyMeeting';
+import DogSelectionModal from '@/components/chat/DogSelectionModal';
+import DogUpdateSuccessModal from '@/components/chat/DogUpdateSuccessModal';
+import { useLeaveMeeting } from '@/hooks/meetup/useLeaveMeeting'; // leaveMeeting 추가
+import ChatOutModal from '@/components/chat/ChatOutModal';
 
 const GroupChatPage = () => {
   const { id: roomId } = useParams<{ id: string }>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
+  const [showDogSelection, setShowDogSelection] = useState(false);
+  const [showUpdateSuccess, setShowUpdateSuccess] = useState(false);
   const [message, setMessage] = useState('');
   const [nickname, setNickname] = useState('');
   const [page, setPage] = useState(0);
@@ -23,20 +30,32 @@ const GroupChatPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const animateBack = location.state?.animateBack ?? true;
-
+  const meetingId = location.state?.meetingId; // state에서 meetingId 받기
   const { messages: fetchedMessages, loading, error, myId } = useChatDetail(Number(roomId), page);
   const { sendMessage, receiveMessage } = useChat(Number(roomId), nickname);
   const { meetings } = useMyMeeting();
+  const { leaveMeeting } = useLeaveMeeting();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(Number(roomId));
-  
-  const currentMeeting = meetings.find((meeting) => meeting.meetingId === Number(roomId)); 
-  
+
+  const currentMeeting = meetings.find((meeting) => meeting.meetingId === Number(roomId));
+
   const scrollToBottom = () => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView();
     }, 50);
+  };
+
+  const handleChatOut = async () => {
+    try {
+      await leaveMeeting(Number(meetingId)); // 나가기 API 호출
+      console.log(`Room ${roomId}에서 나갔습니다.`);
+      setIsChatOutModalOpen(false);
+      navigate('/mymeetuproom');
+    } catch (error) {
+      console.error('채팅방 나가기 중 오류 발생:', error);
+    }
   };
 
   const handleScrollToTopLoad = useCallback(() => {
@@ -52,6 +71,12 @@ const GroupChatPage = () => {
       }, 100);
     }
   }, [loading]);
+
+  // 강아지 선택 모달 열기 핸들러 추가
+  const handleDogSelectionClick = () => {
+    setIsModalOpen(false); // 정보 모달 닫기
+    setShowDogSelection(true); // 강아지 선택 모달 열기
+  };
 
   useEffect(() => {
     if (fetchedMessages.length > 0) {
@@ -94,7 +119,19 @@ const GroupChatPage = () => {
 
   const handleViewDetails = () => {
     setIsModalOpen(false);
-    navigate(`/meetupdoglist/${roomId}`, { state: { animateBack: true } });
+    navigate(`/meetupdoglist/${meetingId}`, {
+      state: {
+        animateBack: true,
+        fromChat: true, // 채팅에서 왔다는 표시
+        roomId: roomId, // 채팅방 ID도 같이 전달
+        meetingId: meetingId, // 모임 ID도 전달
+      },
+    });
+  };
+
+  const handleDogSelectionComplete = () => {
+    setShowDogSelection(false);
+    setShowUpdateSuccess(true);
   };
 
   const formatDateLabel = (dateString: string): string => {
@@ -111,16 +148,14 @@ const GroupChatPage = () => {
       initial={{ x: 300, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -300, opacity: 0 }}
-      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="flex flex-col h-screen"
     >
       <div className="flex items-center bg-deep-coral text-white p-4">
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
-        <h1 className="text-lg font-bold flex-1">
-          {currentMeeting ? currentMeeting.title : '채팅방'}
-        </h1>
+        <h1 className="text-lg font-bold flex-1">{currentMeeting ? currentMeeting.title : '채팅방'}</h1>
 
         <button onClick={() => setIsModalOpen(true)} className="text-white">
           <FiMenu size={24} />
@@ -152,9 +187,7 @@ const GroupChatPage = () => {
               )}
               {msg.messageType === 'NOTICE' ? (
                 <div className="flex justify-center my-2">
-                  <span className="text-sm text-blue-500 bg-blue-100 px-4 py-2 rounded-md">
-                    {msg.message}
-                  </span>
+                  <span className="text-sm text-blue-500 bg-blue-100 px-4 py-2 rounded-md">{msg.message}</span>
                 </div>
               ) : (
                 <div className={`flex ${isSender ? 'justify-end' : 'justify-start'}`}>
@@ -221,6 +254,24 @@ const GroupChatPage = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onViewDetails={handleViewDetails}
+        meetingId={meetingId}
+        onDogSelectionClick={handleDogSelectionClick} // 추가
+        onLeaveChat={() => setIsChatOutModalOpen(true)} //추가
+      />
+
+      <DogSelectionModal
+        isOpen={showDogSelection}
+        onClose={() => setShowDogSelection(false)}
+        meetingId={Number(meetingId)}
+        onComplete={handleDogSelectionComplete}
+      />
+
+      <DogUpdateSuccessModal isOpen={showUpdateSuccess} onClose={() => setShowUpdateSuccess(false)} />
+      <ChatOutModal
+        isOpen={isChatOutModalOpen}
+        onClose={() => setIsChatOutModalOpen(false)}
+        onConfirm={handleChatOut} // 나가기 확인 처리
+        chatName={currentMeeting?.title || '채팅방'}
       />
     </motion.div>
   );
