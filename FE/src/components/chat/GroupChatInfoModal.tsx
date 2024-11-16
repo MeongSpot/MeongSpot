@@ -4,6 +4,7 @@ import { FaBell, FaDog } from 'react-icons/fa';
 import { useMeeting } from '@/hooks/meetup/useMeeting';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
 
 interface GroupChatInfoModalProps {
   isOpen: boolean;
@@ -24,7 +25,7 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({
 }) => {
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(false);
   const { meetingDetail, hashtags, dogImages, isLoading, error, fetchMeetingDetail } = useMeeting();
-
+  const navigate = useNavigate();
   useEffect(() => {
     if (isOpen && meetingId) {
       fetchMeetingDetail(String(meetingId));
@@ -128,7 +129,15 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({
 
           <div className="flex space-x-2 mt-2">
             {dogImages.map((dog, index) => (
-              <div key={`dog-${dog.dogId}-${index}`} className="w-8 h-8">
+              <div
+                key={`dog-${dog.dogId}-${index}`}
+                className="w-8 h-8 cursor-pointer"
+                onClick={() =>
+                  navigate(`/profile/${dog.memberId}`, {
+                    state: { dogId: dog.dogId },
+                  })
+                }
+              >
                 <img
                   src={dog.profileImage}
                   alt={`강아지 ${index + 1}`}

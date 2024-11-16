@@ -19,6 +19,7 @@ import FriendsRequestModal from '@/components/friends/FriendsRequestModal';
 const UserProfile: React.FC = () => {
   const { id, where } = useParams();
   const location = useLocation();
+  const { dogId } = location.state || {}; // 전달된 dogId 가져오기
   const meetingId = (location.state as { meetingId?: number })?.meetingId;
   const fromList = (location.state as { fromList?: boolean })?.fromList;
   const fromModal = (location.state as { fromModal?: boolean })?.fromModal;
@@ -31,6 +32,8 @@ const UserProfile: React.FC = () => {
   const { deleteFriend, requestFriend, requestFriendResponse, isRequestFriendModalOpen, setIsRequestFriendModalOpen } =
     useFriend();
   const { createChatRoom, loading: chatLoading, error: chatError, chatRoomData } = useSingleChatCreate();
+  const [initialSlideIndex, setInitialSlideIndex] = useState(0);
+  const [isDogsLoaded, setIsDogsLoaded] = useState(false);
 
   const handleDeleteFriend = useCallback(
     (friendId: number) => {
@@ -47,17 +50,26 @@ const UserProfile: React.FC = () => {
   }, [requestFriend, getUserProfile, id]);
 
   useEffect(() => {
-    getUserProfile(Number(id));
-    getUserDogs(Number(id));
-  }, [id]);
-
-  useEffect(() => {
     if (chatRoomData) {
       navigate(`/chat/single/${chatRoomData}`, { state: { roomId: chatRoomData, friendName: userData?.nickname } });
     }
   }, [chatRoomData, navigate, userData]);
 
-  if (isLoading || chatLoading ) {
+  useEffect(() => {
+    getUserProfile(Number(id));
+    getUserDogs(Number(id));
+  }, [id]);
+
+  // dogId를 기준으로 초기 슬라이드 인덱스 설정
+  useEffect(() => {
+    if (dogId && userDogs.length > 0) {
+      const index = userDogs.findIndex((dog) => dog.id === dogId);
+      setInitialSlideIndex(index >= 0 ? index : 0);
+      setIsDogsLoaded(true); // 강아지 데이터 로드 완료
+    }
+  }, [dogId, userDogs]);
+
+  if (isLoading || !isDogsLoaded) {
     return <LoadingOverlay message="로딩 중..." />;
   }
 
@@ -140,28 +152,27 @@ const UserProfile: React.FC = () => {
         </div>
 
         {userDogs.length === 0 ? (
-          <div className="h-32 flex items-center justify-center">
+          <div className="h-32 flex flex-col items-center justify-center">
+            <img className="w-16 h-16 mb-4" src="/icons/sadDogIcon.svg" alt="슬픈강아지아이콘" />
             <div className="text-center text-zinc-500">등록된 반려견이 없습니다</div>
           </div>
         ) : (
-          <div>
-            <Swiper
-              pagination={{
-                dynamicBullets: true,
-              }}
-              modules={[Pagination]}
-              className="dogSwiper rounded-lg"
-            >
-              {userDogs.map((dog, idx) => (
-                <SwiperSlide key={idx}>
-                  <MyDogInfoCard dog={dog} isOwnProfile={false} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+          <Swiper
+            pagination={{
+              dynamicBullets: true,
+            }}
+            modules={[Pagination]}
+            className="dogSwiper rounded-lg"
+            initialSlide={initialSlideIndex} // 초기 슬라이드 설정
+          >
+            {userDogs.map((dog, idx) => (
+              <SwiperSlide key={dog.id}>
+                <MyDogInfoCard dog={dog} isOwnProfile={false} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
         )}
       </div>
-
       <div className="bg-zinc-100 w-full h-3"></div>
 
       {/* 친구 요청 상태 모달 */}
