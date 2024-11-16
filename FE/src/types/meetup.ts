@@ -141,6 +141,7 @@ export interface HashtagResponse {
 // 타입 정의도 업데이트
 export interface DogImage {
   dogId: number;
+  memberId: number;
   profileImage: string;
 }
 

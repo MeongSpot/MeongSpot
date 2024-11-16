@@ -57,7 +57,7 @@ const MyMeetUpRoomPage = () => {
               <div className="flex flex-col items-center justify-center mt-[20vh]">
                 <div className="flex flex-col justify-center items-center h-64 text-gray-500">
                   <div className="rounded-full bg-gray-200 p-4 mb-4">
-                    <MascotDog className="w-16 h-16 grayscale" />
+                  <img className="w-16 h-16 grayscale" src="/icons/sadDogIcon.svg" alt="슬픈강아지아이콘" />
                   </div>
                   <p className="text-sm mb-2">참여 중인 모임이 없습니다</p>
                   <p className="text-xs text-deep-coral">새로운 모임에 참여해보세요!</p>
