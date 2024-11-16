@@ -57,17 +57,9 @@ public class FindMeetingService {
                 .collect(Collectors.groupingBy(MeetingHashtagDto::getMeetingId, Collectors.mapping(MeetingHashtagDto::getHashtag, Collectors.toList())));
 
         return meetings.stream()
-                .map(meeting -> MeetingResponse.builder()
-                        .meetingId(meeting.getId())
-                        .title(meeting.getTitle())
-                        .participants(meeting.getParticipants())
-                        .maxParticipants(meeting.getMaxParticipants())
-                        .meetingAt(meeting.getMeetingAt())
-                        .detailLocation(meeting.getDetailLocation())
-                        .hashtag(hashtagMap.getOrDefault(meeting.getId(), Collections.emptyList()))
-                        .build()
+                .map(meeting -> MeetingResponse.of(meeting, hashtagMap.getOrDefault(meeting.getId(), Collections.emptyList()))
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -81,15 +73,7 @@ public class FindMeetingService {
                 .collect(Collectors.groupingBy(MeetingHashtagDto::getMeetingId, Collectors.mapping(MeetingHashtagDto::getHashtag, Collectors.toList())));
 
         List<MeetingResponse> meetingResponses = meetings.stream()
-                .map(meeting -> MeetingResponse.builder()
-                        .meetingId(meeting.getId())
-                        .title(meeting.getTitle())
-                        .participants(meeting.getParticipants())
-                        .maxParticipants(meeting.getMaxParticipants())
-                        .meetingAt(meeting.getMeetingAt())
-                        .detailLocation(meeting.getDetailLocation())
-                        .hashtag(hashtagMap.getOrDefault(meeting.getId(), Collections.emptyList()))
-                        .build()
+                .map(meeting -> MeetingResponse.of(meeting, hashtagMap.getOrDefault(meeting.getId(), Collections.emptyList()))
                 )
                 .toList();
 
@@ -103,6 +87,7 @@ public class FindMeetingService {
     public FindMeetingResponse findMeeting(FindMeetingDto dto) {
         Member member = memberRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(MemberNotFoundException::new);
+
         Meeting meeting = meetingRepository.findById(dto.getMeetingId())
                 .orElseThrow(MeetingNotFoundException::new);
 
@@ -128,12 +113,8 @@ public class FindMeetingService {
             Meeting meeting = meetingRepository.findById(meetingId)
                     .orElseThrow(MeetingNotFoundException::new);
 
-            String title = meeting.getTitle();
-            int maxParticipants = meeting.getMaxParticipants();
-            LocalDateTime meetingAt = meeting.getMeetingAt();
-            int participants = meeting.getParticipants();
-            String spot = meeting.getSpot().getName();
-            List<String> hashtag = hashTagRepository.findTagsByMeeting(meeting);
+            List<String> hashtags = hashTagRepository.findTagsByMeeting(meeting);
+
             Long chatRoomId = meeting.getChatRoom().getId();
 
             ChatMember chatMember = chatMemberRepository.findByChatRoomIdAndMyId(chatRoomId, member.getId())
@@ -141,19 +122,7 @@ public class FindMeetingService {
 
             long unreadMessageCnt = findChatRoomService.countUnreadMessage(chatRoomId, chatMember.getReadAt());
 
-            FindMyMeetingResponse response = FindMyMeetingResponse.builder()
-                    .meetingId(meeting.getId())
-                    .title(title)
-                    .maxParticipants(maxParticipants)
-                    .meetingAt(meetingAt)
-                    .unreadMessageCnt(unreadMessageCnt)
-                    .chatRoomId(chatRoomId)
-                    .hashtag(hashtag)
-                    .spotName(spot)
-                    .participants(participants)
-                    .build();
-
-            result.add(response);
+            result.add(FindMyMeetingResponse.of(meeting, hashtags, unreadMessageCnt));
         }
         return result;
     }

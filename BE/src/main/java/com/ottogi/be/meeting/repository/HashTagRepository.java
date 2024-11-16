@@ -20,11 +20,4 @@ public interface HashTagRepository extends JpaRepository<Hashtag, Long> {
             WHERE h.meeting IN :meetings
             """)
     List<MeetingHashtagDto> findAllByMeetings(List<Meeting> meetings);
-
-    @Query("""
-            SELECT NEW com.ottogi.be.meeting.dto.MeetingHashtagDto(h.meeting.id, h.tag)
-            FROM Hashtag h
-            WHERE h.meeting.id IN :meetingIds
-            """)
-    List<MeetingHashtagDto> findAllByMeetingIds(List<Long> meetingIds);
 }

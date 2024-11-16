@@ -43,8 +43,8 @@ public class MeetingController {
     public ResponseEntity<?> meetingJoin(@PathVariable Long meetingId,
                                          @Valid @RequestBody JoinMeetingRequest request,
                                          @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws ExecutionException, InterruptedException {
-        joinMeetingService.joinMeeting(request.toDto(meetingId, loginMemberInfo.getLoginId()));
-        return ResponseEntity.ok(new ApiResponse<>("MT101", "모임 참여 성공", null));
+        Long chatRoomId = joinMeetingService.joinMeeting(request.toDto(meetingId, loginMemberInfo.getLoginId()));
+        return ResponseEntity.ok(new ApiResponse<>("MT101", "모임 참여 성공", chatRoomId));
     }
 
     @GetMapping

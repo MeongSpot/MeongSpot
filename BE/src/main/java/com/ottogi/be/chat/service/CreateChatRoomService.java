@@ -46,4 +46,16 @@ public class CreateChatRoomService {
 
         return chatRoom.getId();
     }
+
+    @Transactional
+    public ChatRoom addMeetingChatRoom(Member member) {
+
+        ChatRoom chatRoom = new ChatRoom(ChatRoomType.MEETING);
+        ChatRoom chat = chatRoomRepository.saveAndFlush(chatRoom);
+
+        ChatMember chatMember = new ChatMember(chat, member);
+        chatMemberRepository.save(chatMember);
+
+        return chat;
+    }
 }

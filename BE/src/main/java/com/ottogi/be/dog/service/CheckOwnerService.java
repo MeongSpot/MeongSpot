@@ -12,7 +12,7 @@ public class CheckOwnerService {
 
     public void checkIsOwner(Member member, List<Dog> dogList) {
         for (Dog dog : dogList) {
-            if (dog.getMember() != member) throw new DogOwnerMismatchException();
+            if (!dog.getMember().equals(member)) throw new DogOwnerMismatchException();
         }
     }
 }
