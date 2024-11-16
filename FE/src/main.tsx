@@ -16,29 +16,50 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// 포그라운드 메시지 수신 처리
+// // 포그라운드 메시지 수신 처리
+// if (messaging) {
+//   onMessage(messaging, (payload) => {
+//     console.log('Received foreground message:', payload);
+//     const title = payload.data?.title || 'Default Title';
+//     const body = payload.data?.body || 'Default Body';
+
+//     // 브라우저 알림 생성
+//     // if (Notification.permission === 'granted') {
+//     //   new Notification(payload.notification?.title || '새 알림', {
+//     //     body: payload.notification?.body,
+//     //     icon: '/icons/favicon/favicon-96x96.png',
+//     //   });
+//     // }
+
+//     // if (Notification.permission === 'granted') {
+//       new Notification(title, {
+//         body: body,
+//         icon: '/icons/favicon/favicon-96x96.png',
+//       });
+//     // }
+
+
+//   });
+// }
+
 if (messaging) {
   onMessage(messaging, (payload) => {
-    console.log('Received foreground message:', payload);
-    const title = payload.data?.title || 'Default Title';
-    const body = payload.data?.body || 'Default Body';
+    console.log("Received foreground message:", payload);
+
+    // 제목과 본문 데이터 추출
+    const title = payload.notification?.title || payload.data?.title || "Default Title";
+    const body = payload.notification?.body || payload.data?.body || "Default Body";
 
     // 브라우저 알림 생성
-    // if (Notification.permission === 'granted') {
-    //   new Notification(payload.notification?.title || '새 알림', {
-    //     body: payload.notification?.body,
-    //     icon: '/icons/favicon/favicon-96x96.png',
-    //   });
-    // }
-
-    // if (Notification.permission === 'granted') {
+    if (Notification.permission === "granted") {
       new Notification(title, {
         body: body,
-        icon: '/icons/favicon/favicon-96x96.png',
+        icon: "/icons/favicon/favicon-96x96.png", // 아이콘 경로
+        data: payload.data, // 추가 데이터 저장
       });
-    // }
-
-
+    } else {
+      console.warn("Notification permission is not granted.");
+    }
   });
 }
 
