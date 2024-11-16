@@ -31,12 +31,12 @@ if (messaging) {
     //   });
     // }
 
-    if (Notification.permission === 'granted') {
+    // if (Notification.permission === 'granted') {
       new Notification(title, {
         body: body,
         icon: '/icons/favicon/favicon-96x96.png',
       });
-    }
+    // }
 
 
   });
