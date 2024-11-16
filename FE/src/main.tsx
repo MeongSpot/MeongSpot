@@ -20,6 +20,8 @@ if ('serviceWorker' in navigator) {
 if (messaging) {
   onMessage(messaging, (payload) => {
     console.log('Received foreground message:', payload);
+    const { title, body } = payload.notification || {}; // `Notification` 필드에서 추출
+    const data = payload.data || {}; // 추가 데이터
     // 브라우저 알림 생성
     if (Notification.permission === 'granted') {
       new Notification(payload.notification?.title || '새 알림', {
