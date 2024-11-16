@@ -43,19 +43,23 @@ if ('serviceWorker' in navigator) {
 // }
 
 if (messaging) {
+  console.log("Firebase messaging initialized:", messaging);
   onMessage(messaging, (payload) => {
     console.log("Received foreground message:", payload);
 
     // 제목과 본문 데이터 추출
     const title = payload.notification?.title || payload.data?.title || "Default Title";
     const body = payload.notification?.body || payload.data?.body || "Default Body";
+    console.log("Extracted title:", title);
+    console.log("Extracted body:", body);
 
     // 브라우저 알림 생성
     if (Notification.permission === "granted") {
+      console.log("Notification permission granted. Showing notification...");
       new Notification(title, {
         body: body,
         icon: "/icons/favicon/favicon-96x96.png", // 아이콘 경로
-        data: payload.data, // 추가 데이터 저장
+        // data: payload.data, // 추가 데이터 저장
       });
     } else {
       console.warn("Notification permission is not granted.");
