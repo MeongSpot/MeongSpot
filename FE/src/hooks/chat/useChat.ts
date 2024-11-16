@@ -67,7 +67,7 @@ const useChat = (
   }, [roomId, addChat]);
 
   const sendMessage = useCallback(
-    debounce((message: string, myId: number) => {
+    debounce((message: string, myId: number, messageType: 'TEXT' | 'NOTICE' = 'TEXT') => {
       if (clientRef.current?.connected) {
         const chatMessage = {
           memberId: myId,
@@ -77,10 +77,10 @@ const useChat = (
           profileImage: profileImage ?? '/icons/favicon/favicon-96x96.png',
           senderId: myId,
           message,
-          messageType: 'TEXT',
+          messageType,
           timestamp: new Date().toISOString(),
         };
-
+        console.log(myId)
         clientRef.current.publish({
           destination: `/pub/send.message.${roomId}`,
           body: JSON.stringify(chatMessage),
