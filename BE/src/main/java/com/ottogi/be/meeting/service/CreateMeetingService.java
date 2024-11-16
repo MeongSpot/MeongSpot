@@ -59,7 +59,7 @@ public class CreateMeetingService {
         Meeting meetingEntity = dto.toEntity(meetingSpot, chat, meetingStartTime);
         Meeting meeting = meetingRepository.saveAndFlush(meetingEntity);
 
-        createHashtagService.addHashtag(dto.getHashtag(), meeting);
+        createHashtagService.addHashtag(dto.getHashtags(), meeting);
 
         saveMeetingMemberService.saveMeetingMember(meeting, member, dogList);
     }
