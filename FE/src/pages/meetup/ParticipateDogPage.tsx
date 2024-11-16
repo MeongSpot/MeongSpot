@@ -57,7 +57,7 @@ const ParticipateDogPage = () => {
   // 성공 모달의 모임으로 가기 버튼 핸들러
   const handleGoToChat = useCallback(() => {
     setShowSuccessModal(false);
-    navigate(`/chat/group/${roomId}`, {
+    navigate(`/mymeetuproom`, {
       state: {
         animateBack: true,
         spotName,
