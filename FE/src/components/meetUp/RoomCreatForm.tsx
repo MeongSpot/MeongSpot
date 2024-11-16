@@ -172,7 +172,7 @@ const RoomCreatForm: React.FC<RoomCreatFormProps> = ({ initialDogs }) => {
         meetingData.information = description;
       }
       if (tags.length > 0) {
-        meetingData.hashtag = tags;
+        meetingData.hashtags = tags;
       }
 
       await createMeeting(meetingData);
