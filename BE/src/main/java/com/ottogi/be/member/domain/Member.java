@@ -118,4 +118,5 @@ public class Member {
     public void beOwner() {
         this.role = Role.ROLE_OWNER;
     }
+    public void beUser() { this.role = Role.ROLE_USER; }
 }

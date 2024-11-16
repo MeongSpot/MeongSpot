@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface BreedRepository extends JpaRepository<Breed, Long> {
 
+    @Query("SELECT br.name FROM Breed br")
+    List<String> findAllBreedName();
+
     @Query("""
             SELECT br.name
             FROM Breed br

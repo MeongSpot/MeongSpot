@@ -55,6 +55,7 @@ public class FindDogService {
     public List<FindDogNameResponse> findDogNameList(String loginId) {
         Member member = memberRepository.findByLoginId(loginId)
                 .orElseThrow(MemberNotFoundException::new);
+
         return dogRepository.findDogNameByMember(member);
     }
 
@@ -63,6 +64,7 @@ public class FindDogService {
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(DogNotFoundException::new);
         List<String> personality = dogPersonalityRepository.findPersonalityByDog(dog);
+
         return FindDogResponse.of(dog, personality);
     }
 }

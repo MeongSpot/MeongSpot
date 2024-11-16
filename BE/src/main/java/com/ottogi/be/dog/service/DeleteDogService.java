@@ -33,6 +33,9 @@ public class DeleteDogService {
 
         if (findMeetingService.isParticipate(dog.getId())) throw new CannotDeleteDogException();
 
+        if (dogRepository.countByMember(member) == 1) {
+            member.beUser();
+        }
         dogRepository.deleteById(dog.getId());
     }
 }

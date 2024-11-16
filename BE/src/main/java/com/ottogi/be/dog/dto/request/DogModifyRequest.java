@@ -3,8 +3,8 @@ package com.ottogi.be.dog.dto.request;
 import com.ottogi.be.dog.domain.enums.Gender;
 import com.ottogi.be.dog.domain.enums.Size;
 import com.ottogi.be.dog.dto.DogModifyDto;
-import com.ottogi.be.dog.validation.annotation.Age;
 import com.ottogi.be.dog.validation.annotation.Name;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,7 +24,7 @@ public class DogModifyRequest {
     private String name;
     private String breed;
     private Size size;
-    @Age
+    @Min(value = 0)
     private int age;
     private Gender gender;
     private Boolean isNeuter;
