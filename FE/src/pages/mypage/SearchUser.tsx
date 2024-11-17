@@ -43,7 +43,7 @@ const SearchUser: React.FC = () => {
 
   return (
     <div>
-      <div>
+      <div className="sticky top-0 z-30 bg-white">
         <div className="p-4 grid grid-cols-3 items-center">
           <IoChevronBack onClick={() => navigate('/friendslist')} size={24} />
           <p className="text-center text-lg font-bold">유저 검색</p>

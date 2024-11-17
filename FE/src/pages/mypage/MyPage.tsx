@@ -53,7 +53,7 @@ const MyPage: React.FC = () => {
   useEffect(() => {
     console.log('읽지 않은 알림 존재 여부:', existUnread);
   }, [existUnread]);
-  
+
   useEffect(() => {
     if (monthlyWalkingLogs) {
       setTotalWalkingDistance(monthlyWalkingLogs.reduce((acc, cur) => acc + (cur.monthlyWalkDistance || 0), 0));
@@ -70,34 +70,35 @@ const MyPage: React.FC = () => {
         <LoadingOverlay message="로딩 중..." />
       ) : (
         <>
-          <div className="w-full p-4 grid grid-cols-3 items-center">
-            <div></div>
-            <h1 className="text-center text-lg font-bold">마이페이지</h1>
-            <div className="w-full flex justify-end items-center space-x-4">
-              <div className="relative">
-                <IoNotificationsOutline
+          <div className="sticky bg-white top-0 z-30">
+            <div className="w-full p-4 grid grid-cols-3 items-center">
+              <div></div>
+              <h1 className="text-center text-lg font-bold">마이페이지</h1>
+              <div className="w-full flex justify-end items-center space-x-4">
+                <div className="relative">
+                  <IoNotificationsOutline
+                    onClick={() => {
+                      navigate('/notification');
+                    }}
+                    className="text-2xl text-zinc-700"
+                  />
+                  {/* 읽지 않은 알림이 있으면 배지 표시 */}
+                  {existUnread && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                      {existUnread ? 'N' : ''}
+                    </span>
+                  )}
+                </div>
+                <SlSettings
                   onClick={() => {
-                    navigate('/notification');
+                    navigate('/settings');
                   }}
-                  className="text-2xl text-zinc-700"
+                  className="text-[1.35rem] text-zinc-700"
                 />
-                {/* 읽지 않은 알림이 있으면 배지 표시 */}
-                {existUnread && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                    {existUnread ? 'N' : ''}
-                  </span>
-                )}
               </div>
-              <SlSettings
-                onClick={() => {
-                  navigate('/settings');
-                }}
-                className="text-[1.35rem] text-zinc-700"
-              />
             </div>
+            <hr />
           </div>
-
-          <hr />
 
           <div className="p-4 flex flex-col space-y-8">
             <div className="flex flex-col space-y-5">
@@ -109,9 +110,7 @@ const MyPage: React.FC = () => {
                   <p className="text-sm text-zinc-500">나의 친구</p>
                   <p className="font-semibold">{friendsCount}</p>
                 </div>
-                <button
-                  className="p-2 px-3 bg-deep-coral rounded-3xl"
-                >
+                <button className="p-2 px-3 bg-deep-coral rounded-3xl">
                   <p className="text-white text-sm">친구 목록</p>
                 </button>
               </div>
