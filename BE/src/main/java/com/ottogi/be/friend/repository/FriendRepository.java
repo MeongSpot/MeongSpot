@@ -67,4 +67,14 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             OR (f.sender.id = :friendId AND f.receiver.id = :myId)
             """)
     void deleteByMyIdAndFriendId(Long myId, Long friendId);
+
+    @Query(
+            """
+            SELECT f.receiver FROM Friend f WHERE f.sender = :member
+            UNION
+            SELECT f.sender FROM Friend f WHERE f.receiver = :member
+            """
+    )
+    List<Member> findAllFriends(Member member);
+
 }

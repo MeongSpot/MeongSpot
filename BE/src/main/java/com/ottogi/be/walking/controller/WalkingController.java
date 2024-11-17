@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 
 @RestController
 @RequestMapping("/walking-log")
@@ -25,7 +27,7 @@ public class WalkingController {
     private final WalkingLogService walkingLogService;
     @PostMapping("/start")
     public ResponseEntity<?> walkingStart(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                          @RequestBody WalkingStartRequest request){
+                                          @RequestBody WalkingStartRequest request) throws ExecutionException, InterruptedException {
         walkingStartService.startWalking(request.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("WK100", "산책 시작 성공",null));
     }

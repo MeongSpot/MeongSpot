@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ottogi.be.member.exception.MemberNotFoundException;
 
 import java.time.Instant;
+import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +22,9 @@ public class WalkingStartService {
     private final MemberRepository memberRepository;
     private final WalkingRedisRepository walkingRedisRepository;
     private final DogRepository dogRepository;
-
+    private final SendWalkingNotificationService sendWalkingNotificationService;
     @Transactional
-    public void startWalking(WalkingStartDto dto) {
+    public void startWalking(WalkingStartDto dto) throws ExecutionException, InterruptedException {
         Member member = memberRepository.findByLoginId(dto.getLoginId()).orElseThrow(MemberNotFoundException::new);
 
         for(Long dogId: dto.getDogIds()){
@@ -36,5 +37,6 @@ public class WalkingStartService {
         walkingRedisRepository.saveStartTime(dto.getLoginId(), startTime);
         walkingRedisRepository.saveDogIds(dto.getLoginId(), dto.getDogIds());
 
+        sendWalkingNotificationService.sendWalkingNotification(member);
     }
 }
