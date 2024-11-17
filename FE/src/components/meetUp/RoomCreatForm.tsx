@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { ko } from 'date-fns/locale';
-import { FaCalendarAlt, FaClock } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaPlus } from 'react-icons/fa';
 import { AiOutlineDown } from 'react-icons/ai';
 import CreateTimeModal from './CreateTimeModal';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -82,14 +82,31 @@ const RoomCreatForm: React.FC<RoomCreatFormProps> = ({ initialDogs }) => {
   const handleTagAdd = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      if (tags.length >= MAX_TAGS) {
-        return;
-      }
+      const input = e.currentTarget;
+      addNewTag(input.value);
+      input.value = '';
+    }
+  };
 
-      const newTag = e.currentTarget.value.trim();
-      if (newTag && !tags.includes(newTag) && newTag.length <= MAX_TAG_LENGTH) {
-        setTags([...tags, newTag]);
-        e.currentTarget.value = '';
+  const addNewTag = (value: string) => {
+    const newTag = value.trim();
+    if (tags.length >= MAX_TAGS) {
+      showToast('태그는 최대 5개까지만 추가할 수 있습니다');
+      return;
+    }
+
+    if (newTag && !tags.includes(newTag) && newTag.length <= MAX_TAG_LENGTH) {
+      setTags([...tags, newTag]);
+      return true;
+    }
+    return false;
+  };
+
+  const handleAddButtonClick = () => {
+    const input = document.querySelector<HTMLInputElement>('input[placeholder*="태그 입력"]');
+    if (input) {
+      if (addNewTag(input.value)) {
+        input.value = '';
       }
     }
   };
@@ -294,15 +311,24 @@ const RoomCreatForm: React.FC<RoomCreatFormProps> = ({ initialDogs }) => {
           currentLength={tags.length}
           maxLength={MAX_TAGS}
         >
-          <input
-            type="text"
-            placeholder={
-              tags.length >= MAX_TAGS ? '태그는 최대 5개까지 입력 가능합니다' : '태그 입력 후 엔터 (최대 15자)'
-            }
-            onKeyDown={handleTagAdd}
-            maxLength={MAX_TAG_LENGTH}
-            className="w-full p-3 border border-gray-200 rounded-lg focus:outline-none focus:border-deep-coral"
-          />
+          <div className="relative">
+            <input
+              type="text"
+              placeholder={
+                tags.length >= MAX_TAGS ? '태그는 최대 5개까지 입력 가능합니다' : '태그 입력 후 엔터 (최대 15자)'
+              }
+              onKeyDown={handleTagAdd}
+              maxLength={MAX_TAG_LENGTH}
+              className="w-full p-3 pr-12 border border-gray-200 rounded-lg focus:outline-none focus:border-deep-coral"
+            />
+            <button
+              onClick={handleAddButtonClick}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-deep-coral hover:text-gray-400 transition-colors"
+              type="button"
+            >
+              <FaPlus />
+            </button>
+          </div>
           <div className="flex flex-wrap gap-2 mt-2">
             {tags.map((tag, index) => (
               <span
