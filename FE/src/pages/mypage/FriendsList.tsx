@@ -50,21 +50,23 @@ const FriendsList: React.FC = () => {
 
   return (
     <div>
-      <div className="p-4 grid grid-cols-3 items-center">
-        <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
-        <p className="text-center text-lg font-bold">친구 목록</p>
-        <div className="flex justify-end">
-          <button
-            onClick={(e) => {
-              navigate('/searchuser');
-              e.stopPropagation();
-            }}
-          >
-            <p className="font-medium text-zinc-600">유저 검색</p>
-          </button>
+      <div className="sticky top-0 bg-white z-30">
+        <div className="p-4 grid grid-cols-3 items-center">
+          <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
+          <p className="text-center text-lg font-bold">친구 목록</p>
+          <div className="flex justify-end">
+            <button
+              onClick={(e) => {
+                navigate('/searchuser');
+                e.stopPropagation();
+              }}
+            >
+              <p className="font-medium text-zinc-600">유저 검색</p>
+            </button>
+          </div>
         </div>
+        <hr />
       </div>
-      <hr />
 
       <div className="mt-2 p-4 space-y-4">
         <SearchBar placeholder="친구 검색" data={friendsList} setData={setFilteredFriendsList} filterField="nickname" />

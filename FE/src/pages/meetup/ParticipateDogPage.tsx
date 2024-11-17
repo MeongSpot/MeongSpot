@@ -57,7 +57,7 @@ const ParticipateDogPage = () => {
   // 성공 모달의 모임으로 가기 버튼 핸들러
   const handleGoToChat = useCallback(() => {
     setShowSuccessModal(false);
-    navigate(`/chat/group/${roomId}`, {
+    navigate(`/mymeetuproom`, {
       state: {
         animateBack: true,
         spotName,
@@ -269,7 +269,15 @@ const ParticipateDogPage = () => {
               <div className="grid grid-cols-5 gap-3">
                 {dogImages.map((dogImage, index) => (
                   // unique한 dogId와 index를 조합하여 key 생성
-                  <div key={`dog-${dogImage.dogId}-${index}`} className="aspect-square">
+                  <div
+                    key={`dog-${dogImage.dogId}-${index}`}
+                    className="aspect-square cursor-pointer"
+                    onClick={() =>
+                      navigate(`/profile/${dogImage.memberId}`, {
+                        state: { dogId: dogImage.dogId },
+                      })
+                    }
+                  >
                     <img
                       src={dogImage.profileImage}
                       alt={`참여 강아지 ${index + 1}`}

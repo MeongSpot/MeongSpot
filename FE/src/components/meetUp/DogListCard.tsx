@@ -91,7 +91,7 @@ const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotNam
             님과 함께하는 반려견
           </p>
         </div>
-        <div className="flex flex-col space-y-3">
+        <div className="flex flex-col space-y-3 overflow-y-auto max-h-80">
           {meetingDogs.map((dog, index) => (
             <div key={index} className="bg-[#fff6ec] p-3 rounded-xl space-y-3">
               <div className="flex items-center">
@@ -107,18 +107,20 @@ const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotNam
                 <div className="flex flex-wrap mt-2"></div>
               </div>
 
-              <div className="mx-2">
-                <div className="flex flex-1 flex-wrap items-center">
-                  {dog.personality.map((tag, index) => (
-                    <button
-                      key={index} // key 위치 수정
-                      className="bg-peach-orange px-2 py-[0.3rem] rounded-full flex justify-center items-center mr-2 mb-2"
-                    >
-                      <span className="text-white text-xs font-medium">{tag}</span>
-                    </button>
-                  ))}
+              {dog.personality && dog.personality.length > 0 && (
+                <div className="mx-2">
+                  <div className="flex flex-1 flex-wrap items-center">
+                    {dog.personality.map((tag, tagIndex) => (
+                      <button
+                        key={`${index}-${tagIndex}-${tag}`}
+                        className="bg-peach-orange px-2 py-[0.3rem] rounded-full flex justify-center items-center mr-2 mb-2"
+                      >
+                        <span className="text-white text-xs font-medium">{tag}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </div>

@@ -7,8 +7,6 @@ import FooterButton from '@/components/common/Button/FooterButton';
 import useDogInfoStore from '@/store/dogInfoStore';
 import { useDog } from '@/hooks/dog/useDog';
 import LoadingOverlay from '@/components/common/LoadingOverlay';
-import { is } from 'date-fns/locale';
-import { div } from 'framer-motion/client';
 
 const AddDog: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +17,14 @@ const AddDog: React.FC = () => {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+
     if (file) {
+      if (file.size > maxFileSize) {
+        alert('10MB 이하의 파일만 업로드할 수 있습니다.');
+        return;
+      }
+
       const imageUrl = URL.createObjectURL(file);
       setDogRegisterInfo({
         ...dogRegisterInfo,
@@ -153,19 +158,21 @@ const AddDog: React.FC = () => {
     >
       {isLoading && <LoadingOverlay message="로딩 중..." />}
 
-      <div className="p-4 grid grid-cols-3 items-center">
-        <div></div>
-        <p className="text-center text-lg font-bold">반려견 등록</p>
-        <div className="flex justify-end">
-          <IoClose
-            onClick={() => {
-              handleBack();
-            }}
-            size={24}
-          />
+      <div className="sticky top-0 bg-white z-30">
+        <div className="p-4 grid grid-cols-3 items-center">
+          <div></div>
+          <p className="text-center text-lg font-bold">반려견 등록</p>
+          <div className="flex justify-end">
+            <IoClose
+              onClick={() => {
+                handleBack();
+              }}
+              size={24}
+            />
+          </div>
         </div>
+        <hr />
       </div>
-      <hr />
 
       {/* 반려견 이미지 등록 */}
       <div className="mt-12">
@@ -189,11 +196,14 @@ const AddDog: React.FC = () => {
           {dogRegisterInfo.profileImage ? (
             <></>
           ) : (
-            <p className="text-sm text-zinc-400 font-medium">
-              반려견 이미지 등록은
-              <span className="font-semibold text-zinc-600"> 필수</span>
-              입니다
-            </p>
+            <div className="flex flex-col items-center space-y-1">
+              <p className="text-sm text-zinc-400 font-medium">
+                반려견 이미지 등록은
+                <span className="font-semibold text-zinc-600"> 필수</span>
+                입니다
+              </p>
+              <p className="text-xs text-zinc-400">(최대 용량 10MB)</p>
+            </div>
           )}
         </div>
       </div>

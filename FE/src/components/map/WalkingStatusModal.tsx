@@ -1,4 +1,28 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { useDog } from '@/hooks/dog/useDog';
+import { useCallback } from 'react';
+import { PiPawPrint } from 'react-icons/pi';
+import { FaPaw } from 'react-icons/fa';
+// or
+import { TbPaw } from 'react-icons/tb';
+
+// 컴포넌트 상단에 스타일 정의
+const pawAnimationStyle = `
+  @keyframes pawAnimation {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  }
+`;
 
 export interface WalkingStatusModalProps {
   isOpen: boolean;
@@ -23,6 +47,21 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
 }) => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number | null>(null);
+  const { myDogsName, getMyDogsName, isFetching } = useDog();
+  const [hasCheckedDogs, setHasCheckedDogs] = useState(false);
+
+  // 강아지 데이터 가져오기
+  const fetchDogs = useCallback(async () => {
+    if (isFetching || hasCheckedDogs) return;
+
+    try {
+      await getMyDogsName();
+      setHasCheckedDogs(true);
+    } catch (error) {
+      console.error('강아지 목록을 불러오는데 실패했습니다:', error);
+      setHasCheckedDogs(true);
+    }
+  }, [getMyDogsName, isFetching, hasCheckedDogs]);
 
   useEffect(() => {
     // 모달이 처음 열릴 때 시작 시간 설정
@@ -41,12 +80,17 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
       }, 1000);
     }
 
+    // 모달이 열릴 때 강아지 데이터 가져오기
+    if (isOpen && !hasCheckedDogs) {
+      fetchDogs();
+    }
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isOpen, isPaused, setWalkSeconds]);
+  }, [isOpen, isPaused, setWalkSeconds, hasCheckedDogs, fetchDogs]);
 
   // 모달이 닫힐 때 초기화
   useEffect(() => {
@@ -79,9 +123,21 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
     return `${(meters / 1000).toFixed(2)} km`;
   };
 
+  const getSelectedDogsText = useCallback(() => {
+    const selectedDogsList = selectedDogs
+      .map((id) => myDogsName.find((dog) => dog.id === id))
+      .filter((dog): dog is NonNullable<typeof dog> => dog !== undefined);
+
+    if (selectedDogsList.length === 0) return '';
+    if (selectedDogsList.length <= 2) {
+      return `${selectedDogsList.map((dog) => dog.name).join(', ')}(이)와`;
+    }
+    return `${selectedDogsList[0].name} 외 ${selectedDogsList.length - 1}마리와`;
+  }, [selectedDogs, myDogsName]);
+
   return (
     <div
-      className={`absolute inset-0 z-20 flex justify-center items-end transition-all duration-300 mb-16 ${
+      className={`absolute inset-0 z-20 flex justify-center items-end transition-all duration-300 ${
         isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
     >
@@ -93,12 +149,12 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
         <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
 
         <h2 className="text-lg font-bold mb-2">
-          <span className="text-deep-coral font-bold truncate">산책중</span>
+          <span className="text-deep-coral font-bold">{getSelectedDogsText()}</span> 산책중
         </h2>
 
         <hr className="border-t-2 border-gray-100 mb-6" />
 
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex justify-between items-center mb-4">
           <div className="flex-1 text-center">
             <p className="text-2xl font-bold mb-1">{formatDistance(distance)}</p>
             <p className="text-sm text-gray-500">거리</p>
@@ -116,6 +172,23 @@ const WalkingStatusModal: React.FC<WalkingStatusModalProps> = ({
             <p className="text-2xl font-bold mb-1">{formatTime(walkSeconds)}</p>
             <p className="text-sm text-gray-500">산책시간</p>
           </div>
+        </div>
+
+        <div className="h-20 flex justify-center items-center">
+          <div className="flex gap-5">
+            {[0, 1, 2].map((index) => (
+              <FaPaw
+                key={index}
+                className="text-3xl text-peach-orange"
+                style={{
+                  animation: 'pawAnimation 1.5s infinite',
+                  animationDelay: `${index * 1.0}s`,
+                  opacity: 0,
+                }}
+              />
+            ))}
+          </div>
+          <style>{pawAnimationStyle}</style>
         </div>
 
         <div className="border-t border-gray-200 -mx-6"></div>
