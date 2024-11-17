@@ -1,6 +1,5 @@
 import { SearchBar } from './SearchBar';
 import { ToggleButton } from './ToggleButton';
-
 interface TopBarProps {
   isWalkingMode: boolean;
   searchKeyword: string;
@@ -8,6 +7,7 @@ interface TopBarProps {
   onSearchChange: (value: string) => void;
   onModeChange: (mode: boolean) => void;
   onSearch: () => void;
+  className?: string; // 추가
 }
 
 export const TopBar = ({
@@ -16,10 +16,11 @@ export const TopBar = ({
   currentLocation,
   onSearchChange,
   onModeChange,
-  onSearch, // 추가
+  onSearch,
+  className = '', // 추가
 }: TopBarProps) => {
   return (
-    <div className="absolute top-4 left-4 right-4 z-50">
+    <div className={`absolute top-4 left-4 right-4 z-50 ${className}`}>
       <div
         className={`bg-white rounded-full shadow-md flex items-center justify-between transition-colors duration-300 ${
           isWalkingMode ? 'border-2 border-deep-coral' : 'border-2 border-light-orange'

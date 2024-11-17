@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import { MdNotifications } from 'react-icons/md';
 import { RiFocus3Line, RiCompass3Line } from 'react-icons/ri';
 import { TopBar } from '@/components/map/TopBar';
@@ -10,7 +10,14 @@ interface DeviceOrientationEventiOS extends DeviceOrientationEvent {
   webkitCompassHeading?: number;
 }
 
+// App의 context 타입 정의
+type AppContextType = {
+  setShowNav: (show: boolean) => void;
+  setIsWalking: (walking: boolean) => void;
+};
+
 const MapPage = () => {
+  const { setShowNav } = useOutletContext<AppContextType>();
   const location = useLocation();
   const navigate = useNavigate();
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -24,6 +31,7 @@ const MapPage = () => {
   const [isWalkingMode, setIsWalkingMode] = useState(location.pathname === '/walking');
   const [searchResult, setSearchResult] = useState<LatLng | null>(null);
   const { existUnread, loading: unreadLoading, error: unreadError } = useCheckUnreadAlarm();
+  const [isWalking, setIsWalking] = useState(false); // 산책 상태 추가
 
   // 모바일 디바이스 체크
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -251,6 +259,9 @@ const MapPage = () => {
   return (
     <div className="w-full h-screen flex flex-col relative">
       <TopBar
+        className={`transition-all duration-300 transform ${
+          isWalking ? '-translate-y-24 opacity-0' : 'translate-y-0 opacity-100'
+        }`}
         isWalkingMode={isWalkingMode}
         searchKeyword={searchKeyword}
         currentLocation={currentLocation}
@@ -259,7 +270,7 @@ const MapPage = () => {
         onSearch={handleSearch}
       />
 
-      <div className="absolute top-20 right-4 z-50">
+      <div className={`absolute right-4 z-50 transition-all duration-300 transform ${isWalking ? 'top-12' : 'top-20'}`}>
         <div className="flex flex-col gap-2">
           <button
             className="relative bg-white p-3 rounded-full shadow-md"
@@ -300,8 +311,9 @@ const MapPage = () => {
             currentLocation,
             currentPosition,
             isTracking,
-            isCompassMode, // 이 값이 제대로 전달되는지 확인
+            isCompassMode,
             heading,
+            isMobile,
             onMapMove: () => {
               if (!isWalkingMode) {
                 setIsTracking(false);
@@ -311,6 +323,8 @@ const MapPage = () => {
             searchResult,
             onSearch: handleSearch,
             getCurrentLocation,
+            setShowNav,
+            setIsWalking, // 여기에 setIsWalking도 전달
           }}
         />
       </div>
