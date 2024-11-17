@@ -18,7 +18,8 @@ type ContextType = {
   isTracking: boolean;
   isCompassMode: boolean;
   heading: number | null;
-  isMobile: boolean; // 추가
+  isMobile: boolean;
+  setIsWalking: (walking: boolean) => void;
 };
 
 const SPOT_IMAGES = {
@@ -34,20 +35,32 @@ const SPOT_IMAGES = {
 
 const WalkingMap = () => {
   const navigate = useNavigate();
-  const { currentPosition: contextPosition, isCompassMode, heading } = useOutletContext<ContextType>();
+  const { currentPosition: contextPosition, isCompassMode, heading, setIsWalking } = useOutletContext<ContextType>();
   const { startWalking, endWalking, totalDistance, isWalking, currentPosition, pathCoordinates } = useWalking();
 
   const [center, setCenter] = useState<LatLng>(contextPosition);
   const [mapLevel, setMapLevel] = useState(3);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDogs, setSelectedDogs] = useState<number[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
   const [showWalkingStatus, setShowWalkingStatus] = useState(false);
   const [isEndModalOpen, setIsEndModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [walkSeconds, setWalkSeconds] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
+  // App 컴포넌트의 상태와 동기화
+  useEffect(() => {
+    setIsWalking(isWalking);
+  }, [isWalking, setIsWalking]);
+
+  // 초기 모달 상태 설정
+  useEffect(() => {
+    if (!isWalking) {
+      setIsModalOpen(true);
+    }
+  }, []);
 
   // 지도 중심 위치 자동 조정
   useEffect(() => {
@@ -67,6 +80,7 @@ const WalkingMap = () => {
     setShowCountdown(true);
   };
 
+  // 산책 시작 시
   const handleCountdownComplete = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -74,15 +88,15 @@ const WalkingMap = () => {
       if (success) {
         setShowCountdown(false);
         setShowWalkingStatus(true);
+        setIsWalking(true); // 여기서 Nav 바를 숨깁니다
       }
     } catch (error) {
-      // console.error('Failed to start walking:', error);
       setIsModalOpen(true);
       setShowCountdown(false);
     } finally {
       setIsLoading(false);
     }
-  }, [startWalking, selectedDogs]);
+  }, [startWalking, selectedDogs, setIsWalking]);
 
   const handleStopWalk = () => {
     setIsEndModalOpen(true);
@@ -94,6 +108,7 @@ const WalkingMap = () => {
     setIsPaused(false);
   };
 
+  // 산책 종료 시
   const handleWalkEnd = useCallback(async () => {
     try {
       const success = await endWalking();
@@ -101,27 +116,26 @@ const WalkingMap = () => {
         setIsEndModalOpen(false);
         setShowWalkingStatus(false);
         setIsCompleteModalOpen(true);
+        setIsWalking(false); // 여기서 Nav 바를 다시 보이게 합니다
       }
     } catch (error) {
       console.error('Failed to end walking:', error);
     }
-  }, [endWalking]);
+  }, [endWalking, setIsWalking]);
 
+  // 완료 모달 닫을 때
   const handleCompleteModalClose = () => {
     setIsCompleteModalOpen(false);
     setWalkSeconds(0);
     setSelectedDogs([]);
+    setIsModalOpen(!isWalking);
+    setIsWalking(false); // 여기서도 Nav 바를 보이게 합니다
   };
 
+  // WalkingStatusModal 표시 여부에 따라 Nav 바 상태 조정
   useEffect(() => {
-    // console.log('Compass Mode Changed:', isCompassMode);
-    if (isCompassMode) {
-      // 약간의 지연 후 상태 업데이트
-      setTimeout(() => {
-        setCenter({ ...center }); // 지도 리렌더링 강제
-      }, 100);
-    }
-  }, [isCompassMode]);
+    setIsWalking(showWalkingStatus);
+  }, [showWalkingStatus, setIsWalking]);
 
   return (
     <div className="relative w-full h-full overflow-hidden">
@@ -133,7 +147,6 @@ const WalkingMap = () => {
           zoomable={false}
           draggable={false}
         >
-          {/* 경로 표시 */}
           {isWalking && pathCoordinates.length > 1 && (
             <Polyline path={pathCoordinates} strokeWeight={5} strokeColor="#F25C54" strokeOpacity={0.7} />
           )}
@@ -167,32 +180,33 @@ const WalkingMap = () => {
         </Map>
       </div>
 
-      {/* 모달 컴포넌트들 */}
-      <WalkStartModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        selectedDogs={selectedDogs}
-        onDogSelect={handleDogSelect}
-        onStartWalk={handleStartWalkClick}
-      />
+      {!isWalking && (
+        <WalkStartModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          selectedDogs={selectedDogs}
+          onDogSelect={handleDogSelect}
+          onStartWalk={handleStartWalkClick}
+        />
+      )}
 
       {showCountdown && <CountdownOverlay onComplete={handleCountdownComplete} />}
 
-      <WalkingStatusModal
-        isOpen={showWalkingStatus}
-        onClose={() => setShowWalkingStatus(false)}
-        selectedDogs={selectedDogs}
-        onStopWalk={handleStopWalk}
-        walkSeconds={walkSeconds}
-        setWalkSeconds={setWalkSeconds}
-        isPaused={isPaused}
-        distance={totalDistance}
-      />
+      {isWalking && (
+        <WalkingStatusModal
+          isOpen={showWalkingStatus}
+          onClose={() => setShowWalkingStatus(false)}
+          selectedDogs={selectedDogs}
+          onStopWalk={handleStopWalk}
+          walkSeconds={walkSeconds}
+          setWalkSeconds={setWalkSeconds}
+          isPaused={isPaused}
+          distance={totalDistance}
+        />
+      )}
 
       <WalkEndModal isOpen={isEndModalOpen} onClose={handleEndModalClose} onConfirm={handleWalkEnd} />
-
       <WalkCompleteModal isOpen={isCompleteModalOpen} onClose={handleCompleteModalClose} />
-
       {isLoading && <LoadingOverlay message="잠시만 기다려주세요..." />}
     </div>
   );

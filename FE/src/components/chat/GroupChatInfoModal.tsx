@@ -127,11 +127,11 @@ const GroupChatInfoModal: React.FC<GroupChatInfoModalProps> = ({
             </button>
           </div>
 
-          <div className="flex space-x-2 mt-2">
+          <div className="grid grid-cols-4 gap-2 mt-2">
             {dogImages.map((dog, index) => (
               <div
                 key={`dog-${dog.dogId}-${index}`}
-                className="w-8 h-8 cursor-pointer"
+                className="w-16 h-16 cursor-pointer"
                 onClick={() =>
                   navigate(`/profile/${dog.memberId}`, {
                     state: { dogId: dog.dogId },

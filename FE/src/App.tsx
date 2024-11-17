@@ -8,7 +8,9 @@ const App = () => {
   const { spotId } = useParams<{ spotId: string }>();
   const { roomId } = useParams<{ roomId: string }>();
   const [showNav, setShowNav] = useState(true);
-  const createRoomPattern = /^\/allmeetuproom\/\d+\/create$/; // 정규식 추가
+  const [isWalking, setIsWalking] = useState(false); // 산책 상태 추가
+
+  const createRoomPattern = /^\/allmeetuproom\/\d+\/create$/;
   const hideNav =
     [
       '/login',
@@ -25,7 +27,7 @@ const App = () => {
       '/walkinglog',
       '/searchuser',
     ].includes(location.pathname) ||
-    createRoomPattern.test(location.pathname) || // 정규식 체크 추가
+    createRoomPattern.test(location.pathname) ||
     (location.pathname.startsWith('/chat/') && id) ||
     (location.pathname.startsWith('/participatedog/') && roomId) ||
     (location.pathname.startsWith('/allmeetuproom/') && spotId) ||
@@ -37,9 +39,9 @@ const App = () => {
   return (
     <div className="mobile-container bg-white">
       <div className="mobile-content">
-        <Outlet context={{ setShowNav }} />
+        <Outlet context={{ setShowNav, setIsWalking }} />
       </div>
-      {showNav && !hideNav && <Nav />}
+      {showNav && !hideNav && !isWalking && <Nav />}
     </div>
   );
 };
