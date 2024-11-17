@@ -133,7 +133,7 @@ const SingleChatPage = () => {
       className="flex flex-col h-screen"
     >
       <div
-        className="flex items-center bg-deep-coral text-white p-4 fixed top-0 left-0 right-0 z-50"
+        className="flex items-center bg-deep-coral text-white p-4"
         style={{ height: '56px' }}
       >
         <button onClick={handleBack} className="mr-3">
