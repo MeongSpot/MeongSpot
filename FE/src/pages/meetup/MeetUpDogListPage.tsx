@@ -7,6 +7,7 @@ import { useMeeting } from '@/hooks/meetup/useMeeting';
 import { useUser } from '@/hooks/user/useUser';
 import { useDog } from '@/hooks/dog/useDog';
 import LoadingOverlay from '@/components/common/LoadingOverlay'; // 경로는 실제 구조에 맞게 수정해주세요
+import { group } from 'console';
 
 const MeetUpDogListPage = () => {
   const { id } = useParams();
@@ -29,12 +30,14 @@ const MeetUpDogListPage = () => {
       navigate(`/chat/group/${roomId}`, {
         state: {
           animateBack: true,
-          meetingId: id // 다시 채팅방으로 갈 때 meetingId도 전달
+          meetingId: id, // 다시 채팅방으로 갈 때 meetingId도 전달
+          roomId,
+          groupName: meetingDetail?.title
         }
       });
     } else {
       // ParticipateDog 페이지에서 왔을 경우
-      navigate(`/participatedog/${id}`, {
+      navigate(`/participatedog/${roomId}`, {
         state: {
           animateBack: true,
           fromList,
