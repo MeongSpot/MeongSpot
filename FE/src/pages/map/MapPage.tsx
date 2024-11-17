@@ -272,19 +272,21 @@ const MapPage = () => {
 
       <div className={`absolute right-4 z-50 transition-all duration-300 transform ${isWalking ? 'top-12' : 'top-20'}`}>
         <div className="flex flex-col gap-2">
-          <button
-            className="relative bg-white p-3 rounded-full shadow-md"
-            onClick={() => {
-              navigate('/notification');
-            }}
-          >
-            <MdNotifications className="text-2xl text-gray-600" />
-            {existUnread && (
-              <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                N
-              </span>
-            )}
-          </button>
+          {!isWalking && ( // 알림 버튼은 산책 중이 아닐 때만 표시
+            <button
+              className="relative bg-white p-3 rounded-full shadow-md transition-all duration-300"
+              onClick={() => {
+                navigate('/notification');
+              }}
+            >
+              <MdNotifications className="text-2xl text-gray-600" />
+              {existUnread && (
+                <span className="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  N
+                </span>
+              )}
+            </button>
+          )}
           <button
             className={`p-3 rounded-full shadow-md transition-all duration-300 ${
               isTracking
