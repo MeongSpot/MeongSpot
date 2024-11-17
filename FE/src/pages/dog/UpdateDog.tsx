@@ -28,7 +28,14 @@ const UpdateDog = () => {
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+    const maxFileSize = 10 * 1024 * 1024; // 10MB
+
     if (file) {
+      if (file.size > maxFileSize) {
+        alert('10MB 이하의 파일만 업로드할 수 있습니다.');
+        return;
+      }
+
       const imageUrl = URL.createObjectURL(file);
       setDogRegisterInfo({
         ...dogRegisterInfo,
@@ -209,16 +216,13 @@ const UpdateDog = () => {
 
   useEffect(() => {
     if (isDeleteModalOpen) {
-      document.documentElement.style.overflow = 'hidden'; // html 스크롤 막기
-      document.body.style.overflow = 'hidden'; // body 스크롤 막기
+      document.body.style.overflow = 'hidden'; // 스크롤 비활성화
     } else {
-      document.documentElement.style.overflow = ''; // 스크롤 복구
       document.body.style.overflow = ''; // 스크롤 복구
     }
 
     // 컴포넌트 언마운트 시 스크롤 복구
     return () => {
-      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     };
   }, [isDeleteModalOpen]);
@@ -228,27 +232,31 @@ const UpdateDog = () => {
   }
 
   return (
-    <div className={`relative transition-transform duration-200 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}>
-      <div className="p-4 grid grid-cols-3 items-center">
-        <div className="">
-          <IoChevronBack
+    <div
+      className={`h-full relative transition-transform duration-200 ${isVisible ? 'translate-y-0' : 'translate-y-full'}`}
+    >
+      <div className="sticky top-0 bg-white z-30">
+        <div className="p-4 grid grid-cols-3 items-center">
+          <div className="">
+            <IoChevronBack
+              onClick={() => {
+                handleBack();
+              }}
+              size={24}
+            />
+          </div>
+          <p className="text-center text-lg font-bold">반려견 수정</p>
+          <div
             onClick={() => {
-              handleBack();
+              setIsDeleteModalOpen(true);
             }}
-            size={24}
-          />
+            className="flex justify-end items-center"
+          >
+            <p className="text-sm font-medium text-zinc-400">삭제하기</p>
+          </div>
         </div>
-        <p className="text-center text-lg font-bold">반려견 수정</p>
-        <div
-          onClick={() => {
-            setIsDeleteModalOpen(true);
-          }}
-          className="flex justify-end items-center"
-        >
-          <p className="text-sm font-medium text-zinc-400">삭제하기</p>
-        </div>
+        <hr />
       </div>
-      <hr />
 
       {/* 반려견 이미지 등록 */}
       <div className="mt-12">
@@ -272,11 +280,14 @@ const UpdateDog = () => {
           {dogRegisterInfo.profileImage ? (
             <></>
           ) : (
-            <p className="text-sm text-zinc-400 font-medium">
-              반려견 이미지 등록은
-              <span className="font-semibold text-zinc-600"> 필수</span>
-              입니다
-            </p>
+            <div className="flex flex-col items-center space-y-1">
+              <p className="text-sm text-zinc-400 font-medium">
+                반려견 이미지 등록은
+                <span className="font-semibold text-zinc-600"> 필수</span>
+                입니다
+              </p>
+              <p className="text-xs text-zinc-400">(최대 용량 10MB)</p>
+            </div>
           )}
         </div>
       </div>

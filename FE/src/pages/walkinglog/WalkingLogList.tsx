@@ -33,7 +33,7 @@ const WalkingLogList = () => {
 
   return (
     <div className="flex flex-col min-h-screen relative">
-      <div>
+      <div className="sticky top-0 z-30 bg-white">
         <div className="p-4 grid grid-cols-3 items-center">
           <IoChevronBack onClick={() => navigate('/mypage')} size={24} />
           <p className="text-center text-lg font-bold">산책 기록</p>
