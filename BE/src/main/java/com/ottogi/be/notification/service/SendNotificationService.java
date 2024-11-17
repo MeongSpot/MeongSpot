@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.concurrent.ExecutionException;
 
-import static com.google.firebase.messaging.Notification.builder;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -20,10 +18,8 @@ public class SendNotificationService {
         log.info("Preparing to send notification. Title: {}, Body: {}, Target Token: {}", title, body, targetToken);  // 메세지 로그
         Message message = Message.builder()
                 .setToken(targetToken)
-                .setNotification(builder()
-                        .setTitle(title)
-                        .setBody(body)
-                        .build())
+                .putData("title", title)
+                .putData("body", body)
                 .build();
         try {
             String response = FirebaseMessaging.getInstance().sendAsync(message).get();
