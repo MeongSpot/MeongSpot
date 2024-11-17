@@ -150,8 +150,7 @@ const GroupChatPage = () => {
       className="flex flex-col h-screen"
     >
       <div
-        className="flex items-center bg-deep-coral text-white p-4 fixed top-0 left-0 right-0 z-50"
-        style={{ height: '56px' }}
+        className="flex items-center bg-deep-coral text-white p-4"
       >
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
@@ -226,7 +225,10 @@ const GroupChatPage = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="flex items-center p-3 border-t bg-white">
+      <div
+        className="flex items-center p-3 border-t bg-white"
+        style={{ height: '60px' }} // 입력창 높이 설정
+      >
         <div className="relative flex-1">
           <textarea
             placeholder="메시지 입력"
