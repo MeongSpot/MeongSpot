@@ -30,7 +30,7 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
       key={meeting.meetingId}
       onClick={() =>
         navigate(`/chat/group/${meeting.chatRoomId}`, {
-          state: { meetingId: meeting.meetingId }, // meetingId를 state로 전달
+          state: { meetingId: meeting.meetingId, roomId: meeting.chatRoomId, groupName: meeting.title }, // meetingId를 state로 전달
         })
       }
       className="bg-white p-4 rounded-lg shadow cursor-pointer"
@@ -52,11 +52,18 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
       <p className="text-sm text-gray-500 mt-1">
         {new Date(meeting.meetingAt).toLocaleDateString()} | {meeting.spotName}
       </p>
-      <div className="flex items-center text-sm text-gray-700 mt-2">
-        <FaUserFriends className="mr-1" />
-        <span>
-          {meeting.participants}/{meeting.maxParticipants}
-        </span>
+      <div className="flex items-center justify-between text-sm text-gray-700 mt-2">
+        <div className="flex items-center">
+          <FaUserFriends className="mr-1" />
+          <span>
+            {meeting.participants}/{meeting.maxParticipants}
+          </span>
+        </div>
+        {meeting.unreadMessageCnt > 0 && (
+          <div className="bg-deep-coral text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
+            {meeting.unreadMessageCnt}
+          </div>
+        )}
       </div>
       <div className="flex flex-wrap mt-2 space-x-2">
         {meeting.hashtags.map((tag, index) => (
@@ -65,6 +72,7 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
           </span>
         ))}
       </div>
+
       {isModalOpen && (
         <GroupChatOptionModal
           isOpen={isModalOpen}

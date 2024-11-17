@@ -14,32 +14,30 @@ import { differenceInCalendarDays, format } from 'date-fns';
 import { useMyMeeting } from '@/hooks/meetup/useMyMeeting';
 import DogSelectionModal from '@/components/chat/DogSelectionModal';
 import DogUpdateSuccessModal from '@/components/chat/DogUpdateSuccessModal';
-import { useLeaveMeeting } from '@/hooks/meetup/useLeaveMeeting'; // leaveMeeting 추가
+import { useLeaveMeeting } from '@/hooks/meetup/useLeaveMeeting';
 import ChatOutModal from '@/components/chat/ChatOutModal';
 
 const GroupChatPage = () => {
-  const { id: roomId } = useParams<{ id: string }>();
+  const navigate = useNavigate()
+  const location = useLocation();  
+  const roomId = location.state?.roomId;
+  const groupName = location.state?.groupName || '채팅방';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isChatOutModalOpen, setIsChatOutModalOpen] = useState(false);
   const [showDogSelection, setShowDogSelection] = useState(false);
   const [showUpdateSuccess, setShowUpdateSuccess] = useState(false);
   const [message, setMessage] = useState('');
-  const [nickname, setNickname] = useState('');
   const [page, setPage] = useState(0);
   const [localMessages, setLocalMessages] = useState<Chat[]>([]);
-  const navigate = useNavigate();
-  const location = useLocation();
   const animateBack = location.state?.animateBack ?? true;
   const meetingId = location.state?.meetingId; // state에서 meetingId 받기
-  const { messages: fetchedMessages, loading, error, myId } = useChatDetail(Number(roomId), page);
-  const { sendMessage, receiveMessage } = useChat(Number(roomId), nickname);
+  const { messages: fetchedMessages, loading, error, myId, nickname, profileImage } = useChatDetail(roomId, page);
+  const { sendMessage, receiveMessage } = useChat(roomId, nickname, profileImage);
   const { meetings } = useMyMeeting();
   const { leaveMeeting } = useLeaveMeeting();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const markRead = useMarkRead(Number(roomId));
-
-  const currentMeeting = meetings.find((meeting) => meeting.meetingId === Number(roomId));
+  const markRead = useMarkRead(roomId);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -92,11 +90,11 @@ const GroupChatPage = () => {
 
   useEffect(() => {
     receiveMessage((newMessage: Chat) => {
-      console.log('새로운 메시지 수신:', newMessage); // 메시지 디버깅용
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       scrollToBottom();
     });
   }, [receiveMessage]);
+  
 
   useEffect(() => {
     if (page === 0 && fetchedMessages.length > 0) {
@@ -151,11 +149,16 @@ const GroupChatPage = () => {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="flex flex-col h-screen"
     >
-      <div className="flex items-center bg-deep-coral text-white p-4">
+      <div
+        className="flex items-center bg-deep-coral text-white p-4 fixed top-0 left-0 right-0 z-50"
+        style={{ height: '56px' }}
+      >
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
-        <h1 className="text-lg font-bold flex-1">{currentMeeting ? currentMeeting.title : '채팅방'}</h1>
+        <h1 className="text-lg font-bold flex-1">
+          {groupName}
+        </h1>
 
         <button onClick={() => setIsModalOpen(true)} className="text-white">
           <FiMenu size={24} />
@@ -271,7 +274,7 @@ const GroupChatPage = () => {
         isOpen={isChatOutModalOpen}
         onClose={() => setIsChatOutModalOpen(false)}
         onConfirm={handleChatOut} // 나가기 확인 처리
-        chatName={currentMeeting?.title || '채팅방'}
+        chatName={groupName?.title || '채팅방'}
       />
     </motion.div>
   );
