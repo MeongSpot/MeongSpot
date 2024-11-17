@@ -276,7 +276,7 @@ const GroupChatPage = () => {
         isOpen={isChatOutModalOpen}
         onClose={() => setIsChatOutModalOpen(false)}
         onConfirm={handleChatOut} // 나가기 확인 처리
-        chatName={groupName?.title || '채팅방'}
+        chatName={groupName?.title}
       />
     </motion.div>
   );
