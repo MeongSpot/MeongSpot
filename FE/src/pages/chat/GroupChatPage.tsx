@@ -14,24 +14,21 @@ import { differenceInCalendarDays, format } from 'date-fns';
 import { useMyMeeting } from '@/hooks/meetup/useMyMeeting';
 
 const GroupChatPage = () => {
-  const { id: roomId } = useParams<{ id: string }>();
+  const navigate = useNavigate()
+  const location = useLocation();  
+  const roomId = location.state?.roomId;
+  const groupName = location.state?.groupName || '채팅방';
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [message, setMessage] = useState('');
-  const [nickname, setNickname] = useState('');
   const [page, setPage] = useState(0);
   const [localMessages, setLocalMessages] = useState<Chat[]>([]);
-  const navigate = useNavigate();
-  const location = useLocation();
   const animateBack = location.state?.animateBack ?? true;
 
-  const { messages: fetchedMessages, loading, error, myId } = useChatDetail(Number(roomId), page);
-  const { sendMessage, receiveMessage } = useChat(Number(roomId), nickname);
-  const { meetings } = useMyMeeting();
+  const { messages: fetchedMessages, loading, error, myId, nickname, profileImage } = useChatDetail(roomId, page);
+  const { sendMessage, receiveMessage } = useChat(roomId, nickname, profileImage);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
-  const markRead = useMarkRead(Number(roomId));
-  
-  const currentMeeting = meetings.find((meeting) => meeting.meetingId === Number(roomId)); 
+  const markRead = useMarkRead(roomId);
   
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -67,11 +64,11 @@ const GroupChatPage = () => {
 
   useEffect(() => {
     receiveMessage((newMessage: Chat) => {
-      console.log('새로운 메시지 수신:', newMessage); // 메시지 디버깅용
       setLocalMessages((prevMessages) => [...prevMessages, newMessage]);
       scrollToBottom();
     });
   }, [receiveMessage]);
+  
 
   useEffect(() => {
     if (page === 0 && fetchedMessages.length > 0) {
@@ -119,7 +116,7 @@ const GroupChatPage = () => {
           <IoChevronBack size={24} />
         </button>
         <h1 className="text-lg font-bold flex-1">
-          {currentMeeting ? currentMeeting.title : '채팅방'}
+          {groupName}
         </h1>
 
         <button onClick={() => setIsModalOpen(true)} className="text-white">

@@ -28,7 +28,7 @@ const MyRoomListCard: React.FC<MyRoomListCardProps> = ({ meeting }) => {
   return (
     <div
       key={meeting.meetingId}
-      onClick={() => navigate(`/chat/group/${meeting.chatRoomId}`)}
+      onClick={() => navigate(`/chat/group/${meeting.chatRoomId}`, { state: { roomId: meeting.chatRoomId, groupName: meeting.title }})}
       className="bg-white p-4 rounded-lg shadow cursor-pointer"
     >
       <div className="flex items-center justify-between">
