@@ -109,10 +109,10 @@ const UserProfile: React.FC = () => {
         <div className="flex flex-col space-y-5">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <div className="w-20 h-20 rounded-full border flex justify-center items-center">
+              <div className="w-[4.5rem] h-[4.5rem] rounded-full border flex justify-center items-center">
                 <img
                   className="w-full h-full rounded-full object-cover"
-                  src={userData.profileImage || '/icons/favicon/favicon-96x96.png'}
+                  src={userData.profileImage || '/icons/userIcon.png'}
                   alt=""
                 />
               </div>

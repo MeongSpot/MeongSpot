@@ -81,7 +81,7 @@ const DogCard = ({
               profileDetailClick();
             }}
             className="w-full h-full object-cover rounded-full"
-            src={member.profileImage || '/icons/favicon/favicon-96x96.png'}
+            src={member.profileImage || '/icons/userIcon.png'}
             alt=""
           />
         </div>
