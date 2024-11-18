@@ -5,63 +5,63 @@
 /* 폰트 민산스 */
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-Thin.otf") format("opentype");
+  src: url('/fonts/MinSans-Thin.otf') format('opentype');
   font-style: normal;
   font-weight: 100;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-ExtraLight.otf") format("opentype");
+  src: url('/fonts/MinSans-ExtraLight.otf') format('opentype');
   font-style: normal;
   font-weight: 200;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-Light.otf") format("opentype");
+  src: url('/fonts/MinSans-Light.otf') format('opentype');
   font-style: normal;
   font-weight: 300;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-Regular.otf") format("opentype");
+  src: url('/fonts/MinSans-Regular.otf') format('opentype');
   font-style: normal;
   font-weight: 400;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-Medium.otf") format("opentype");
+  src: url('/fonts/MinSans-Medium.otf') format('opentype');
   font-style: normal;
   font-weight: 500;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-SemiBold.otf") format("opentype");
+  src: url('/fonts/MinSans-SemiBold.otf') format('opentype');
   font-style: normal;
   font-weight: 600;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-Bold.otf") format("opentype");
+  src: url('/fonts/MinSans-Bold.otf') format('opentype');
   font-style: normal;
   font-weight: 700;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-ExtraBold.otf") format("opentype");
+  src: url('/fonts/MinSans-ExtraBold.otf') format('opentype');
   font-style: normal;
   font-weight: 800;
 }
 
 @font-face {
   font-family: 'MinSans';
-  src: url("/fonts/MinSans-Black.otf") format("opentype");
+  src: url('/fonts/MinSans-Black.otf') format('opentype');
   font-style: normal;
   font-weight: 900;
 }
@@ -113,7 +113,7 @@ body {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
-  
+
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -143,7 +143,7 @@ body {
 
   html,
   body {
-    @apply h-[100dvh] overflow-hidden;
+    @apply h-[100dvh] overflow-hidden min-w-[320px];
   }
 
   #root {
@@ -151,30 +151,56 @@ body {
   }
 }
 
-/* 모바일 레이아웃 유틸리티 */
+/* 모바일 레이아웃 유틸리티 수정 */
 @layer utilities {
   .mobile-container {
-    @apply h-[100dvh] max-w-xl mx-auto relative flex flex-col;
+    @apply h-[100dvh] w-full max-w-xl mx-auto relative flex flex-col; /* 기본 패딩 추가 */
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* 로그인, 회원가입 페이지용 콘텐츠 */
+  /* 작은 화면 대응을 위한 미디어 쿼리 */
+  @media (max-width: 380px) {
+    /* 폰트 사이즈 조정 */
+    html {
+      font-size: 14px; /* 기본 폰트 사이즈 축소 */
+    }
+  }
+
+  /* 기존 클래스들 */
   .auth-content {
     @apply flex-1 overflow-hidden;
   }
 
-  /* 일반 페이지용 스크롤 가능한 콘텐츠 */
   .mobile-content {
     @apply flex-1 overflow-y-auto overscroll-contain;
   }
 
-  /* 하단 네비게이션이 있는 페이지용 */
   .mobile-content-with-nav {
     @apply pb-16;
   }
 }
 
+/* 기존 스크롤바 관련 스타일 유지 */
+*::-webkit-scrollbar {
+  display: none;
+}
+
+/* Firefox 스크롤바 숨김 유지 */
+* {
+  scrollbar-width: none;
+}
+
+/* IE 스크롤바 숨김 유지 */
+* {
+  -ms-overflow-style: none;
+}
+
+/* 기존 text-outline 스타일 유지 */
 .text-outline {
-  text-shadow: -1px 0px #F4845F, 0px 1px #F4845F, 1px 0px #F4845F, 0px -1px #F4845F;
+  text-shadow:
+    -1px 0px #f4845f,
+    0px 1px #f4845f,
+    1px 0px #f4845f,
+    0px -1px #f4845f;
 }
