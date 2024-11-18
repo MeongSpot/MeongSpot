@@ -32,7 +32,7 @@ const UserModal = ({ isOpen, onClose, user }: FriendsModalProps) => {
 
   return (
     <div
-      className={`fixed inset-0 z-20 bg-gray-800 bg-opacity-50 flex justify-center items-end transition-all duration-300 ${
+      className={`fixed inset-0 z-40 bg-gray-800 bg-opacity-50 flex justify-center items-end transition-all duration-300 ${
         isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       onClick={handleBackgroundClick}
@@ -49,7 +49,7 @@ const UserModal = ({ isOpen, onClose, user }: FriendsModalProps) => {
           <div className="py-4 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img
-                src={user.profileImage || '/icons/favicon/favicon-96x96.png'}
+                src={user.profileImage || '/icons/userIcon.png'}
                 alt="Profile"
                 className="w-14 h-14 rounded-full border object-cover"
               />
@@ -92,7 +92,11 @@ const UserModal = ({ isOpen, onClose, user }: FriendsModalProps) => {
 
       {/* 친구 요청 상태 모달 */}
       {isRequestFriendModalOpen && (
-        <FriendsRequestModal requestFriendResponse={requestFriendResponse} setIsRequestFriendModalOpen={setIsRequestFriendModalOpen} isUserModal={true} />
+        <FriendsRequestModal
+          requestFriendResponse={requestFriendResponse}
+          setIsRequestFriendModalOpen={setIsRequestFriendModalOpen}
+          isUserModal={true}
+        />
       )}
     </div>
   );

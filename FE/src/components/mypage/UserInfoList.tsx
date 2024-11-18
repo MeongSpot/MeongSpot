@@ -14,11 +14,11 @@ const UserInfoList = ({ userData }: UserInfoListProps) => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 rounded-full border flex justify-center items-center">
+          <div className="w-[4.6rem] h-[4.6rem] rounded-full border flex justify-center items-center">
             {userData?.profileImage ? (
               <img className="w-full h-full rounded-full object-cover" src={userData.profileImage} alt="" />
             ) : (
-              <img className="w-[80%] h-[80%]" src="/icons/favicon/favicon-96x96.png" alt="" />
+              <img className="" src="/icons/userIcon.png" alt="" />
             )}
           </div>
           <p className="font-bold text-lg">{userData?.nickname}</p>
