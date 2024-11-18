@@ -307,7 +307,6 @@ const RoomCreatForm: React.FC<RoomCreatFormProps> = ({ initialDogs }) => {
 
         <FormField
           label="해시태그"
-          optionalText="띄어쓰기는 _로 표시됩니다"
           currentLength={tags.length}
           maxLength={MAX_TAGS}
         >

@@ -329,9 +329,8 @@ const InfoStep = ({
           </div>
 
           {/* 휴대폰 번호 입력 섹션 */}
+          {/* 전화번호 입력 섹션 부분만 수정합니다 */}
           <div className="w-full space-y-2">
-            {' '}
-            {/* space-y-2 추가 */}
             <div className="flex gap-2 w-full">
               <div className="flex-1">
                 <BoxInput
@@ -341,6 +340,7 @@ const InfoStep = ({
                   onChange={handleInputChange}
                   onFocus={handleInputFocus}
                   className="py-4"
+                  disabled={isPhoneVerified} // 인증 완료시 입력 비활성화
                 />
               </div>
               <ValidateButton
@@ -350,26 +350,26 @@ const InfoStep = ({
                 }
               >
                 {isPhoneVerified
-                  ? '다시받기'
+                  ? '확인완료'
                   : isValidating
                     ? '전송중...'
                     : !canRequestVerification() && attempts >= 5
                       ? '시도초과'
                       : !canRequestVerification()
-                        ? '다시받기'
-                        : '다시받기'}
+                        ? '인증하기'
+                        : '인증하기'}
               </ValidateButton>
             </div>
             {/* 전화번호 검증 메시지 */}
             {phoneValidationMessage && (
               <ValidationMessage message={phoneValidationMessage} isValid={isPhoneAvailable} />
             )}
-            {/* 인증 시도 횟수 메시지 */}
+            {/* 인증 시도 횟수 메시지 - 인증 완료되지 않았을 때만 표시 */}
             {!isPhoneVerified && attempts > 0 && (
               <ValidationMessage message={`남은 인증 시도 횟수: ${5 - attempts}회`} isValid={attempts < 5} />
             )}
-            {/* 재시도 대기 시간 메시지 */}
-            {!canRequestVerification() && attempts < 5 && (
+            {/* 재시도 대기 시간 메시지 - 인증 완료되지 않았을 때만 표시 */}
+            {!canRequestVerification() && !isPhoneVerified && attempts < 5 && (
               <ValidationMessage
                 message={`${Math.ceil(timeUntilNextAttempt() / 1000)}초 후에 재시도 가능합니다`}
                 isValid={false}
