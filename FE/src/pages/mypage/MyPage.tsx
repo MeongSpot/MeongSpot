@@ -189,7 +189,7 @@ const MyPage: React.FC = () => {
               </div>
               <div className="flex flex-col justify-center items-center space-y-2">
                 <div className="flex items-end space-x-1">
-                  <p className="text-[1.4rem] font-extrabold">{totalWalkingTime.toFixed(2)}</p>
+                  <p className="text-[1.4rem] font-extrabold">{totalWalkingTime ? totalWalkingTime.toFixed(2) : 0}</p>
                   <p className="text-xs text-zinc-600">h</p>
                 </div>
                 <p className="text-xs text-zinc-700">이번달 산책 시간</p>

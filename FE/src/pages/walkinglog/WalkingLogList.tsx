@@ -56,12 +56,12 @@ const WalkingLogList = () => {
 
               {/* 반투명 검정 오버레이 */}
               {showAllDogs && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 z-10" onClick={() => setShowAllDogs(false)}></div>
+                <div className="fixed inset-0 bg-black bg-opacity-50 z-40" onClick={() => setShowAllDogs(false)}></div>
               )}
 
               {/* 모든 강아지 프로필 목록 */}
               <div
-                className={`absolute -right-2 top-9 flex flex-col items-end gap-2 p-2 rounded-lg z-20 duration-300 ${
+                className={`absolute -right-2 top-9 flex flex-col items-end gap-2 p-2 rounded-lg z-50 duration-300 ${
                   showAllDogs ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
                 }`}
                 style={{ transition: 'max-height 0.3s ease, opacity 0.3s ease' }}
