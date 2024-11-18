@@ -44,6 +44,7 @@ public class FindMeetingDogService {
                         .breed(dog.getBreed())
                         .birth(dog.getBirth())
                         .age(dog.getAge())
+                        .size(dog.getSize())
                         .personality(personalityMap.get(dog.getId()))
                         .build())
                 .collect(Collectors.toList());
