@@ -24,6 +24,8 @@ const MeetUpDogListPage = () => {
   const spotName = location.state?.spotName;
   const fromModal = location.state?.fromModal;
 
+  console.log('룸 아이디', roomId);
+
   const handleBack = () => {
     if (fromChat) {
       // 채팅방에서 왔을 경우
@@ -32,12 +34,12 @@ const MeetUpDogListPage = () => {
           animateBack: true,
           meetingId: id, // 다시 채팅방으로 갈 때 meetingId도 전달
           roomId,
-          groupName: meetingDetail?.title
-        }
+          groupName: meetingDetail?.title,
+        },
       });
     } else {
-      // ParticipateDog 페이지에서 왔을 경우
-      navigate(`/participatedog/${roomId}`, {
+      // ParticipateDog 페이지에서 왔을 경우\
+      navigate(`/participatedog/${id}`, {
         state: {
           animateBack: true,
           fromList,
@@ -103,8 +105,10 @@ const MeetUpDogListPage = () => {
             meetingId={Number(id)}
             fromList={fromList}
             fromModal={fromModal}
+            fromChat={fromChat}
             previousPath={previousPath}
             spotName={spotName}
+            roomId={roomId}
           />
         ))}
       </div>
