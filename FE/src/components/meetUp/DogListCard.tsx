@@ -4,7 +4,6 @@ import { useDog } from '@/hooks/dog/useDog';
 import DogIcon from '/icons/DogIcon.svg';
 import { useNavigate } from 'react-router-dom';
 import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
-import { div } from 'framer-motion/client';
 
 interface DogCardProps {
   member: MeetingParticipantsInfo;
@@ -17,10 +16,28 @@ interface DogCardProps {
   roomId?: number;
 }
 
-const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotName, fromChat, roomId }: DogCardProps) => {
+const DogCard = ({
+  member,
+  meetingId,
+  fromList,
+  fromModal,
+  previousPath,
+  spotName,
+  fromChat,
+  roomId,
+}: DogCardProps) => {
   const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
   const { meetingDogs, getMeetingDogs } = useDog();
+
+  const getDogSize = (size: string) => {
+    const sizeMap: Record<string, string> = {
+      SMALL: '소형견',
+      MEDIUM: '중형견',
+      LARGE: '대형견',
+    };
+    return sizeMap[size] || size;
+  };
 
   const toggleDetails = () => {
     if (showDetails === false) {
@@ -43,7 +60,6 @@ const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotNam
     });
   };
 
-  // 생일을 기반으로 나이를 계산하는 함수
   const calculateAge = (birthdate: string) => {
     const birthDate = new Date(birthdate);
     const today = new Date();
@@ -100,10 +116,16 @@ const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotNam
             <div key={index} className="bg-[#fff6ec] p-3 rounded-xl space-y-3">
               <div className="flex items-center">
                 <div className="w-10 h-10 mr-2 rounded-full border">
-                  <img className="w-full h-full object-cover rounded-full" src={dog.profileImage} alt="" />
+                  <img
+                    className="w-full h-full object-cover rounded-full"
+                    src={dog.profileImage || '/icons/favicon/favicon-96x96.png'}
+                    alt=""
+                  />
                 </div>
                 <span className="font-semibold text-md">{dog.name}</span>
                 <div className="ml-auto flex space-x-2 items-center">
+                  <span className="text-sm text-zinc-600">{getDogSize(dog.size)}</span>
+                  <div className="border-r border-zinc-400 h-4"></div>
                   <span className="text-sm text-zinc-600">{dog.breed}</span>
                   <div className="border-r border-zinc-400 h-4"></div>
                   <p className="text-sm text-zinc-600">{dog.age}살</p>

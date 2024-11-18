@@ -10,34 +10,57 @@ interface MyDogInfoCardProps {
 
 const MyDogInfoCard: React.FC<MyDogInfoCardProps> = ({ dog, isOwnProfile }) => {
   const navigate = useNavigate();
+
+  const getDogSize = (size: string) => {
+    const sizeMap: Record<string, string> = {
+      SMALL: '소형견',
+      MEDIUM: '중형견',
+      LARGE: '대형견',
+    };
+    return sizeMap[size] || size;
+  };
+
   const dogInfo = [
     { label: '성별', value: dog.gender === 'MALE' ? '남' : '여' },
     { label: '중성화', value: dog.isNeuter ? '했음' : '안했음' },
     { label: '생일', value: dog.birth },
   ];
 
-  const maxTraitsToShow = 4; // 표시할 최대 성격 개수
-  const traitsToShow = dog.personality?.slice(0, dog.personality?.length === 4 ? maxTraitsToShow : maxTraitsToShow - 1) || [];
+  const maxTraitsToShow = 4;
+  const traitsToShow =
+    dog.personality?.slice(0, dog.personality?.length === 4 ? maxTraitsToShow : maxTraitsToShow - 1) || [];
   const remainingTraitsCount = dog.personality?.length - traitsToShow.length || 0;
 
   return (
     <div
-      onClick={() => {navigate(`/dog/${dog.id}`)}}
-      className="h-[16.7rem] px-3 py-4 bg-white rounded-xl space-y-5">
+      onClick={() => {
+        navigate(`/dog/${dog.id}`);
+      }}
+      className="h-[16.7rem] px-3 py-4 bg-white rounded-xl space-y-5"
+    >
       <div className="px-2 flex justify-between items-center">
         <div className="flex items-center space-x-3">
-          <img className="w-14 h-14 border rounded-full object-cover" src={dog.profileImage} alt="반려견 프로필 이미지" />
+          <img
+            className="w-14 h-14 border rounded-full object-cover"
+            src={dog.profileImage}
+            alt="반려견 프로필 이미지"
+          />
           <div>
             <p className="font-semibold">{dog.name}</p>
-            <p className="text-xs font-medium text-zinc-500">{dog.breed}</p>
+            <p className="text-xs font-medium text-zinc-500">
+              {dog.breed} ({getDogSize(dog.size)})
+            </p>
           </div>
         </div>
-        {isOwnProfile && <PiNotePencil
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/dog/${dog.id}/update`);
-          }}
-          className="text-2xl" />}
+        {isOwnProfile && (
+          <PiNotePencil
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/dog/${dog.id}/update`);
+            }}
+            className="text-2xl"
+          />
+        )}
       </div>
 
       <div className="px-4 flex flex-col space-y-4">
