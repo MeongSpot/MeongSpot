@@ -45,7 +45,7 @@ const AlarmPage = () => {
         await markAsRead(notification.notificationId);
         console.log(`알림 ID ${notification.notificationId}가 읽음으로 처리되었습니다.`);
       }
-      navigate('/mypage'); // 마이페이지로 이동
+      navigate(-1);
     } catch (error) {
       console.error("알림 읽음 처리 중 오류:", error);
     }
