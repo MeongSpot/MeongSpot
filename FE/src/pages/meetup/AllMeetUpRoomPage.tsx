@@ -137,7 +137,7 @@ const AllMeetUpRoomPage = () => {
                 <div className="flex flex-col justify-center items-center h-64 text-gray-500">
                   <div className="rounded-full bg-gray-200 p-4 mb-4">
                     <img className="w-16 h-16 grayscale" src="/icons/sadDogIcon.svg" alt="슬픈강아지아이콘" />
-cxzxghhgxdfg                  </div>
+                  </div>
                   <p className="text-sm mb-2">{spotName ? `${spotName}에` : ''} 등록된 모임이 없습니다</p>
                   <p className="text-xs text-deep-coral">새로운 모임을 만들어보세요!</p>
                 </div>
