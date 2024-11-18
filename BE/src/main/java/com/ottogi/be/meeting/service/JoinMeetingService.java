@@ -57,7 +57,7 @@ public class JoinMeetingService {
 
         joinChatRoomService.joinMeetingChatRoom(new JoinMeetingChatRoomDto(member, meeting.getChatRoom()));
 
-        sendJoinNotificationService.sendMeetingJoinNotification(meeting,member);
+//        sendJoinNotificationService.sendMeetingJoinNotification(meeting,member);
 
         return meeting.getChatRoom().getId();
     }
