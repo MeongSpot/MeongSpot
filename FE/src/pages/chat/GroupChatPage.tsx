@@ -149,9 +149,7 @@ const GroupChatPage = () => {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="flex flex-col h-screen"
     >
-      <div
-        className="flex items-center bg-deep-coral text-white p-4"
-      >
+      <div className="flex items-center bg-deep-coral text-white p-4 sticky top-0 z-10">
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
