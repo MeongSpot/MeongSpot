@@ -4,14 +4,14 @@ import com.ottogi.be.chat.domain.ChatMessage;
 import com.ottogi.be.chat.domain.enums.MessageType;
 import com.ottogi.be.chat.repository.ChatMessageRepository;
 import com.ottogi.be.common.constants.AdminConstants;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 
-@Getter
+@Component
 @RequiredArgsConstructor
 public class LeaveMeetingChatRoomEventListener {
 

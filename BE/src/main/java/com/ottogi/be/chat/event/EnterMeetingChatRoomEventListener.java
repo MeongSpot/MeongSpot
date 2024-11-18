@@ -2,7 +2,6 @@ package com.ottogi.be.chat.event;
 
 import com.ottogi.be.chat.domain.ChatMessage;
 import com.ottogi.be.chat.domain.enums.MessageType;
-import com.ottogi.be.chat.repository.ChatMemberRepository;
 import com.ottogi.be.chat.repository.ChatMessageRepository;
 import com.ottogi.be.common.constants.AdminConstants;
 import lombok.RequiredArgsConstructor;
