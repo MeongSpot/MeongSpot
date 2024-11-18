@@ -11,11 +11,13 @@ interface DogCardProps {
   meetingId: number;
   fromList?: boolean;
   fromModal?: boolean;
+  fromChat?: boolean;
   previousPath?: string;
   spotName?: string;
+  roomId?: number;
 }
 
-const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotName }: DogCardProps) => {
+const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotName, fromChat, roomId }: DogCardProps) => {
   const navigate = useNavigate();
   const [showDetails, setShowDetails] = useState(false);
   const { meetingDogs, getMeetingDogs } = useDog();
@@ -35,6 +37,8 @@ const DogCard = ({ member, meetingId, fromList, fromModal, previousPath, spotNam
         fromModal: fromModal,
         previousPath: previousPath,
         spotName: spotName,
+        fromChat: fromChat,
+        roomId: roomId,
       },
     });
   };

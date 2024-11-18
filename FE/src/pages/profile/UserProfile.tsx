@@ -23,6 +23,8 @@ const UserProfile: React.FC = () => {
   const meetingId = (location.state as { meetingId?: number })?.meetingId;
   const fromList = (location.state as { fromList?: boolean })?.fromList;
   const fromModal = (location.state as { fromModal?: boolean })?.fromModal;
+  const fromChat = (location.state as { fromChat?: boolean })?.fromChat;
+  const roomId = (location.state as { roomId?: number })?.roomId;
   const previousPath = (location.state as { previousPath?: string })?.previousPath;
   const spotName = (location.state as { spotName?: string })?.spotName;
   const navigate = useNavigate();
@@ -90,7 +92,7 @@ const UserProfile: React.FC = () => {
           onClick={() => {
             if (where === 'meetingparticipants') {
               navigate(`/meetupdoglist/${meetingId}`, {
-                state: { animateBack: true, fromList, fromModal, previousPath, spotName },
+                state: { animateBack: true, fromList, fromModal, previousPath, spotName, fromChat, roomId },
               });
             } else {
               navigate(-1);
