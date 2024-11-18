@@ -34,7 +34,8 @@ const SingleChatPage = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(roomId);
-
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+  
   const scrollToBottom = () => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView();
@@ -54,6 +55,17 @@ const SingleChatPage = () => {
       }, 100);
     }
   }, [loading, isLastPage]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportHeight(window.innerHeight); // 키보드 활성화 시 높이 재조정
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (fetchedMessages.length > 0) {
@@ -131,6 +143,7 @@ const SingleChatPage = () => {
       exit={{ x: -300, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="flex flex-col h-screen"
+      style={{ height: `${viewportHeight}px` }}
     >
       <div className="flex items-center bg-deep-coral text-white p-4 sticky top-0 z-10">
         <button onClick={handleBack} className="mr-3">
