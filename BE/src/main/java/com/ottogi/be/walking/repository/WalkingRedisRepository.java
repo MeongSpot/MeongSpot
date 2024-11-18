@@ -3,11 +3,8 @@ package com.ottogi.be.walking.repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
-
-import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -21,12 +18,11 @@ public class WalkingRedisRepository {
     }
 
     public void saveDogIds(String loginId, List<Long> dogIds) {
-        Set<Long> uniqueDogIds = new HashSet<>(dogIds);
         String key = "walking:" + loginId + ":dogIds";
-        redisTemplate.opsForList().rightPushAll(key, uniqueDogIds);
+        for(Long dogId : dogIds) {
+            redisTemplate.opsForList().rightPush(key, dogId);
+        }
 
-//        String key = "walking:" + loginId + ":dogIds";
-//        redisTemplate.opsForList().rightPushAll(key, dogIds);
     }
 
     public Long getStartTime(String loginId) {
@@ -45,6 +41,7 @@ public class WalkingRedisRepository {
 
     public List<Object> getDogIds(String loginId) {
         String key = "walking:" + loginId + ":dogIds";
+        System.out.println(loginId+"!!!!!!!!!!!!!!!!!");
         return redisTemplate.opsForList().range(key, 0, -1);
     }
 

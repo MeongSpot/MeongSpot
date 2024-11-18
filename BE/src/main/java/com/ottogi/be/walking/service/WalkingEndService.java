@@ -1,7 +1,6 @@
 package com.ottogi.be.walking.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ottogi.be.dog.domain.Dog;
 import com.ottogi.be.dog.repository.DogRepository;
@@ -23,7 +22,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,7 +42,15 @@ public class WalkingEndService {
         List<Object> gpsCoordinates = walkingRedisRepository.getGpsData(loginId);
         List<PointDto> latLngList = parseGpsCoordinates(gpsCoordinates);
         List<Object> dogIds = walkingRedisRepository.getDogIds(loginId);
-        List<Long> parsedDogIds = parseDogIds(dogIds);
+
+        Set<Long> dogIdSet = new HashSet<>();
+        for(Object dogId : dogIds) {
+            if (dogId instanceof Integer) {
+                dogIdSet.add(((Integer) dogId).longValue());
+            } else {
+                dogIdSet.add((Long) dogId);
+            }
+        }
 
         Long startTimeEpoch = walkingRedisRepository.getStartTime(loginId);
         LocalDateTime startDateTime = Instant.ofEpochSecond(startTimeEpoch)
@@ -53,7 +62,8 @@ public class WalkingEndService {
                 .collect(Collectors.toList()));
 
 
-        for (Long dogId : parsedDogIds) {
+        for (Long dogId : dogIdSet) {
+
             Dog dog = dogRepository.findById(dogId).orElseThrow(DogNotFoundException::new);
 
             WalkingLog walkingLog = WalkingLog.builder()
@@ -82,49 +92,5 @@ public class WalkingEndService {
         }
 
         return latLngList;
-    }
-
-    List<Long> parseDogIds(List<Object> dogIds) throws JsonProcessingException {
-        List<Long> parsedDogIds = new ArrayList<>();
-        for (Object dogIdObj : dogIds) {
-
-            String jsonStr = dogIdObj.toString();
-            System.out.println("JSON String: " + jsonStr);
-            JsonNode rootNode = objectMapper.readTree(jsonStr);
-
-            for (JsonNode idNode : rootNode) {
-                parsedDogIds.add(idNode.asLong());
-            }
-        }
-        return parsedDogIds;
-    }
-
-    private double calculateDistance(List<PointDto> latLngList){
-        double totalDistance = 0.0;
-
-        for (int i = 1; i < latLngList.size(); i++) {
-            PointDto point1 = latLngList.get(i - 1);
-            PointDto point2 = latLngList.get(i);
-
-            double lat1 = point1.getLat();
-            double lon1 = point1.getLng();
-            double lat2 = point2.getLat();
-            double lon2 = point2.getLng();
-
-            totalDistance += haversine(lat1, lon1, lat2, lon2);
-        }
-
-        return totalDistance;
-    }
-
-    private double haversine(double lat1, double lon1, double lat2, double lon2) {
-        final double R = 6371;
-        double latDistance = Math.toRadians(lat2 - lat1);
-        double lonDistance = Math.toRadians(lon2 - lon1);
-        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2) +
-                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                        Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return R * c;
     }
 }

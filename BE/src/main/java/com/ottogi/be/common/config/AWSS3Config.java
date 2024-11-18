@@ -39,5 +39,6 @@ public class AWSS3Config {
         awsS3ObjectStorageUpload.setBucket(bucket);
         return awsS3ObjectStorageUpload;
     }
+
 }
 
