@@ -31,7 +31,9 @@ const FriendsListCard = ({ data, handleClick }: FriendsListCardProps) => {
   // chatRoomData 업데이트 시 네비게이트 실행
   useEffect(() => {
     if (chatRoomData && selectedFriend) {
-      navigate(`/chat/single/${chatRoomData}`, { state: { roomId: chatRoomData, friendName: selectedFriend.nickname } });
+      navigate(`/chat/single/${chatRoomData}`, {
+        state: { roomId: chatRoomData, friendName: selectedFriend.nickname },
+      });
       setSelectedFriend(null); // 상태 초기화
     }
   }, [chatRoomData, navigate, selectedFriend]);
@@ -58,7 +60,7 @@ const FriendsListCard = ({ data, handleClick }: FriendsListCardProps) => {
                       alt={`${friend.nickname}의 프로필 사진`}
                     />
                   ) : (
-                    <img className="w-9 h-9" src="/icons/favicon/favicon-96x96.png" alt="기본 프로필 이미지" />
+                    <img className="w-9 h-9" src="/icons/userIcon.png" alt="기본 프로필 이미지" />
                   )}
                 </div>
                 <p className="font-semibold text-sm pl-3 pr-2">{friend.nickname}</p>

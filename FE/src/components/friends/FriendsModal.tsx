@@ -25,7 +25,7 @@ const FriendsModal = ({ isOpen, onClose, onDelete, friend }: FriendsModalProps) 
 
   return (
     <div
-      className={`fixed inset-0 z-20 bg-gray-800 bg-opacity-50 flex justify-center items-end transition-all duration-300 ${
+      className={`fixed inset-0 z-40 bg-gray-800 bg-opacity-50 flex justify-center items-end transition-all duration-300 ${
         isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
       }`}
       onClick={handleBackgroundClick}
@@ -42,7 +42,7 @@ const FriendsModal = ({ isOpen, onClose, onDelete, friend }: FriendsModalProps) 
           <div className="py-4 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <img
-                src={friend.profileImage || '/icons/favicon/favicon-96x96.png'}
+                src={friend.profileImage || '/icons/userIcon.png'}
                 alt="Profile"
                 className="w-14 h-14 rounded-full border object-cover"
               />
