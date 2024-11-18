@@ -24,7 +24,7 @@ export const Toast = ({ message, isVisible, onHide }: ToastProps) => {
 
   return (
     <div
-      className={`fixed top-24 w-2/3 left-1/2 transform -translate-x-1/2 z-40 bg-white shadow-lg rounded-lg px-6 py-3 ${animation}`}
+      className={`absolute top-24 w-2/3 left-1/2 transform -translate-x-1/2 z-40 bg-white shadow-lg rounded-lg px-6 py-3 ${animation}`}
     >
       <p className="text-center font-medium">{message}</p>
     </div>
