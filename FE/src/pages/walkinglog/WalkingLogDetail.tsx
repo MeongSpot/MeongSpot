@@ -11,47 +11,6 @@ const WalkingLogDetail = () => {
   const navigate = useNavigate();
   const { getWalkingLogDetail, walkingLogDetail } = useWalkingLog();
   const { id } = useParams();
-  // 더미 데이터
-  // const walkingLogDetail = {
-  //   startedAt: '2024-11-07T02:57:53.644014',
-  //   finishedAt: '2024-11-07T02:57:53',
-  //   dogImage: 'https://meongspotd107.s3.ap-northeast-2.amazonaws.com/661925e5-6b3b-4631-b753-4d0f1c11ee20_wink.png',
-  //   dogName: '감자',
-  //   time: null,
-  //   distance: 0.1445534046379845,
-  //   trail: [
-  //     {
-  //       lat: 36.107209484700626,
-  //       lng: 128.4173797397128,
-  //     },
-  //     {
-  //       lat: 36.10684687490224,
-  //       lng: 128.4175620073311,
-  //     },
-  //     {
-  //       lat: 36.10556937758879,
-  //       lng: 128.41738358452642,
-  //     },
-  //     {
-  //       lat: 36.10515872676945,
-  //       lng: 128.41743728178403,
-  //     },
-  //     {
-  //       lat: 36.10517235888565,
-  //       lng: 128.41666575305655,
-  //     },
-  //     {
-  //       lat: 36.105113713844524,
-  //       lng: 128.41590958369622,
-  //     },
-  //     {
-  //       lat: 36.105137119497094,
-  //       lng: 128.4024289419908,
-  //     },
-  //   ],
-  // };
-
-  console.log(walkingLogDetail);
 
   const [mapLevel, setMapLevel] = useState(5);
   const {
@@ -144,9 +103,7 @@ const WalkingLogDetail = () => {
 
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 border rounded-full">
-            <img
-              className="w-8 h-8 rounded-full object-cover"
-              src={walkingLogDetail.dogImage} alt="" />
+            <img className="w-8 h-8 rounded-full object-cover" src={walkingLogDetail.dogImage} alt="" />
           </div>
           <p>{walkingLogDetail.dogName}(이)와 함께 산책했어요</p>
         </div>
@@ -154,12 +111,22 @@ const WalkingLogDetail = () => {
         <div className="flex">
           <div className="px-5 flex flex-col items-center border-r border-zinc-300">
             <p className="text-sm text-zinc-800">산책 시간</p>
-            <p className="text-2xl font-bold">{walkingLogDetail.time ? walkingLogDetail.time : 0}</p>
-            <p className="text-sm text-zinc-600">분</p>
+            <p className="text-2xl font-bold">
+              {walkingLogDetail.time
+                ? walkingLogDetail.time >= 60
+                  ? `${(walkingLogDetail.time / 60).toFixed(1)}`
+                  : `${walkingLogDetail.time}`
+                : '0'}
+            </p>
+            <p className="text-sm text-zinc-600">
+              {walkingLogDetail.time ? (walkingLogDetail.time >= 60 ? '시간' : '분') : '분'}
+            </p>
           </div>
           <div className="px-5 flex flex-col items-center">
             <p className="text-sm text-zinc-800">산책 거리</p>
-            <p className="text-2xl font-bold">{walkingLogDetail.distance ? walkingLogDetail.distance.toFixed(2) : 0}</p>
+            <p className="text-2xl font-bold">
+              {walkingLogDetail.distance ? (walkingLogDetail?.distance / 1000).toFixed(2) : 0}
+            </p>
             <p className="text-sm text-zinc-600">Km</p>
           </div>
         </div>
@@ -167,7 +134,9 @@ const WalkingLogDetail = () => {
         <div className="w-[90%] h-64 border rounded-xl">
           {center && (
             <Map
-              onClick={() => {navigate(`/walkinglog/${id}/map`);}}
+              onClick={() => {
+                navigate(`/walkinglog/${id}/map`);
+              }}
               center={center}
               style={{ width: '100%', height: '100%', borderRadius: '0.8rem' }}
               level={mapLevel}
