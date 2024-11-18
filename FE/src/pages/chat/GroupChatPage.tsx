@@ -38,6 +38,7 @@ const GroupChatPage = () => {
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const markRead = useMarkRead(roomId);
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
 
   const scrollToBottom = () => {
     setTimeout(() => {
@@ -75,6 +76,17 @@ const GroupChatPage = () => {
     setIsModalOpen(false); // 정보 모달 닫기
     setShowDogSelection(true); // 강아지 선택 모달 열기
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportHeight(window.innerHeight); // 키보드 활성화 시 높이 재조정
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (fetchedMessages.length > 0) {
@@ -148,8 +160,9 @@ const GroupChatPage = () => {
       exit={{ x: -300, opacity: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
       className="flex flex-col h-screen"
+      style={{ height: `${viewportHeight}px` }}
     >
-      <div className="flex items-center bg-deep-coral text-white p-4 sticky top-0 z-10">
+      <div className="flex items-center bg-deep-coral text-white p-4">
         <button onClick={handleBack} className="mr-3">
           <IoChevronBack size={24} />
         </button>
