@@ -82,7 +82,7 @@ const AlarmPage = () => {
                 <img
                   onClick={() => notification.type === 'FRIEND_INVITE' && handleProfileClick(notification.friendId)}
                   className="rounded-full bg-gray-200 p-2 w-12 h-12"
-                  src={notification.profileImage ?? undefined}
+                  src={notification.profileImage || '/icons/favicon/favicon-96x96.png'}
                   alt="반려견 프로필 사진"
                 />
 
