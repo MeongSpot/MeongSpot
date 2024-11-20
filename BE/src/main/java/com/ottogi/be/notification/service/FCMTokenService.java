@@ -19,5 +19,4 @@ public class FCMTokenService {
     public void saveFcmToken(FCMTokenDto dto){
         redisService.setHashData(RedisKeyConstants.TOKEN+dto.getLoginId(), RedisFieldConstants.FCM, dto.getToken(),FCM_TOKEN_EXPIRED);
     }
-
 }

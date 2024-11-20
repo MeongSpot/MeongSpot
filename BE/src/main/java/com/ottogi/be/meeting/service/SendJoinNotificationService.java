@@ -27,7 +27,7 @@ public class SendJoinNotificationService{
     private final NotificationRepository notificationRepository;
     private final SendNotificationService sendNotificationService;
 
-    public void sendMeetingJoinNotification(Meeting meeting, Member newMember) throws ExecutionException, InterruptedException {
+    public void sendMeetingJoinNotification(Meeting meeting, Member newMember){
         List<Member> receivers = meetingMemberRepository.findMembersForNotification(meeting, newMember);
 
         for (Member receiver : receivers) {

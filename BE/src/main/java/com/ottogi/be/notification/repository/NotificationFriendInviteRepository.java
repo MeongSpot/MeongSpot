@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationFriendInviteRepository extends JpaRepository<NotificationFriendInvite, Long> {
     boolean existsBySenderAndReceiverAndStatus(Member sender, Member receiver, Status status);
-
 }

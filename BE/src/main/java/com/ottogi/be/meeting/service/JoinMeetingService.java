@@ -36,7 +36,7 @@ public class JoinMeetingService {
     private final SaveMeetingMemberService saveMeetingMemberService;
 
     @Transactional
-    public Long joinMeeting(JoinMeetingDto dto) throws ExecutionException, InterruptedException {
+    public Long joinMeeting(JoinMeetingDto dto){
 
         Member member = memberRepository.findByLoginId(dto.getLoginId())
                 .orElseThrow(MemberNotFoundException::new);
@@ -57,7 +57,7 @@ public class JoinMeetingService {
 
         joinChatRoomService.joinMeetingChatRoom(new JoinMeetingChatRoomDto(member, meeting.getChatRoom()));
 
-//        sendJoinNotificationService.sendMeetingJoinNotification(meeting,member);
+        sendJoinNotificationService.sendMeetingJoinNotification(meeting,member);
 
         return meeting.getChatRoom().getId();
     }

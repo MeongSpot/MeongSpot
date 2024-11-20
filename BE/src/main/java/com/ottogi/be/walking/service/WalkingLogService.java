@@ -66,7 +66,7 @@ public class WalkingLogService {
     }
 
     @Transactional
-    public void checkRedisLog(String loginId) throws JsonProcessingException {
+    public void checkRedisLog(String loginId){
         String key = "walking:" + loginId + ":startTime";
         Object value = redisTemplate.opsForValue().get(key);
         if (value != null) {

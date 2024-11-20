@@ -24,7 +24,7 @@ public class WalkingStartService {
     private final DogRepository dogRepository;
     private final SendWalkingNotificationService sendWalkingNotificationService;
     @Transactional
-    public void startWalking(WalkingStartDto dto) throws ExecutionException, InterruptedException {
+    public void startWalking(WalkingStartDto dto){
         Member member = memberRepository.findByLoginId(dto.getLoginId()).orElseThrow(MemberNotFoundException::new);
 
         for(Long dogId: dto.getDogIds()){
@@ -36,5 +36,7 @@ public class WalkingStartService {
 
         walkingRedisRepository.saveStartTime(dto.getLoginId(), startTime);
         walkingRedisRepository.saveDogIds(dto.getLoginId(), dto.getDogIds());
+
+        sendWalkingNotificationService.sendWalkingNotification(member);
     }
 }

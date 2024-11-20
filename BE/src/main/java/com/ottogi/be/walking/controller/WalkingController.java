@@ -27,14 +27,14 @@ public class WalkingController {
     private final WalkingLogService walkingLogService;
     @PostMapping("/start")
     public ResponseEntity<?> walkingStart(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                          @RequestBody WalkingStartRequest request) throws ExecutionException, InterruptedException {
+                                          @RequestBody WalkingStartRequest request){
         walkingStartService.startWalking(request.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("WK100", "산책 시작 성공",null));
     }
 
     @PostMapping("/end")
     public ResponseEntity<?> walkingEnd(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo,
-                                        @RequestBody WalkingEndRequest request) throws JsonProcessingException {
+                                        @RequestBody WalkingEndRequest request){
         walkingEndService.endWalking(loginMemberInfo.getLoginId(),request);
         return ResponseEntity.ok(new ApiResponse<>("WK102", "산책 종료 성공",null));
     }
@@ -53,7 +53,7 @@ public class WalkingController {
     }
 
     @PostMapping("/check")
-    public ResponseEntity<?> walkingCheck(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws JsonProcessingException {
+    public ResponseEntity<?> walkingCheck(@AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         walkingLogService.checkRedisLog(loginMemberInfo.getLoginId());
         return ResponseEntity.ok(new ApiResponse<>("WK105","비정상 산책 기록 체크 성공",null));
     }

@@ -61,7 +61,7 @@ public class NotificationController {
     }
     @PostMapping("/invitation/response")
     public ResponseEntity<?> friendInvitationRespond(@RequestBody FriendInviteNotificationRequest request,
-                                                   @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws ExecutionException, InterruptedException {
+                                                   @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         respondFriendInvitationService.respondFriendInvitation(request.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("NO100","그룹 초대 응답 성공",null));
     }

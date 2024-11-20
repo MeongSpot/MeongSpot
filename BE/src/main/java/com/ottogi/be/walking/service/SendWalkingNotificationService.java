@@ -26,7 +26,7 @@ public class SendWalkingNotificationService {
     private final SendNotificationService sendNotificationService;
     private final FriendRepository friendRepository;
 
-    public void sendWalkingNotification(Member member) throws ExecutionException, InterruptedException {
+    public void sendWalkingNotification(Member member){
         List<Member> friends = friendRepository.findAllFriends(member);
 
         for (Member friend : friends) {

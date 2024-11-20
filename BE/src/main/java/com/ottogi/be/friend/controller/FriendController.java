@@ -41,7 +41,7 @@ public class FriendController {
 
     @PostMapping("/invitation")
     public ResponseEntity<?> friendInvitation(@RequestBody FriendInvitationRequest request,
-                                              @AuthenticationPrincipal LoginMemberInfo loginMemberInfo) throws ExecutionException, InterruptedException {
+                                              @AuthenticationPrincipal LoginMemberInfo loginMemberInfo){
         inviteFriendService.inviteFriend(request.toDto(loginMemberInfo.getLoginId()));
         return ResponseEntity.ok(new ApiResponse<>("FR101", "친구 초대 성공", null));
     }

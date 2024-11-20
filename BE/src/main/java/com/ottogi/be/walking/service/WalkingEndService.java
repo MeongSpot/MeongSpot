@@ -36,7 +36,7 @@ public class WalkingEndService {
     private final DogRepository dogRepository;
     private final ObjectMapper objectMapper = new ObjectMapper();
     @Transactional
-    public void endWalking(String loginId, WalkingEndRequest request) throws JsonProcessingException {
+    public void endWalking(String loginId, WalkingEndRequest request){
         Member member = memberRepository.findByLoginId(loginId).orElseThrow(MemberNotFoundException::new);
 
         List<Object> gpsCoordinates = walkingRedisRepository.getGpsData(loginId);
