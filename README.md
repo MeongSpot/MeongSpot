@@ -1,4 +1,5 @@
-# <img width="30" align="center" src="https://github.com/user-attachments/assets/fce752fa-362f-43a6-8cec-440dcf5b3528"> SongPicker
+# <img width="30" align="center" src="https://github.com/user-attachments/assets/c0cd0909-309c-4a33-aceb-928ca75382c3"> 멍스팟
+
 
 <p align="center">
   <img width="80%" src="https://github.com/user-attachments/assets/d7aa1ab8-08d3-43a1-849c-1500376810988" alt="Description">
@@ -8,16 +9,16 @@
 ## 🌈 프로젝트 소개
 
 ### 🎈 서비스 개요
-**[컨텐츠 기반 필터링 알고리즘을 활용한 노래방 선곡 추천 서비스]**
+**[위치 기반 반려견 산책 모임 서비스]**
 
-SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 맞는 선곡을 추천해 주는 서비스입니다.  
-개별 선곡 추천뿐만 아니라 팀을 만들어 팀의 분위기에 맞는 노래를 추천받을 수 있고, 장르별로 노래를 추천받을 수 있습니다.  
-또한 QR 기능을 이용해 노래방 기기에 연동하여 쉽게 예약할 수 있고, 추천 차트 또한 노래방 기기 화면으로 볼 수 있습니다.
+멍스팟은 GPS를 통한 위치를 기반으로 반려견 산책 모임을 구성하여 다수의 인원과 산책을 할 수 있는 서비스입니다.
+미리 선정되어있는 산책 스팟에 특정 시간, 세부 장소 및 해시태그 등의 정보를 통해 산책 모임을 구성할 수 있습니다.
+또한 실시간 위치를 이용해 반려견 산책 정보를 표시하고, 이동 경로 및 이동 거리, 시간 등의 산책 기록을 확인할 수 있습니다.
 
 <br>
 
 ### 📆 진행 기간 
-2024.08 - 2024.10 ( 8주 )
+2024.10 - 2024.11 ( 5주 )
 
 <br>
   
@@ -25,7 +26,8 @@ SongPicker는 노래방 이용 데이터를 바탕으로 사용자의 취향에 
 
 |         <img src="https://github.com/hyeon8571.png" width="150">          |   <img src="https://github.com/eunji04.png" width="150">   |    <img src="https://github.com/suwhan2.png" width="150">     | <img src="https://github.com/jjuy00.png" width="150">  |   <img src="https://github.com/codemj99.png" width="150">    |       <img src="https://github.com/soyeoning.png" width="150">       |
 | :----------------------------------------------------------------------: | :---------------------------------------------------------: | :---------------------------------------------------------------: | :---------------------------------------------------: | :-----------------------------------------------------------: | :-----------------------------------------------------------------: |
-| [원승현<br>@hyeon8571](https://github.com/hyeon8571)<br/>`BE`<br/>`Leader` | [박은지<br>@eunji04](https://github.com/eunji04)<br/>`BE` | [최수환<br>@suwhan2](https://github.com/suwhan2)<br/>`BE` | [박주영<br>@jjuy00](https://github.com/jjuy00)<br/>`FE` | [김민진<br>@codemj99](https://github.com/codemj99)<br/>`FE` | [조소연<br>@soyeoning](https://github.com/soyeoning)<br/>`FE` |
+| [최수환<br>@suwhan2](https://github.com/suwhan2)<br/>`BE`<br/>`Leader` | [박은지<br>@eunji04](https://github.com/eunji04)<br/>`BE` | [원승현<br>@hyeon8571](https://github.com/hyeon8571)<br/>`BE` | [박주영<br>@jjuy00](https://github.com/jjuy00)<br/>`FE` | [송근웅<br>@songgeunwoong](https://github.com/songgeunwoong)<br/>`FE` | [박예진<br>@llovehate](https://github.com/llovehate)<br/>`FE` |
+
 
 <br>
 
