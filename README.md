@@ -1,7 +1,9 @@
 # <img width="30" align="center" src="https://github.com/user-attachments/assets/fce752fa-362f-43a6-8cec-440dcf5b3528"> SongPicker
 
 <p align="center">
-  <img width="80%" src="https://github.com/user-attachments/assets/4707aad7-e073-49dd-8502-cc7c4c6d8ff8" alt="Description">
+  ![image](https://github.com/user-attachments/assets/d7aa1ab8-08d3-43a1-849c-150037681098)
+
+  <img width="80%" src="[https://github.com/user-attachments/assets/d7aa1ab8-08d3-43a1-849c-1500376810988" alt="Description">
 </p>
 
 
