@@ -24,7 +24,7 @@
   
 ### 👨🏻‍💻 개발 인원
 
-|         <img src="https://github.com/hyeon8571.png" width="150">          |   <img src="https://github.com/eunji04.png" width="150">   |    <img src="https://github.com/suwhan2.png" width="150">     | <img src="https://github.com/jjuy00.png" width="150">  |   <img src="https://github.com/codemj99.png" width="150">    |       <img src="https://github.com/soyeoning.png" width="150">       |
+|         <img src="https://github.com/suwhan2.png" width="150">          |   <img src="https://github.com/eunji04.png" width="150">   |    <img src="https://github.com/hyeon8571.png" width="150">     | <img src="https://github.com/jjuy00.png" width="150">  |   <img src="https://github.com/songgeunwoong.png" width="150">    |       <img src="https://github.com/llovehate.png" width="150">       |
 | :----------------------------------------------------------------------: | :---------------------------------------------------------: | :---------------------------------------------------------------: | :---------------------------------------------------: | :-----------------------------------------------------------: | :-----------------------------------------------------------------: |
 | [최수환<br>@suwhan2](https://github.com/suwhan2)<br/>`BE`<br/>`Leader` | [박은지<br>@eunji04](https://github.com/eunji04)<br/>`BE` | [원승현<br>@hyeon8571](https://github.com/hyeon8571)<br/>`BE` | [박주영<br>@jjuy00](https://github.com/jjuy00)<br/>`FE` | [송근웅<br>@songgeunwoong](https://github.com/songgeunwoong)<br/>`FE` | [박예진<br>@llovehate](https://github.com/llovehate)<br/>`FE` |
 
