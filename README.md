@@ -137,7 +137,7 @@
 
 ## <img align="center" width="50" src="https://github.com/user-attachments/assets/2e9357e9-30a3-4de4-9db6-b753a952ec55"> 시스템 아키텍처
 <p align="center">
-  <img width="80%" src="https://github.com/user-attachments/assets/ffb5cab0-9846-4ee3-b5b6-46defd9bd438"> 
+  <img width="80%" src="https://github.com/user-attachments/assets/73d730af-ff52-4725-ad19-0262f9d070d3"> 
 </p>
 
 ### 개발 환경
