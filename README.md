@@ -33,22 +33,36 @@
 
 ### 📌 주요기능 소개
 
-#### 💡 선곡 추천 기능
-노래방 이용 데이터를 기반으로 사용자에게 알맞은 선곡을 추천합니다.  
-개인 이용 기록을 바탕으로한 개인 선곡 추천, 그룹 이용 기록을 바탕으로한 그룹 선곡 추천을 제공합니다.
+#### 💡 산책 모임 기능
+지도에 미리 등록 되어있는 산책 스팟에 사용자가 산책 모임을 생성하면 다수의 인원이 참여할 수 있습니다.
+산책 모임을 생성할 때 시간, 세부 장소, 해시태그 등을 통해 모임의 상세 정보를 설정합니다.
+산책 모임 생성 및 참여 시 미리 등록한 반려견 중 어떤 반려견과 함께할 지 선택할 수 있습니다.
+산책 모임에 참여한 인원들과 채팅을 할 수 있습니다.
 
 <table>
 <tr>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">개인 선곡 추천 기능</p>
-  <img src="https://github.com/user-attachments/assets/d1064e0c-7075-4c96-90e9-3842c1ad3267" width="100%" />
+<p style="font-weight: bold">산책 모임 생성</p>
+  <img src="https://github.com/user-attachments/assets/e95b46d6-1452-49e3-b74d-a0e64cbbc955" width="100%" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">그룹 선곡 추천 기능</p>
-<img src="https://github.com/user-attachments/assets/d571a586-d1fb-4809-803b-c17f41d4a7e2" width="100%" />
+<p style="font-weight: bold">산책 스팟 조회</p>
+  <img src="https://github.com/user-attachments/assets/85217305-3168-4fe2-92d0-3c76dc903ae7" width="100%" />
+</div>
+</td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">산책 모임 가입</p>
+  <img src="https://github.com/user-attachments/assets/cdd39864-34ef-4bb3-aa40-a3f69a572509" width="100%" />
+</div>
+</td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">산책 모임 상세</p>
+  <img src="https://github.com/user-attachments/assets/29c09dc6-80a5-448d-b190-ca9771d1a153" width="100%" />
 </div>
 </td>
 </tr>
