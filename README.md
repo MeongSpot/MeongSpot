@@ -88,7 +88,9 @@
 
 #### 💡 산책 기능
 미리 등록한 반려견 중 산책을 함께할 반려견을 선택하고 산책을 진행할 수 있습니다.
+<br>
 산책을 시작하면 실시간으로 이동 거리, 이동 시간, 산책 경로가 표시됩니다.
+<br>
 산책 종료 후 자동으로 산책 기록이 저장됩니다.
 
 <table>
@@ -107,6 +109,7 @@
 
 #### 💡 산책 기록 기능
 이번 달 산책 기록을 반려견별로 확인할 수 있습니다.
+<br>
 산책 기록 상세 내역에서 산책 시작 및 종료 시간, 이동 거리, 산책 경로, 함께한 반려견을 확인할 수 있습니다.
 
 <table>
@@ -124,6 +127,7 @@
 
 #### 💡 반려견 관리 기능
 사용자의 반려견을 등록, 수정, 삭제할 수 있습니다.
+<br>
 반려견의 이름, 성별, 품종, 생일, 성격 등의 정보를 관리할 수 있습니다.
 
 <table>
@@ -147,7 +151,9 @@
 
 #### 💡 친구 관리 / 1:1 채팅 기능
 유저 검색을 통해 특정 사용자를 찾을 수 있습니다.
+<br>
 사용자의 프로필 또는 유저 검색에서 친구 신청을 할 수 있습니다.
+<br>
 친구 신청을 받은 사용자는 알림을 통해 친구 신청을 거절 / 수락할 수 있습니다.
 
 <table>
@@ -213,15 +219,16 @@
   <span><img src="https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black"/></span>
   <span><img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=flat-square&logo=tailwind-css&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/Axios-5A29E4?style=flat-square&logo=axios&logoColor=white"/></span>
-  <span><img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=flat-square&logo=vite&logoColor=white"</span>
+  <span><img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=flat-square&logo=vite&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/Zustand-FFDD00?style=flat-square&logo=react&logoColor=black" alt="Zustand Badge" /></span>
+  <span><img src="https://img.shields.io/badge/Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black"/></span>
+  <span><img src="https://img.shields.io/badge/PWA-5A0FC8?style=flat-square&logo=pwa&logoColor=white" /></span>
 </div>
 <div>
   <span><img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/Spring Security-6DB33F?style=flat-square&logo=springsecurity&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/JWT-B041FF?style=flat-square&logo=jsonwebtokens&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/JPA-007396?style=flat-square&logo=hibernate&logoColor=white"/></span>
-  <span><img src="https://img.shields.io/badge/QueryDSL-007396?style=flat-square&logo=java&logoColor=white"/></span>
-  <span><img src="https://img.shields.io/badge/django-%23092E20.svg?style=flat-square&logo=django&logoColor=white"/></span>
 </div>
 
 <br>
@@ -230,6 +237,8 @@
 <div>
   <span><img src="https://img.shields.io/badge/mysql-4479A1.svg?style=flat-square&logo=mysql&logoColor=white"/></span>
   <span><img src="https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white"/></span>
+  <span><img src="https://img.shields.io/badge/RabbitMQ-FF6600?style=flat-square&logo=rabbitmq&logoColor=white"/></span>
 </div>
 
 <br>
@@ -262,12 +271,13 @@
 
 <br>
 
-![_C__Users_SSAFY_AppData_Local_Temp_c4329436-0718-4647-b396-b2cbe905768c_f7a73be4-594f-4e5b-ab72-76e4993032f9_Export-294bb2cb-2e83-4319-be1a-3d38250cf085 zip 68c_API%20%E1%84%86%E1%85%A7%E1%86%BC%E1%84%89%E1%85%A6%E](https://github.com/user-attachments/assets/240e443e-7de9-4d3f-b421-ac0d17d6fde4)
+![_C__Users_eksk9_Downloads_901e2a7d-ad54-47cc-b5f7-e1cc2e4e9334_Export-1287c9b1-dec8-4988-ac72-1a857eacc8de_API%20%EB%AA%85%EC%84%B8%EC%84%9C%20b162d3111e2d4d0f82f50eb94fed7370 html](https://github.com/user-attachments/assets/d0ca471e-a19d-4595-8581-999280287e41)
+
 
 </div>
 </details>
 
-#### [명세서 자세히 보기](https://mahogany-emperor-c5e.notion.site/API-6398db3c8a6147acb53ae2cfe13a5d50?pvs=4)
+#### [명세서 자세히 보기](https://acoustic-passive-453.notion.site/API-b162d3111e2d4d0f82f50eb94fed7370?pvs=4)
 
 ## 📂 디렉토리 구조
 
