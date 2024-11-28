@@ -170,6 +170,12 @@
   <img src="https://github.com/user-attachments/assets/c52eb95d-d58c-4e1c-acd6-7ac6566caa7e" width="100%" />
 </div>
 </td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">친구 프로필 조회 / 친구 삭제</p>
+  <img src="https://github.com/user-attachments/assets/c66e2f8e-cb80-421a-b514-21222fde35e3" width="100%" />
+</div>
+</td>
 </tr>
 </table>
 
@@ -177,14 +183,14 @@
 <tr>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">친구 프로필 조회 / 친구 삭제</p>
-  <img src="https://github.com/user-attachments/assets/c66e2f8e-cb80-421a-b514-21222fde35e3" width="100%" />
+<p style="font-weight: bold">유저 검색</p>
+  <img src="https://github.com/user-attachments/assets/e4bd8771-fa27-4e19-baf8-761773f0dea7" width="100%" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">유저 검색</p>
-  <img src="https://github.com/user-attachments/assets/e4bd8771-fa27-4e19-baf8-761773f0dea7" width="100%" />
+<p style="font-weight: bold">1:1 채팅</p>
+  <img src="https://github.com/user-attachments/assets/1ba22ee9-8cb4-43f0-8466-dffca7cc7d5f" width="100%" />
 </div>
 </td>
 </tr>
