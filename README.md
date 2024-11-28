@@ -53,6 +53,11 @@
   <img src="https://github.com/user-attachments/assets/85217305-3168-4fe2-92d0-3c76dc903ae7" width="100%" />
 </div>
 </td>
+</tr>
+</table>
+
+<table>
+<tr>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">산책 모임 가입</p>
