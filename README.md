@@ -35,9 +35,14 @@
 
 #### 💡 산책 모임 기능
 지도에 미리 등록 되어있는 산책 스팟에 사용자가 산책 모임을 생성하면 다수의 인원이 참여할 수 있습니다.
+<br>
 산책 모임을 생성할 때 시간, 세부 장소, 해시태그 등을 통해 모임의 상세 정보를 설정합니다.
+<br>
 산책 모임 생성 및 참여 시 미리 등록한 반려견 중 어떤 반려견과 함께할 지 선택할 수 있습니다.
+<br>
 산책 모임에 참여한 인원들과 채팅을 할 수 있습니다.
+<br>
+내 주변 멍스팟 추천 버튼 클릭 시 반경 3km 이내에서 산책 모임 개수가 많은 산책 스팟을 추천해줍니다.
 
 <table>
 <tr>
@@ -70,80 +75,110 @@
   <img src="https://github.com/user-attachments/assets/29c09dc6-80a5-448d-b190-ca9771d1a153" width="100%" />
 </div>
 </td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">내 주변 멍스팟 추천</p>
+  <img src="https://github.com/user-attachments/assets/9c90e18d-1318-4b59-b679-e69729b1e4f2" width="100%" />
+</div>
+</td>
 </tr>
 </table>
 
 <hr>
 
-#### 💡 노래방 연동 기능
-노래방 기기에 부여된 QR코드를 태깅하여 연동할 수 있습니다.  
-연동을 완료하면 노래를 예약할 수 있고, 추천 차트를 기기에서도 확인할 수 있습니다.
+#### 💡 산책 기능
+미리 등록한 반려견 중 산책을 함께할 반려견을 선택하고 산책을 진행할 수 있습니다.
+산책을 시작하면 실시간으로 이동 거리, 이동 시간, 산책 경로가 표시됩니다.
+산책 종료 후 자동으로 산책 기록이 저장됩니다.
 
 <table>
 <tr>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">개별(솔로) 모드 연동 기능</p>
-  <img src="https://github.com/user-attachments/assets/3ab812f5-9759-4c94-b081-a1d5c1fa6ab3" width="100%" />
-</div>
-</td>
-<td width="30%" valign="top">
-<div>
-<p style="font-weight: bold">그룹 모드 연동 기능</p>
-<img src="https://github.com/user-attachments/assets/8e1ab559-7488-42da-af66-57676b18e722" width="100%" />
+<p style="font-weight: bold">산책 기능</p>
+  <img src="https://github.com/user-attachments/assets/41d5e367-02ec-40d7-bcf8-7d1d7c3d88c2" width="100%" />
 </div>
 </td>
 </tr>
 </table>
-
-<table>
-<tr>
-<td width="30%" valign="top">
-<div>
-<p style="font-weight: bold">예약 기능</p>
-  <img src="https://github.com/user-attachments/assets/c8436a4e-6d35-425c-bb4b-05c66cecd56c" width="80%" />
-</div>
-</td>
-<td width="30%" valign="top">
-<div>
-<p style="font-weight: bold">예약 목록 조회</p>
-<img src="https://github.com/user-attachments/assets/6d1774b9-3f20-41d4-b5e3-765a90894fda" width="100%" />
-</div>
-<div>
-<p style="font-weight: bold">추천 차트 조회</p>
-<img src="https://github.com/user-attachments/assets/a801f4e4-8e77-40db-818a-096eb85a7b39" width="100%" />
-</div>
-</td>
-</tr>
-</table>
-
-
 
 
 <hr>
 
-#### 💡 그룹 생성 및 초대 기능
-그룹을 생성하고 팀원을 초대할 수 있습니다.  
-그룹에 대한 선곡 추천을 받을 수 있습니다.
+#### 💡 산책 기록 기능
+이번 달 산책 기록을 반려견별로 확인할 수 있습니다.
+산책 기록 상세 내역에서 산책 시작 및 종료 시간, 이동 거리, 산책 경로, 함께한 반려견을 확인할 수 있습니다.
 
 <table>
 <tr>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">그룹 생성 기능</p>
-  <img src="https://github.com/user-attachments/assets/e354b0ce-768e-4eff-8d8f-50f986986fbb" width="100%" />
+<p style="font-weight: bold">산책 기록</p>
+  <img src="https://github.com/user-attachments/assets/c4b33e48-6e96-45da-8d04-1a1002178044" width="100%" />
+</div>
+</td>
+</tr>
+</table>
+
+<hr>
+
+#### 💡 반려견 관리 기능
+사용자의 반려견을 등록, 수정, 삭제할 수 있습니다.
+반려견의 이름, 성별, 품종, 생일, 성격 등의 정보를 관리할 수 있습니다.
+
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">반려견 등록</p>
+  <img src="https://github.com/user-attachments/assets/07e28030-9a59-433c-96cf-b75507b2add0" width="100%" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">팀원 초대 기능</p>
-<img src="https://github.com/user-attachments/assets/62dacbf7-2da1-4533-9fc8-b0bfcb21bc49" width="100%" />
+<p style="font-weight: bold">반려견 정보 조회</p>
+  <img src="https://github.com/user-attachments/assets/1419f5f3-a412-4fb0-a240-4c5a29598e72" width="100%" />
+</div>
+</td>
+</tr>
+</table>
+
+<hr>
+
+#### 💡 친구 관리 / 1:1 채팅 기능
+유저 검색을 통해 특정 사용자를 찾을 수 있습니다.
+사용자의 프로필 또는 유저 검색에서 친구 신청을 할 수 있습니다.
+친구 신청을 받은 사용자는 알림을 통해 친구 신청을 거절 / 수락할 수 있습니다.
+
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">친구 목록</p>
+  <img src="https://github.com/user-attachments/assets/6443672f-5721-4030-9d7d-14ed3e7804d9" width="100%" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
-<p style="font-weight: bold">팀 초대 수락/거절 기능</p>
-<img src="https://github.com/user-attachments/assets/740c36a7-080a-47f3-95ce-96c91e842f7e" width="100%" />
+<p style="font-weight: bold">친구 신청 수락</p>
+  <img src="https://github.com/user-attachments/assets/c52eb95d-d58c-4e1c-acd6-7ac6566caa7e" width="100%" />
+</div>
+</td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">친구 프로필 조회 / 친구 삭제</p>
+  <img src="https://github.com/user-attachments/assets/c66e2f8e-cb80-421a-b514-21222fde35e3" width="100%" />
+</div>
+</td>
+<td width="30%" valign="top">
+<div>
+<p style="font-weight: bold">유저 검색</p>
+  <img src="https://github.com/user-attachments/assets/e4bd8771-fa27-4e19-baf8-761773f0dea7" width="100%" />
 </div>
 </td>
 </tr>
@@ -162,18 +197,14 @@
 ### 개발 환경
 
 #### 🟡 Frontend
-- **개발 언어**: TypeScript 5.4.2
-- **빌드 툴**: Vite 5.4.5
+- **개발 언어**: TypeScript 5.6.2
+- **빌드 툴**: Vite 5.4.9
 - **프레임워크**: React 18.3.1
 
 #### 🟢 Backend
 - **개발 언어**: Java 17
-- **빌드 툴**: Gradle 8.10.1
+- **빌드 툴**: Gradle 8.10.2
 - **프레임워크**: SpringBoot 3.3.3
-
-#### 🟣 Data
-- **개발 언어**: Python 3.11.10
-- **프레임워크**: Django 4.2.16
 
 ### ⚒️ 기술 스택
 
@@ -219,8 +250,7 @@
 <div markdown="1">
 
 <br>
-
-<p align="center"><img src="https://github.com/user-attachments/assets/ce438072-9476-42bf-91d4-8f8437f88503" width="100%" /></p>
+<p align="center"><img src="https://github.com/user-attachments/assets/305aab4a-9189-4a85-9896-d5d0527fb500" width="100%" /></p>
 
 </div>
 </details>
@@ -248,41 +278,68 @@
 <p style="font-weight: bold">frontend</p>
 
 ```bash
-.
-├── README.md
-├── eslint.config.js
-├── index.html
-├── package-lock.json
-├── package.json
-├── postcss.config.js
-├── public
-│   ├── basicImg.png
-│   ├── firebase-messaging-sw.js
-│   ├── fonts
-│   ├── icons
-│   ├── manifest.json
-│   └── songPicker_icon.png
-├── src
-│   ├── App.css
-│   ├── App.tsx
-│   ├── assets
-│   ├── components
-│   ├── firebaseConfig.ts
-│   ├── hooks
-│   ├── index.css
-│   ├── layouts
-│   ├── main.tsx
-│   ├── pages
-│   ├── react-qr-scanner.d.ts
-│   ├── services
-│   ├── stores
-│   ├── styles
-│   └── vite-env.d.ts
-├── tailwind.config.js
-├── tsconfig.app.json
-├── tsconfig.json
-├── tsconfig.node.json
-└── vite.config.ts
+─FE
+│  ├─dev-dist
+│  ├─public
+│  │  ├─fonts
+│  │  └─icons
+│  │      └─favicon
+│  └─src
+│      ├─assets
+│      │  └─chat
+│      ├─components
+│      │  ├─chat
+│      │  ├─common
+│      │  │  ├─Button
+│      │  │  ├─DogInput
+│      │  │  ├─Input
+│      │  │  ├─Logo
+│      │  │  └─Message
+│      │  ├─dog
+│      │  ├─friends
+│      │  ├─Layout
+│      │  ├─map
+│      │  ├─meetUp
+│      │  ├─mypage
+│      │  └─user
+│      ├─css
+│      ├─hooks
+│      │  ├─alarm
+│      │  ├─chat
+│      │  ├─dog
+│      │  ├─friend
+│      │  ├─map
+│      │  ├─meetup
+│      │  ├─mypage
+│      │  ├─profile
+│      │  ├─user
+│      │  └─walkinglog
+│      ├─pages
+│      │  ├─chat
+│      │  ├─dog
+│      │  ├─map
+│      │  ├─meetup
+│      │  ├─mypage
+│      │  ├─profile
+│      │  ├─signup
+│      │  └─walkinglog
+│      ├─router
+│      ├─services
+│      ├─store
+│      └─types
+└─gps
+    ├─.idea
+    │  └─modules
+    └─src
+        └─main
+            ├─java
+            │  └─com
+            │      └─ottogi
+            │          └─gps
+            │              └─walking
+            │                  ├─handler
+            │                  └─repository
+            └─resources
 ```
 </div>
 </td>
@@ -291,204 +348,112 @@
 <p style="font-weight: bold">backend</p>
 
 ```bash
-.
-├── java
-│   └── com
-│       └── fastarm
-│           └── back
-│               ├── BackApplication.java
-│               ├── auth
-│               │   ├── config
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── enums
-│               │   ├── exception
-│               │   ├── security
-│               │   └── service
-│               ├── basedata
-│               │   ├── constants
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── exception
-│               │   ├── repository
-│               │   └── service
-│               ├── common
-│               │   ├── config
-│               │   ├── constants
-│               │   ├── controller
-│               │   ├── exception
-│               │   └── service
-│               ├── connection
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── enums
-│               │   ├── exception
-│               │   ├── repository
-│               │   └── service
-│               ├── history
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── repository
-│               │   └── service
-│               ├── karaoke
-│               │   ├── dto
-│               │   ├── entity
-│               │   └── repository
-│               ├── likes
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── exception
-│               │   ├── repository
-│               │   └── service
-│               ├── member
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── enums
-│               │   ├── exception
-│               │   ├── repository
-│               │   ├── service
-│               │   └── validation
-│               ├── notification
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── enums
-│               │   ├── exception
-│               │   ├── repository
-│               │   └── service
-│               ├── song
-│               │   ├── constants
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── enums
-│               │   ├── exception
-│               │   ├── repository
-│               │   └── service
-│               └── team
-│                   ├── controller
-│                   ├── dto
-│                   ├── entity
-│                   ├── exception
-│                   ├── repository
-│                   ├── service
-│                   └── validation
-└── resources
-    ├── application.yml
-
+├─BE
+│  └─src
+│      └─main
+│          └─java
+│              └─com
+│                  └─ottogi
+│                      └─be
+│                          ├─chat
+│                          │  ├─controller
+│                          │  ├─domain
+│                          │  │  └─enums
+│                          │  ├─dto
+│                          │  │  ├─request
+│                          │  │  └─response
+│                          │  ├─event
+│                          │  ├─repository
+│                          │  └─service
+│                          ├─common
+│                          │  ├─config
+│                          │  ├─constants
+│                          │  ├─dto
+│                          │  └─infra
+│                          ├─dog
+│                          │  ├─controller
+│                          │  ├─domain
+│                          │  ├─dto
+│                          │  │  ├─request
+│                          │  │  └─response
+│                          │  ├─exception
+│                          │  ├─repository
+│                          │  └─service
+│                          ├─friend
+│                          │  ├─controller
+│                          │  ├─domain
+│                          │  ├─dto
+│                          │  │  ├─request
+│                          │  │  └─response
+│                          │  ├─exception
+│                          │  ├─repository
+│                          │  └─service
+│                          ├─meeting
+│                          │  ├─constants
+│                          │  ├─controller
+│                          │  ├─domain
+│                          │  ├─dto
+│                          │  │  ├─request
+│                          │  │  └─response
+│                          │  ├─exception
+│                          │  ├─repository
+│                          │  ├─service
+│                          │  └─validation
+│                          │      ├─annotation
+│                          │      └─validator
+│                          ├─member
+│                          │  ├─controller
+│                          │  ├─domain
+│                          │  ├─dto
+│                          │  │  ├─request
+│                          │  │  └─response
+│                          │  ├─repository
+│                          │  └─service
+│                          ├─notification
+│                          │  ├─controller
+│                          │  ├─domain
+│                          │  │  └─enums
+│                          │  ├─dto
+│                          │  │  ├─request
+│                          │  │  └─response
+│                          │  ├─exception
+│                          │  ├─repository
+│                          │  └─service
+│                          ├─spot
+│                          │  ├─controller
+│                          │  ├─domain
+│                          │  ├─dto
+│                          │  ├─exception
+│                          │  ├─repository
+│                          │  └─service
+│                          └─walking
+│                              ├─controller
+│                              ├─domain
+│                              ├─dto
+│                              │  ├─request
+│                              │  └─response
+│                              ├─exception
+│                              ├─repository
+│                              ├─service
+│                              └─util
+├─CHAT
+│  └─src
+│      └─main
+│          ├─java
+│          │  └─com
+│          │      └─ottogi
+│          │          └─chat
+│          │              ├─config
+│          │              ├─constants
+│          │              ├─controller
+│          │              ├─domain
+│          │              │  └─enums
+│          │              ├─dto
+│          │              └─repository
+│          └─resources
 ```
 </div>
 </td>
 </tr>
 </table>
 
-
-<details>
-<summary>노래방 서비스 디렉토리 구조</summary>
-<table>
-<tr>
-<td width="25%" valign="top">
-<div>
-<p style="font-weight: bold">karaoke_front</p>
-
-```bash
-.
-├── README.md
-├── dist
-│   ├── assets
-│   ├── fonts
-│   └── index.html
-├── eslint.config.js
-├── index.html
-├── package-lock.json
-├── package.json
-├── postcss.config.js
-├── public
-│   └── fonts
-├── src
-│   ├── App.css
-│   ├── App.tsx
-│   ├── assets
-│   ├── atoms
-│   ├── hooks
-│   ├── index.css
-│   ├── main.tsx
-│   ├── molecules
-│   ├── organisms
-│   ├── pages
-│   ├── services
-│   ├── shared
-│   ├── styles
-│   ├── template
-│   ├── utils
-│   └── vite-env.d.ts
-├── tailwind.config.js
-├── tsconfig.app.json
-├── tsconfig.app.tsbuildinfo
-├── tsconfig.json
-├── tsconfig.node.json
-├── tsconfig.node.tsbuildinfo
-└── vite.config.ts
-
-```
-</div>
-</td>
-<td width="25%" valign="top">
-<div>
-<p style="font-weight: bold">karaoke_back</p>
-
-```bash
-.
-├── java
-│   └── com
-│       └── fastarm
-│           └── back
-│               ├── BackApplication.java
-│               ├── common
-│               │   ├── config
-│               │   ├── constants
-│               │   ├── controller
-│               │   ├── exception
-│               │   └── service
-│               ├── connection
-│               │   ├── entity
-│               │   ├── enums
-│               │   └── repository
-│               ├── history
-│               │   ├── entity
-│               │   └── repository
-│               ├── karaoke
-│               │   ├── constants
-│               │   ├── controller
-│               │   ├── dto
-│               │   ├── entity
-│               │   ├── exception
-│               │   ├── repository
-│               │   └── service
-│               ├── member
-│               │   ├── entity
-│               │   ├── enums
-│               │   ├── exception
-│               │   └── repository
-│               ├── song
-│               │   ├── entity
-│               │   ├── exception
-│               │   └── repository
-│               └── team
-│                   ├── entity
-│                   ├── exception
-│                   └── repository
-└── resources
-    └── application.yml
-
-```
-</div>
-</td>
-</tr>
-</table>
-</details>
