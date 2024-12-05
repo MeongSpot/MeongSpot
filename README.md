@@ -49,13 +49,13 @@
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">산책 모임 생성</p>
-  <img src="https://github.com/user-attachments/assets/e95b46d6-1452-49e3-b74d-a0e64cbbc955" width="100%" />
+  <img src="https://github.com/user-attachments/assets/e95b46d6-1452-49e3-b74d-a0e64cbbc955" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">산책 스팟 조회</p>
-  <img src="https://github.com/user-attachments/assets/85217305-3168-4fe2-92d0-3c76dc903ae7" width="100%" />
+  <img src="https://github.com/user-attachments/assets/85217305-3168-4fe2-92d0-3c76dc903ae7" width="215px" />
 </div>
 </td>
 </tr>
@@ -66,19 +66,19 @@
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">산책 모임 가입</p>
-  <img src="https://github.com/user-attachments/assets/cdd39864-34ef-4bb3-aa40-a3f69a572509" width="100%" />
+  <img src="https://github.com/user-attachments/assets/cdd39864-34ef-4bb3-aa40-a3f69a572509" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">산책 모임 상세</p>
-  <img src="https://github.com/user-attachments/assets/29c09dc6-80a5-448d-b190-ca9771d1a153" width="100%" />
+  <img src="https://github.com/user-attachments/assets/29c09dc6-80a5-448d-b190-ca9771d1a153" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">내 주변 멍스팟 추천</p>
-  <img src="https://github.com/user-attachments/assets/9c90e18d-1318-4b59-b679-e69729b1e4f2" width="100%" />
+  <img src="https://github.com/user-attachments/assets/9c90e18d-1318-4b59-b679-e69729b1e4f2" width="210px" />
 </div>
 </td>
 </tr>
@@ -98,7 +98,7 @@
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">산책 기능</p>
-  <img src="https://github.com/user-attachments/assets/41d5e367-02ec-40d7-bcf8-7d1d7c3d88c2" width="100%" />
+  <img src="https://github.com/user-attachments/assets/41d5e367-02ec-40d7-bcf8-7d1d7c3d88c2" width="220px" />
 </div>
 </td>
 </tr>
@@ -117,7 +117,7 @@
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">산책 기록</p>
-  <img src="https://github.com/user-attachments/assets/c4b33e48-6e96-45da-8d04-1a1002178044" width="100%" />
+  <img src="https://github.com/user-attachments/assets/c4b33e48-6e96-45da-8d04-1a1002178044" width="220px" />
 </div>
 </td>
 </tr>
@@ -135,13 +135,13 @@
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">반려견 등록</p>
-  <img src="https://github.com/user-attachments/assets/07e28030-9a59-433c-96cf-b75507b2add0" width="100%" />
+  <img src="https://github.com/user-attachments/assets/07e28030-9a59-433c-96cf-b75507b2add0" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">반려견 정보 조회</p>
-  <img src="https://github.com/user-attachments/assets/1419f5f3-a412-4fb0-a240-4c5a29598e72" width="100%" />
+  <img src="https://github.com/user-attachments/assets/1419f5f3-a412-4fb0-a240-4c5a29598e72" width="220px" />
 </div>
 </td>
 </tr>
@@ -161,19 +161,19 @@
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">친구 목록</p>
-  <img src="https://github.com/user-attachments/assets/6443672f-5721-4030-9d7d-14ed3e7804d9" width="100%" />
+  <img src="https://github.com/user-attachments/assets/6443672f-5721-4030-9d7d-14ed3e7804d9" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">친구 신청 수락</p>
-  <img src="https://github.com/user-attachments/assets/c52eb95d-d58c-4e1c-acd6-7ac6566caa7e" width="100%" />
+  <img src="https://github.com/user-attachments/assets/c52eb95d-d58c-4e1c-acd6-7ac6566caa7e" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">친구 프로필 조회 / 친구 삭제</p>
-  <img src="https://github.com/user-attachments/assets/c66e2f8e-cb80-421a-b514-21222fde35e3" width="100%" />
+  <img src="https://github.com/user-attachments/assets/c66e2f8e-cb80-421a-b514-21222fde35e3" width="220px" />
 </div>
 </td>
 </tr>
@@ -184,13 +184,13 @@
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">유저 검색</p>
-  <img src="https://github.com/user-attachments/assets/e4bd8771-fa27-4e19-baf8-761773f0dea7" width="100%" />
+  <img src="https://github.com/user-attachments/assets/e4bd8771-fa27-4e19-baf8-761773f0dea7" width="220px" />
 </div>
 </td>
 <td width="30%" valign="top">
 <div>
 <p style="font-weight: bold">1:1 채팅</p>
-  <img src="https://github.com/user-attachments/assets/1ba22ee9-8cb4-43f0-8466-dffca7cc7d5f" width="100%" />
+  <img src="https://github.com/user-attachments/assets/1ba22ee9-8cb4-43f0-8466-dffca7cc7d5f" width="220px" />
 </div>
 </td>
 </tr>
